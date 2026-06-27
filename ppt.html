@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>인비저블 시즌 — 회사소개</title>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:    #060508;
+  --text:  #FAFAF8;
+  --muted: rgba(250,250,248,0.52);
+  --dim:   rgba(250,250,248,0.24);
+  --point: #E59A82;
+  --point-hi: #F5C4AD;
+  --border: rgba(255,255,255,0.08);
+  --sans:  'Pretendard', 'Pretendard Variable', -apple-system, 'Apple SD Gothic Neo', sans-serif;
+}
+
+html { scroll-behavior: smooth; background: #000; }
+body { font-family: var(--sans); color: var(--text); -webkit-font-smoothing: antialiased; }
+
+/* ── DECK ─────────────────────────────── */
+.deck {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 24px;
+  padding: 32px 12px 80px;
+}
+.slide {
+  position: relative;
+  width: 1280px; max-width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--bg);
+  overflow: hidden;
+  box-shadow: 0 32px 96px rgba(0,0,0,.85);
+  scroll-margin-top: 16px;
+}
+
+/* ── IMAGE LAYER ─────────────────────── */
+.fi {                         /* full image */
+  position: absolute; inset: 0; overflow: hidden; z-index: 0;
+}
+.fi img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.fo { position: absolute; inset: 0; z-index: 1; }   /* fill overlay */
+
+/* ── LOGO / PAGE NO ─────────────────── */
+.s-logo {
+  position: absolute; left: 44px; bottom: 28px; z-index: 20;
+  display: flex; align-items: center; gap: 8px;
+}
+.s-logo svg { width: 16px; height: 16px; opacity: 0.7; }
+.s-logo span {
+  font-size: 10.5px;
+  letter-spacing: 3.5px; color: rgba(250,250,248,0.38);
+}
+.s-no {
+  position: absolute; right: 44px; bottom: 28px; z-index: 20;
+  font-size: 10px; font-weight: 400; letter-spacing: 3px;
+  color: rgba(250,250,248,0.2);
+}
+
+/* ── NAV ─────────────────────────────── */
+.dots {
+  position: fixed; right: 16px; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 10px; z-index: 99;
+}
+.dots a {
+  display: block; width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,0.2); transition: .25s;
+}
+.dots a:hover { background: var(--point); transform: scale(1.5); }
+.hint {
+  position: fixed; left: 14px; bottom: 14px; z-index: 99;
+  font-size: 9px; font-weight: 500; letter-spacing: 3px;
+  color: rgba(250,250,248,0.18); text-transform: uppercase;
+}
+
+/* ── TYPE SYSTEM ─────────────────────── */
+.eyebrow {
+  display: block;
+  font-size: 9.5px; font-weight: 600;
+  letter-spacing: 0.4em; text-transform: uppercase;
+  color: var(--point);
+}
+.d1 {                         /* huge display */
+  font-size: 88px; font-weight: 900;
+  line-height: 0.95; letter-spacing: -0.055em;
+  color: var(--text);
+}
+.d1 .hi { color: var(--point); }
+.d2 {                         /* slide title */
+  font-size: 52px; font-weight: 800;
+  line-height: 1.05; letter-spacing: -0.04em;
+  color: var(--text);
+}
+.d2 em { font-style: normal; color: var(--point); }
+.body {
+  font-size: 16px; font-weight: 200;
+  line-height: 2.0; color: var(--muted);
+}
+.body-sm {
+  font-size: 13.5px; font-weight: 200;
+  line-height: 1.9; color: var(--muted);
+}
+hr.rule { border: none; height: 1px; background: var(--border); margin: 22px 0; }
+
+/* ── SLIDE 1 · COVER ─────────────────── */
+.s1-content {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; flex-direction: column;
+  justify-content: flex-end; padding: 72px 88px;
+}
+.s1-content .eyebrow { margin-bottom: 20px; }
+.s1-content .d1 { margin-bottom: 28px; }
+.s1-content .body { max-width: 28em; }
+
+/* ── SLIDE 2 · ABOUT ─────────────────── */
+.s2-content {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; flex-direction: column;
+  justify-content: center; padding: 72px 88px;
+  max-width: 56%;
+}
+.s2-content .eyebrow { margin-bottom: 22px; }
+.s2-content .d2 { margin-bottom: 26px; }
+
+/* ── SLIDE 3 · SERVICES ──────────────── */
+.s3-content {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; flex-direction: column;
+  padding: 60px 80px 72px;
+}
+.s3-head { margin-bottom: 32px; }
+.s3-head .eyebrow { margin-bottom: 14px; }
+.svc-row {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border);
+  margin-top: auto;
+}
+.svc {
+  background: rgba(6,5,8,0.78);
+  padding: 34px 28px;
+  backdrop-filter: blur(12px);
+  position: relative; overflow: hidden;
+}
+.svc::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, var(--point) 0%, transparent 70%);
+}
+.svc-n {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.28em; color: var(--point); margin-bottom: 14px;
+}
+.svc h3 {
+  font-size: 18px; font-weight: 700;
+  color: var(--text); margin-bottom: 10px; letter-spacing: -0.01em;
+}
+.svc p { font-size: 13px; font-weight: 200; line-height: 1.85; color: var(--muted); }
+
+/* ── SLIDE 4 · BLOOMING AIR ──────────── */
+.s4-wrap {
+  position: absolute; inset: 0; z-index: 5;
+  display: grid; grid-template-columns: 55% 45%;
+}
+.s4-img-col { position: relative; overflow: hidden; }
+.s4-img-col img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  filter: brightness(0.88) saturate(1.2);
+}
+.s4-img-col::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to right, transparent 45%, rgba(6,5,8,1) 100%);
+}
+.s4-text {
+  padding: 56px 52px;
+  display: flex; flex-direction: column; justify-content: center;
+  background: var(--bg);
+}
+.show-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 9.5px; font-weight: 600; letter-spacing: 0.38em;
+  color: var(--point); margin-bottom: 22px; text-transform: uppercase;
+}
+.show-pill::before { content: ''; width: 18px; height: 1px; background: var(--point); display: block; }
+.s4-title { font-size: 40px; font-weight: 800; letter-spacing: -0.04em; color: var(--text); margin-bottom: 4px; }
+.s4-en {
+  font-size: 11px; font-weight: 300; letter-spacing: 0.25em;
+  color: var(--dim); margin-bottom: 22px; text-transform: uppercase;
+}
+.s4-desc { font-size: 13px; font-weight: 200; line-height: 1.9; color: var(--muted); margin-bottom: 24px; }
+.meta { list-style: none; border-top: 1px solid var(--border); }
+.meta li {
+  display: flex; gap: 18px; padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12.5px; font-weight: 300;
+}
+.meta li span { color: var(--dim); min-width: 44px; }
+.meta li b { font-weight: 500; color: rgba(250,250,248,0.75); }
+
+/* ── SLIDE 5 · AUDIENCE ──────────────── */
+.s5-content {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; flex-direction: column;
+  padding: 60px 80px 72px;
+}
+.s5-head { margin-bottom: auto; }
+.s5-head .eyebrow { margin-bottom: 14px; }
+.aud-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+.aud-card {
+  background: rgba(6,5,8,0.72);
+  border: 1px solid var(--border);
+  padding: 28px 24px;
+  backdrop-filter: blur(14px);
+}
+.aud-q {
+  font-size: 30px;
+  color: var(--point); margin-bottom: 12px; line-height: 1;
+}
+.aud-card p { font-size: 14.5px; font-weight: 200; line-height: 1.8; color: var(--muted); }
+
+/* ── SLIDE 6 · CLOSING ───────────────── */
+.s6-content {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 60px;
+}
+.s6-content .eyebrow { margin-bottom: 20px; }
+.s6-display {
+  font-size: 70px; font-weight: 900;
+  line-height: 0.95; letter-spacing: -0.055em;
+  color: var(--point); margin: 16px 0 34px;
+}
+.s6-contact {
+  font-size: 14px; font-weight: 200;
+  color: var(--muted); letter-spacing: 0.3px;
+}
+.s6-contact b { font-weight: 600; color: var(--text); }
+.s6-note { margin-top: 10px; font-size: 10.5px; color: var(--dim); }
+
+/* ── BILINGUAL SUB ───────────────────── */
+.msg-en {
+  font-family: 'Inter', 'Pretendard', sans-serif;
+  font-size: 11.5px; font-weight: 300; line-height: 1.6;
+  color: rgba(250,250,248,0.34); letter-spacing: 0.01em;
+  margin-top: 5px; display: block;
+}
+.meta li > div { display: flex; flex-direction: column; gap: 2px; }
+.meta li small {
+  font-family: 'Inter', 'Pretendard', sans-serif;
+  font-size: 10.5px; font-weight: 300;
+  color: rgba(250,250,248,0.3); letter-spacing: 0.01em;
+}
+
+/* ── RESPONSIVE ──────────────────────── */
+@media (max-width: 1320px) {
+  .slide { width: 100%; }
+  .d1 { font-size: 6.5vw; }
+  .d2 { font-size: 4vw; }
+  .s1-content, .s2-content, .s3-content, .s5-content { padding: 5vw 6.5vw; }
+  .s6-content { padding: 3.5vw; }
+  .s6-display { font-size: 5.2vw; }
+  .s4-text { padding: 3.8vw; }
+  .s4-title { font-size: 3vw; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+  <defs>
+    <radialGradient id="grd" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#E59A82" stop-opacity="0.34"/>
+      <stop offset="55%"  stop-color="#E59A82" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="#E59A82" stop-opacity="0"/>
+    </radialGradient>
+    <g id="bloom">
+      <circle cx="0" cy="0" r="62" fill="url(#grd)"/>
+      <g fill="none" stroke="#E59A82" stroke-width="1.6" stroke-linejoin="round">
+        <path d="M0 0 C7-13 7-26 0-37 C-7-26-7-13 0 0Z" transform="rotate(0)"   opacity="0.95"/>
+        <path d="M0 0 C7-13 7-26 0-37 C-7-26-7-13 0 0Z" transform="rotate(60)"  opacity="0.52"/>
+        <path d="M0 0 C7-13 7-26 0-37 C-7-26-7-13 0 0Z" transform="rotate(120)" opacity="0.88"/>
+        <path d="M0 0 C7-13 7-26 0-37 C-7-26-7-13 0 0Z" transform="rotate(180)" opacity="0.38"/>
+        <path d="M0 0 C7-13 7-26 0-37 C-7-26-7-13 0 0Z" transform="rotate(240)" opacity="0.82"/>
+        <path d="M0 0 C7-13 7-26 0-37 C-7-26-7-13 0 0Z" transform="rotate(300)" opacity="0.48"/>
+      </g>
+      <g fill="none" stroke="#E59A82" stroke-width="1.1" stroke-linejoin="round">
+        <path d="M0 0 C4-7.5 4-15 0-21 C-4-15-4-7.5 0 0Z" transform="rotate(30)"  opacity="0.36"/>
+        <path d="M0 0 C4-7.5 4-15 0-21 C-4-15-4-7.5 0 0Z" transform="rotate(90)"  opacity="0.24"/>
+        <path d="M0 0 C4-7.5 4-15 0-21 C-4-15-4-7.5 0 0Z" transform="rotate(150)" opacity="0.36"/>
+        <path d="M0 0 C4-7.5 4-15 0-21 C-4-15-4-7.5 0 0Z" transform="rotate(210)" opacity="0.20"/>
+        <path d="M0 0 C4-7.5 4-15 0-21 C-4-15-4-7.5 0 0Z" transform="rotate(270)" opacity="0.36"/>
+        <path d="M0 0 C4-7.5 4-15 0-21 C-4-15-4-7.5 0 0Z" transform="rotate(330)" opacity="0.22"/>
+      </g>
+      <circle cx="0" cy="0" r="2.0" fill="#F5C4AD"/>
+    </g>
+  </defs>
+</svg>
+
+<nav class="dots">
+  <a href="#s1" title="표지"></a>
+  <a href="#s2" title="소개"></a>
+  <a href="#s3" title="하는 일"></a>
+  <a href="#s4" title="블루밍에어"></a>
+  <a href="#s5" title="청중"></a>
+  <a href="#s6" title="맺음"></a>
+</nav>
+<div class="hint">scroll</div>
+
+<div class="deck">
+
+  <!-- ① COVER ─────────────────────────────────────────── -->
+  <section class="slide" id="s1">
+    <!-- 이미지: 빛의 히어로, 하단에 비네팅으로 텍스트 확보 -->
+    <div class="fi">
+      <img src="img_hero.png" alt="" style="filter:brightness(0.72) saturate(1.3);transform:scale(1.04)">
+    </div>
+    <div class="fo" style="background:
+      linear-gradient(to top, rgba(6,5,8,0.96) 0%, rgba(6,5,8,0.55) 45%, rgba(6,5,8,0.08) 100%),
+      linear-gradient(to right, rgba(6,5,8,0.6) 0%, transparent 55%)">
+    </div>
+    <div class="s1-content">
+      <span class="eyebrow">MEDIA ART · MULTIMEDIA EXHIBITION STUDIO</span>
+      <h1 class="d1">현실같은<br><span class="hi">비현실</span></h1>
+      <span class="msg-en">Surreal Reality</span>
+      <p class="body" style="margin-top:18px">빛과 소리와 감각이 교차하는 현실에서,<br>당신의 오늘을 기록하세요.</p>
+    </div>
+    <div class="s-logo">
+      <svg viewBox="-70 -70 140 140"><use href="#bloom"/></svg>
+      <span>INVISIBLE SEASON</span>
+    </div>
+    <div class="s-no">01 / 06</div>
+  </section>
+
+  <!-- ② ABOUT ──────────────────────────────────────────── -->
+  <section class="slide" id="s2">
+    <!-- 이미지: 오른쪽 52%에서 드라마틱하게 fade-in -->
+    <div style="position:absolute;left:48%;right:0;top:0;bottom:0;overflow:hidden;z-index:0">
+      <img src="img_about.png" alt=""
+        style="width:100%;height:100%;object-fit:cover;display:block;
+               filter:brightness(0.78) saturate(1.1) contrast(1.05)">
+    </div>
+    <div class="fo" style="background:
+      linear-gradient(to right,
+        rgba(6,5,8,1) 0%,
+        rgba(6,5,8,0.97) 30%,
+        rgba(6,5,8,0.65) 58%,
+        rgba(6,5,8,0.0) 100%)">
+    </div>
+    <div class="s2-content">
+      <span class="eyebrow">ABOUT US</span>
+      <h2 class="d2">어둠 위에서<br><em>색이 피어나는</em><br>스튜디오</h2>
+      <span class="msg-en">A studio where color blooms upon the dark.</span>
+      <p class="body" style="margin-top:18px">인비저블 시즌은 미디어아트를 중심으로 빛과 소리,<br>향과 공간을 하나의 호흡으로 엮는 종합 멀티미디어<br>전시 기획 스튜디오입니다.</p>
+      <hr class="rule" style="margin:20px 0">
+      <p style="font-size:11px;font-weight:300;letter-spacing:0.18em;color:var(--dim)">현실같은 비현실 — 사라지는 계절도, 머무는 동안엔 분명히 곁에 있습니다</p>
+    </div>
+    <div class="s-logo">
+      <svg viewBox="-70 -70 140 140"><use href="#bloom"/></svg>
+      <span>INVISIBLE SEASON</span>
+    </div>
+    <div class="s-no">02 / 06</div>
+  </section>
+
+  <!-- ③ WHAT WE DO ────────────────────────────────────── -->
+  <section class="slide" id="s3">
+    <!-- 이미지: 빛의 런웨이, 저채도로 인서트 -->
+    <div class="fi">
+      <img src="img_runway.png" alt=""
+        style="filter:brightness(0.35) saturate(0.6) contrast(1.1);opacity:0.65;transform:scale(1.06)">
+    </div>
+    <div class="fo" style="background:
+      radial-gradient(ellipse 80% 70% at 50% 100%, rgba(229,154,130,0.07) 0%, transparent 70%),
+      rgba(6,5,8,0.68)">
+    </div>
+    <div class="s3-content">
+      <div class="s3-head">
+        <span class="eyebrow">WHAT WE DO</span>
+        <h2 class="d2" style="margin-top:12px">하나의 공간,<br>여러 겹의 감각</h2>
+      </div>
+      <div class="svc-row">
+        <div class="svc">
+          <div class="svc-n">01</div>
+          <h3>미디어아트 연출</h3>
+          <p>프로젝션·영상·인터랙션으로 벽과 바닥을 살아 있는 장면으로 바꿉니다.</p>
+        </div>
+        <div class="svc">
+          <div class="svc-n">02</div>
+          <h3>사운드 · 향 설계</h3>
+          <p>소리와 향을 공간의 결에 맞춰 배치해, 눈으로만 보지 않는 전시를 만듭니다.</p>
+        </div>
+        <div class="svc">
+          <div class="svc-n">03</div>
+          <h3>전시 기획 · 공간</h3>
+          <p>주제부터 동선·마감까지. 하나의 이야기가 자연스럽게 흐르도록 짓습니다.</p>
+        </div>
+      </div>
+    </div>
+    <div class="s-logo">
+      <svg viewBox="-70 -70 140 140"><use href="#bloom"/></svg>
+      <span>INVISIBLE SEASON</span>
+    </div>
+    <div class="s-no">03 / 06</div>
+  </section>
+
+  <!-- ④ BLOOMING AIR ───────────────────────────────────── -->
+  <section class="slide" id="s4">
+    <!-- 좌 55% 전시 사진 / 우 45% 텍스트 — teamLab 스타일 풀하이트 이미지 -->
+    <div class="s4-wrap">
+      <div class="s4-img-col">
+        <img src="img_show.png" alt="블루밍에어 전시">
+      </div>
+      <div class="s4-text">
+        <div class="show-pill">FIRST EXHIBITION</div>
+        <h2 class="s4-title">블루밍에어</h2>
+        <p class="s4-en">Blooming Air</p>
+        <p class="s4-desc">어둠 속에서 피어나는 빛의 정원. 프로젝션과 소리가 한 호흡으로 흐르는 인비저블 시즌의 첫 번째 전시입니다.</p>
+        <ul class="meta">
+          <li>
+            <span>전시<br><small>Exhibition</small></span>
+            <div><b>어둠 속에서 피어나는 빛의 정원</b><small>A garden of light blooming in the dark</small></div>
+          </li>
+          <li>
+            <span>구성<br><small>Format</small></span>
+            <div><b>미디어아트 · 사운드 · 향 멀티미디어</b><small>Media art · sound · multimedia</small></div>
+          </li>
+          <li>
+            <span>분야<br><small>Field</small></span>
+            <div><b>미디어아트 × 플라워</b><small>Media art × flower</small></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="s-logo">
+      <svg viewBox="-70 -70 140 140"><use href="#bloom"/></svg>
+      <span>INVISIBLE SEASON</span>
+    </div>
+    <div class="s-no">04 / 06</div>
+  </section>
+
+  <!-- ⑤ AUDIENCE ───────────────────────────────────────── -->
+  <section class="slide" id="s5">
+    <!-- 이미지: 크리스탈 빛, 컬러 살림 -->
+    <div class="fi">
+      <img src="img_crystal.png" alt=""
+        style="filter:brightness(0.5) saturate(1.4) contrast(1.1);transform:scale(1.05)">
+    </div>
+    <div class="fo" style="background:
+      radial-gradient(ellipse 90% 80% at 50% 50%, transparent 0%, rgba(6,5,8,0.75) 100%)">
+    </div>
+    <div class="s5-content">
+      <div class="s5-head">
+        <span class="eyebrow">WHO IT'S FOR</span>
+        <h2 class="d2" style="margin-top:12px">이런 분께<br>건네는 시간</h2>
+        <span class="msg-en">Time we offer to you.</span>
+      </div>
+      <div class="aud-row">
+        <div class="aud-card">
+          <div class="aud-q">"</div>
+          <p>오늘의 나를 기록하고 싶은 사람</p>
+        </div>
+        <div class="aud-card">
+          <div class="aud-q">"</div>
+          <p>일상 속에서 아름다운 순간을 찾고 싶은 사람</p>
+        </div>
+        <div class="aud-card">
+          <div class="aud-q">"</div>
+          <p>감각적인 경험으로 무언가를 느끼고 싶은 모든 사람</p>
+        </div>
+      </div>
+    </div>
+    <div class="s-logo">
+      <svg viewBox="-70 -70 140 140"><use href="#bloom"/></svg>
+      <span>INVISIBLE SEASON</span>
+    </div>
+    <div class="s-no">05 / 06</div>
+  </section>
+
+  <!-- ⑥ CLOSING ────────────────────────────────────────── -->
+  <section class="slide" id="s6">
+    <!-- 이미지: 보케 빛, 컬러 화려하게 -->
+    <div class="fi">
+      <img src="img_bokeh.png" alt=""
+        style="filter:brightness(0.55) saturate(1.5) contrast(1.05);transform:scale(1.06)">
+    </div>
+    <div class="fo" style="background:
+      radial-gradient(ellipse 70% 65% at 50% 50%, transparent 0%, rgba(6,5,8,0.78) 100%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(229,154,130,0.06) 0%, transparent 60%)">
+    </div>
+    <div class="s6-content">
+      <svg width="72" height="72" viewBox="-70 -70 140 140" style="margin-bottom:16px;opacity:0.9">
+        <use href="#bloom"/>
+      </svg>
+      <span class="eyebrow">INVISIBLE SEASON</span>
+      <h2 class="s6-display">현실같은 비현실</h2>
+      <span class="msg-en" style="margin-bottom:20px">Surreal Reality</span>
+      <p class="s6-contact"><b>인비저블 시즌</b> · hello@invisibleseason.demo · @invisible.season</p>
+      <p class="s6-note">표기된 연락처는 데모용 가상 정보입니다.</p>
+    </div>
+    <div class="s-logo">
+      <svg viewBox="-70 -70 140 140"><use href="#bloom"/></svg>
+      <span>INVISIBLE SEASON</span>
+    </div>
+    <div class="s-no">06 / 06</div>
+  </section>
+
+</div>
+</body>
+</html>

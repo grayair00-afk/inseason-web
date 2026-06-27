@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>인비저블 시즌 — 명함 · 메일 서명</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --bg:#0B0A0E; --surface:#15131B; --surface-2:#1F1B27;
+    --border:#2C2836; --border-strong:#3A3548;
+    --text:#F3EFE8; --text-muted:#B6AFBF; --text-subtle:#837C90;
+    --point:#E59A82; --point-bright:#F2B89D; --point-deep:#C9745C;
+    --point-tint:rgba(229,154,130,0.12);
+    --font-sans:'Pretendard','Pretendard Variable',-apple-system,'Apple SD Gothic Neo',sans-serif;
+    --radius:2px; --radius-pill:999px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#060509;color:var(--text);font-family:var(--font-sans);
+    padding:48px 20px 72px;display:flex;flex-direction:column;align-items:center;gap:46px}
+.label{font-size:11px;letter-spacing:3px;color:var(--text-subtle);text-transform:uppercase;
+    text-align:center;margin-bottom:16px}
+  .section{width:100%;max-width:920px}
+
+  /* card geometry: 90x54mm ratio */
+  .cards{display:flex;gap:34px;flex-wrap:wrap;justify-content:center}
+  .card{position:relative;width:420px;height:252px;background:var(--bg);border:1px solid var(--border);
+    overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+  .card .glow{position:absolute;pointer-events:none;z-index:0}
+  .card .in{position:relative;z-index:1;width:100%;height:100%}
+
+  /* FRONT */
+  .front .in{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px}
+  .front .sym{width:62px;height:62px;margin-bottom:14px}
+  .front .wm{font-size:21px;font-weight:700;letter-spacing:6px;color:var(--text)}
+  .front .kr{font-size:12px;font-weight:500;letter-spacing:8px;color:var(--text-muted);margin-top:7px}
+  .front .divider{width:38px;height:1px;background:var(--point);opacity:.7;margin:16px 0 12px}
+  .front .slo{font-size:12.5px;letter-spacing:1px;color:var(--point)}
+
+  /* BACK */
+  .back .in{display:flex;flex-direction:column;justify-content:space-between;padding:32px 34px}
+  .back .name{font-size:27px;font-weight:800;letter-spacing:-0.02em;color:var(--text);line-height:1}
+  .back .role{font-size:12.5px;letter-spacing:1px;color:var(--text-muted);margin-top:9px}
+  .back .rule{height:1px;background:var(--point);opacity:.55;width:46px;margin:16px 0}
+  .back .rows{font-size:12.5px;color:var(--text-muted);line-height:1.95}
+  .back .rows b{color:var(--text);font-weight:500;display:inline-block;min-width:52px;color:var(--text-subtle)}
+  .back .rows a{color:var(--point);text-decoration:none}
+  .back .topwm{display:flex;align-items:center;gap:8px}
+  .back .topwm .sym{width:18px;height:18px}
+  .back .topwm span{font-size:11px;font-weight:600;letter-spacing:3px;color:var(--text-subtle)}
+  .back .demo{font-size:10px;color:var(--text-subtle);letter-spacing:.5px}
+
+  /* email signature */
+  .sigwrap{background:#fff;padding:30px 32px;border-radius:var(--radius);max-width:560px;margin:0 auto;
+    box-shadow:0 18px 50px rgba(0,0,0,.4)}
+  table{border-collapse:collapse}
+  .demo-note{text-align:center;color:var(--text-subtle);font-size:12px;margin-top:14px}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <radialGradient id="is-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#E59A82" stop-opacity="0.30"/>
+      <stop offset="55%" stop-color="#E59A82" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#E59A82" stop-opacity="0"/>
+    </radialGradient>
+    <g id="bloom">
+      <circle cx="0" cy="0" r="62" fill="url(#is-glow)"/>
+      <g fill="none" stroke="#E59A82" stroke-width="1.6" stroke-linejoin="round">
+        <path d="M 0 0 C 7 -13 7 -26 0 -37 C -7 -26 -7 -13 0 0 Z" transform="rotate(0)" opacity="0.95"/>
+        <path d="M 0 0 C 7 -13 7 -26 0 -37 C -7 -26 -7 -13 0 0 Z" transform="rotate(60)" opacity="0.55"/>
+        <path d="M 0 0 C 7 -13 7 -26 0 -37 C -7 -26 -7 -13 0 0 Z" transform="rotate(120)" opacity="0.90"/>
+        <path d="M 0 0 C 7 -13 7 -26 0 -37 C -7 -26 -7 -13 0 0 Z" transform="rotate(180)" opacity="0.40"/>
+        <path d="M 0 0 C 7 -13 7 -26 0 -37 C -7 -26 -7 -13 0 0 Z" transform="rotate(240)" opacity="0.85"/>
+        <path d="M 0 0 C 7 -13 7 -26 0 -37 C -7 -26 -7 -13 0 0 Z" transform="rotate(300)" opacity="0.50"/>
+      </g>
+      <g fill="none" stroke="#E59A82" stroke-width="1.2" stroke-linejoin="round">
+        <path d="M 0 0 C 4.5 -8 4.5 -16 0 -22 C -4.5 -16 -4.5 -8 0 0 Z" transform="rotate(30)" opacity="0.40"/>
+        <path d="M 0 0 C 4.5 -8 4.5 -16 0 -22 C -4.5 -16 -4.5 -8 0 0 Z" transform="rotate(90)" opacity="0.28"/>
+        <path d="M 0 0 C 4.5 -8 4.5 -16 0 -22 C -4.5 -16 -4.5 -8 0 0 Z" transform="rotate(150)" opacity="0.40"/>
+        <path d="M 0 0 C 4.5 -8 4.5 -16 0 -22 C -4.5 -16 -4.5 -8 0 0 Z" transform="rotate(210)" opacity="0.24"/>
+        <path d="M 0 0 C 4.5 -8 4.5 -16 0 -22 C -4.5 -16 -4.5 -8 0 0 Z" transform="rotate(270)" opacity="0.40"/>
+        <path d="M 0 0 C 4.5 -8 4.5 -16 0 -22 C -4.5 -16 -4.5 -8 0 0 Z" transform="rotate(330)" opacity="0.26"/>
+      </g>
+      <circle cx="0" cy="0" r="2.2" fill="#F2B89D"/>
+    </g>
+  </defs>
+</svg>
+
+<!-- NAME CARD -->
+<div class="section">
+  <p class="label">BUSINESS CARD · 앞 / 뒤</p>
+  <div class="cards">
+
+    <!-- FRONT -->
+    <div class="card front">
+      <div class="glow" style="left:50%;top:-22%;width:340px;height:300px;transform:translateX(-50%);
+        background:radial-gradient(closest-side,rgba(229,154,130,.26),rgba(201,138,176,.14),rgba(126,143,214,.10),transparent 72%);filter:blur(54px)"></div>
+      <div class="in">
+        <svg class="sym" viewBox="-80 -80 160 160"><use href="#bloom"/></svg>
+        <div class="wm">INVISIBLE SEASON</div>
+        <div class="kr">인비저블 시즌</div>
+        <div class="divider"></div>
+        <div class="slo">현실같은 비현실</div>
+      </div>
+    </div>
+
+    <!-- BACK -->
+    <div class="card back">
+      <div class="glow" style="right:-18%;bottom:-24%;width:280px;height:260px;
+        background:radial-gradient(closest-side,rgba(229,154,130,.16),transparent 70%);filter:blur(54px)"></div>
+      <div class="in">
+        <div class="topwm">
+          <svg class="sym" viewBox="-70 -70 140 140"><use href="#bloom"/></svg>
+          <span>INVISIBLE SEASON</span>
+        </div>
+        <div>
+          <div class="name">Jung.K</div>
+          <div class="role">전시 기획 · Creative Director</div>
+          <div class="rule"></div>
+          <div class="rows">
+            <div><b>M</b> 010-0000-0000</div>
+            <div><b>E</b> <a href="mailto:jung.k@invisibleseason.demo">jung.k@invisibleseason.demo</a></div>
+            <div><b>W</b> <a href="#">invisibleseason.demo</a></div>
+          </div>
+        </div>
+        <div class="demo">미디어아트 멀티미디어 전시 스튜디오 · 데모용 가상 정보</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- EMAIL SIGNATURE -->
+<div class="section">
+  <p class="label">EMAIL SIGNATURE</p>
+  <div class="sigwrap">
+    <table cellpadding="0" cellspacing="0" role="presentation" style="font-family:'Pretendard',-apple-system,'Apple SD Gothic Neo',sans-serif">
+      <tr>
+        <td style="vertical-align:top;padding-right:20px;border-right:2px solid #E59A82">
+          <div style="width:54px;height:54px;background:#0B0A0E;border-radius:2px;display:flex;align-items:center;justify-content:center">
+            <svg width="46" height="46" viewBox="-80 -80 160 160"><use href="#bloom"/></svg>
+          </div>
+        </td>
+        <td style="vertical-align:top;padding-left:20px">
+          <div style="font-family:'Pretendard',-apple-system,sans-serif;font-size:18px;color:#15131B;font-weight:800;letter-spacing:-0.02em">Jung.K <span style="font-size:12px;color:#837C90;font-weight:400">· 전시 기획 / Creative Director</span></div>
+          <div style="font-family:'Pretendard',-apple-system,sans-serif;font-size:11px;font-weight:600;letter-spacing:3px;color:#C9745C;margin:7px 0 9px">INVISIBLE SEASON · 인비저블 시즌</div>
+          <div style="font-size:12px;color:#3A3548;line-height:1.85">
+            M. 010-0000-0000 &nbsp;|&nbsp; E. <a href="mailto:jung.k@invisibleseason.demo" style="color:#C9745C;text-decoration:none">jung.k@invisibleseason.demo</a><br>
+            W. <a href="#" style="color:#C9745C;text-decoration:none">invisibleseason.demo</a> &nbsp;|&nbsp; <span style="color:#837C90">현실같은 비현실</span>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <p class="demo-note">이름·연락처는 데모용 가상 정보입니다. (서명은 메일 클라이언트 호환을 위해 인라인 스타일 사용)</p>
+</div>
+
+</body>
+</html>

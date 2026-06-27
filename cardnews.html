@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>인비저블 시즌 — 카드뉴스</title>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:    #060508;
+  --text:  #FAFAF8;
+  --muted: rgba(250,250,248,0.52);
+  --dim:   rgba(250,250,248,0.26);
+  --point: #E59A82;
+  --point-hi: #F5C4AD;
+  --border: rgba(255,255,255,0.08);
+  --sans: 'Pretendard', 'Pretendard Variable', -apple-system, 'Apple SD Gothic Neo', sans-serif;
+}
+
+html { background: #000; }
+body {
+  font-family: var(--sans); color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  padding: 48px 0 72px;
+  display: flex; flex-direction: column; align-items: center; gap: 48px;
+}
+
+/* ── PAGE HEADER ──────────────────────── */
+.head {
+  text-align: center; padding: 0 24px;
+}
+.head .eyebrow {
+  font-size: 9.5px; font-weight: 600;
+  letter-spacing: 0.4em; text-transform: uppercase;
+  color: var(--point);
+}
+.head h1 {
+  font-size: 28px; font-weight: 900;
+  letter-spacing: -0.04em; line-height: 1.05;
+  color: var(--text); margin-top: 10px;
+}
+.head p {
+  font-size: 12px; font-weight: 300;
+  color: var(--dim); margin-top: 10px; letter-spacing: 0.05em;
+}
+
+/* ── FILMSTRIP ────────────────────────── */
+.strip {
+  display: flex; gap: 20px;
+  overflow-x: auto; padding: 8px 48px 24px;
+  scroll-snap-type: x mandatory;
+}
+.strip::-webkit-scrollbar { height: 4px; }
+.strip::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 99px; }
+.strip::-webkit-scrollbar-track { background: transparent; }
+
+/* ── CARD BASE ────────────────────────── */
+.card {
+  position: relative;
+  flex: 0 0 auto; width: 480px; height: 480px;
+  background: var(--bg); overflow: hidden;
+  scroll-snap-align: center;
+  box-shadow: 0 28px 80px rgba(0,0,0,.8);
+}
+
+/* image & overlay */
+.ci { position: absolute; inset: 0; overflow: hidden; }
+.ci img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.co { position: absolute; inset: 0; }
+
+/* content layers */
+.body-layer {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; flex-direction: column;
+  padding: 44px 42px;
+}
+.foot-bar {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 5;
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 42px 28px;
+}
+.foot-bar svg { width: 14px; height: 14px; opacity: 0.65; }
+.foot-bar .wm {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 3px; color: rgba(250,250,248,0.38);
+}
+.foot-bar .slo {
+  margin-left: auto; font-size: 10px; font-weight: 400;
+  letter-spacing: 1px; color: var(--point); opacity: 0.8;
+}
+
+/* ── TYPE ─────────────────────────────── */
+.eyebrow {
+  font-size: 9.5px; font-weight: 600;
+  letter-spacing: 0.4em; text-transform: uppercase; color: var(--point);
+}
+.num {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.3em; color: var(--point);
+}
+.display {
+  font-size: 52px; font-weight: 900;
+  line-height: 0.95; letter-spacing: -0.055em; color: var(--text);
+}
+.display .hi { color: var(--point); }
+.title {
+  font-size: 36px; font-weight: 800;
+  line-height: 1.1; letter-spacing: -0.04em; color: var(--text);
+}
+.title em { font-style: normal; color: var(--point); }
+.desc {
+  font-size: 13px; font-weight: 200;
+  line-height: 1.9; color: var(--muted);
+}
+
+/* ── CARD 1 · COVER ──────────────────── */
+.c1 .body-layer { justify-content: flex-end; }
+.c1 .eyebrow { margin-bottom: 16px; }
+
+/* ── CARD 2 · INVITATION ─────────────── */
+.c2 .body-layer { justify-content: flex-end; }
+.c2 .num { margin-bottom: 8px; }
+.c2 .title { margin-bottom: 16px; }
+
+/* ── CARD 3 · EXHIBITION ─────────────── */
+.c3 .body-layer { justify-content: flex-end; }
+.c3 .num { margin-bottom: 8px; }
+.c3 .title { margin-bottom: 16px; }
+
+/* ── CARD 4 · FOR YOU ────────────────── */
+.c4 .body-layer { justify-content: flex-end; }
+.c4 .num { margin-bottom: 8px; }
+.c4 .title { margin-bottom: 16px; }
+
+/* ── CARD 5 · CTA ────────────────────── */
+.c5 .body-layer {
+  align-items: center; justify-content: center; text-align: center;
+}
+.c5 .eyebrow { margin-bottom: 20px; }
+.c5 .title { font-size: 34px; color: var(--point); margin-bottom: 28px; letter-spacing: -0.03em; }
+.c5 .cta {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.18em;
+  color: var(--bg); background: var(--point);
+  padding: 12px 26px;
+  box-shadow: 0 0 0 1px rgba(229,154,130,.3), 0 8px 32px rgba(229,154,130,.22);
+}
+
+/* ── BILINGUAL SUB ───────────────────── */
+.msg-en {
+  font-family: 'Inter', 'Pretendard', sans-serif;
+  font-size: 11.5px; font-weight: 300; line-height: 1.6;
+  color: rgba(250,250,248,0.34); letter-spacing: 0.01em;
+  margin-top: 6px;
+}
+
+/* ── DEMO NOTE ───────────────────────── */
+.demo {
+  font-size: 11px; font-weight: 300;
+  color: rgba(250,250,248,0.2); letter-spacing: 0.05em;
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+  <defs>
+    <radialGradient id="grd" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#E59A82" stop-opacity="0.34"/>
+      <stop offset="55%"  stop-color="#E59A82" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="#E59A82" stop-opacity="0"/>
+    </radialGradient>
+    <g id="bloom">
+      <circle cx="0" cy="0" r="62" fill="url(#grd)"/>
+      <g fill="none" stroke="#E59A82" stroke-width="1.6" stroke-linejoin="round">
+        <path d="M0 0 C7-13 7-26 0-37 C-7-26-7-13 0 0Z" transform="rotate(0)"   opacity="0.95"/>
+        <path d="M0 0 C7-13 7-26 0-37 C-7-26-7-13 0 0Z" transform="rotate(60)"  opacity="0.52"/>
+        <path d="M0 0 C7-13 7-26 0-37 C-7-26-7-13 0 0Z" transform="rotate(120)" opacity="0.88"/>
+        <path d="M0 0 C7-13 7-26 0-37 C-7-26-7-13 0 0Z" transform="rotate(180)" opacity="0.38"/>
+        <path d="M0 0 C7-13 7-26 0-37 C-7-26-7-13 0 0Z" transform="rotate(240)" opacity="0.82"/>
+        <path d="M0 0 C7-13 7-26 0-37 C-7-26-7-13 0 0Z" transform="rotate(300)" opacity="0.48"/>
+      </g>
+      <g fill="none" stroke="#E59A82" stroke-width="1.1" stroke-linejoin="round">
+        <path d="M0 0 C4-7.5 4-15 0-21 C-4-15-4-7.5 0 0Z" transform="rotate(30)"  opacity="0.36"/>
+        <path d="M0 0 C4-7.5 4-15 0-21 C-4-15-4-7.5 0 0Z" transform="rotate(90)"  opacity="0.24"/>
+        <path d="M0 0 C4-7.5 4-15 0-21 C-4-15-4-7.5 0 0Z" transform="rotate(150)" opacity="0.36"/>
+        <path d="M0 0 C4-7.5 4-15 0-21 C-4-15-4-7.5 0 0Z" transform="rotate(210)" opacity="0.20"/>
+        <path d="M0 0 C4-7.5 4-15 0-21 C-4-15-4-7.5 0 0Z" transform="rotate(270)" opacity="0.36"/>
+        <path d="M0 0 C4-7.5 4-15 0-21 C-4-15-4-7.5 0 0Z" transform="rotate(330)" opacity="0.22"/>
+      </g>
+      <circle cx="0" cy="0" r="2.0" fill="#F5C4AD"/>
+    </g>
+  </defs>
+</svg>
+
+<!-- PAGE HEADER -->
+<div class="head">
+  <p class="eyebrow">INVISIBLE SEASON · CARD NEWS</p>
+  <h1>현실같은 비현실</h1>
+  <p>좌우로 넘겨보세요 — 정사각 1080 카드 5장 · 장당 한 메시지</p>
+</div>
+
+<div class="strip">
+
+  <!-- ① COVER ──────────────────────────────────────── -->
+  <article class="card c1">
+    <!-- img_hero: 빛의 히어로, 하단 비네팅으로 텍스트 공간 확보 -->
+    <div class="ci">
+      <img src="img_hero.png" alt="" style="filter:brightness(0.68) saturate(1.35);transform:scale(1.06)">
+    </div>
+    <div class="co" style="background:
+      linear-gradient(to top, rgba(6,5,8,0.96) 0%, rgba(6,5,8,0.55) 45%, rgba(6,5,8,0.06) 100%),
+      linear-gradient(to right, rgba(6,5,8,0.4) 0%, transparent 60%)">
+    </div>
+    <div class="body-layer">
+      <span class="eyebrow">MEDIA ART · EXHIBITION STUDIO</span>
+      <h2 class="display" style="margin-top:14px">현실같은<br><span class="hi">비현실</span></h2>
+      <p class="msg-en">Surreal Reality</p>
+    </div>
+    <div class="foot-bar">
+      <svg viewBox="-70 -70 140 140"><use href="#bloom"/></svg>
+      <span class="wm">INVISIBLE SEASON</span>
+    </div>
+  </article>
+
+  <!-- ② INVITATION ──────────────────────────────────── -->
+  <article class="card c2">
+    <!-- img_crystal: 크리스탈 빛, 채도 극대화 -->
+    <div class="ci">
+      <img src="img_crystal.png" alt="" style="filter:brightness(0.55) saturate(1.5) contrast(1.1);transform:scale(1.05)">
+    </div>
+    <div class="co" style="background:
+      linear-gradient(to top, rgba(6,5,8,0.97) 0%, rgba(6,5,8,0.65) 50%, rgba(6,5,8,0.12) 100%)">
+    </div>
+    <div class="body-layer">
+      <span class="num">01</span>
+      <div style="flex:1"></div>
+      <h2 class="title">빛과 소리와 감각이<br><em>교차하는 자리</em>로<br>당신을 초대합니다.</h2>
+      <p class="msg-en">We invite you to where light, sound, and the senses cross.</p>
+      <p class="desc" style="margin-top:14px">눈으로만 보지 않는 전시. 머무는 동안 천천히 스며드는 장면을 준비했습니다.</p>
+    </div>
+    <div class="foot-bar">
+      <svg viewBox="-70 -70 140 140"><use href="#bloom"/></svg>
+      <span class="wm">INVISIBLE SEASON</span>
+      <span class="slo">현실같은 비현실</span>
+    </div>
+  </article>
+
+  <!-- ③ BLOOMING AIR ────────────────────────────────── -->
+  <article class="card c3">
+    <!-- img_show: 전시 현장, 빛감 살림 -->
+    <div class="ci">
+      <img src="img_show.png" alt="" style="filter:brightness(0.75) saturate(1.25);transform:scale(1.04)">
+    </div>
+    <div class="co" style="background:
+      linear-gradient(to top, rgba(6,5,8,0.97) 0%, rgba(6,5,8,0.58) 48%, rgba(6,5,8,0.06) 100%)">
+    </div>
+    <div class="body-layer">
+      <span class="num">02</span>
+      <div style="flex:1"></div>
+      <h2 class="title">어둠 속에서<br>피어나는 빛의 정원,<br><em>블루밍에어.</em></h2>
+      <p class="msg-en">A garden of light blooming in the dark — Blooming Air.</p>
+      <p class="desc" style="margin-top:14px">프로젝션과 향, 소리가 한 호흡으로 흐르는 인비저블 시즌의 첫 번째 전시입니다.</p>
+    </div>
+    <div class="foot-bar">
+      <svg viewBox="-70 -70 140 140"><use href="#bloom"/></svg>
+      <span class="wm">INVISIBLE SEASON</span>
+      <span class="slo">Blooming Air</span>
+    </div>
+  </article>
+
+  <!-- ④ FOR YOU ─────────────────────────────────────── -->
+  <article class="card c4">
+    <!-- img_bokeh: 보케 빛, 컬러 화려하게 -->
+    <div class="ci">
+      <img src="img_bokeh.png" alt="" style="filter:brightness(0.58) saturate(1.55);transform:scale(1.06)">
+    </div>
+    <div class="co" style="background:
+      linear-gradient(to top, rgba(6,5,8,0.97) 0%, rgba(6,5,8,0.5) 52%, rgba(6,5,8,0.1) 100%)">
+    </div>
+    <div class="body-layer">
+      <span class="num">03</span>
+      <div style="flex:1"></div>
+      <h2 class="title">사라지는 계절도,<br>머무는 동안엔<br><em>분명히 곁에 있었다.</em></h2>
+      <p class="msg-en">Even a fading season was surely here, while it stayed.</p>
+      <p class="desc" style="margin-top:14px">오늘의 나를 기록하고 싶은 사람에게. 감각으로 무언가를 느끼고 싶은 모든 사람에게.</p>
+    </div>
+    <div class="foot-bar">
+      <svg viewBox="-70 -70 140 140"><use href="#bloom"/></svg>
+      <span class="wm">INVISIBLE SEASON</span>
+      <span class="slo">현실같은 비현실</span>
+    </div>
+  </article>
+
+  <!-- ⑤ CTA ───────────────────────────────────────────── -->
+  <article class="card c5">
+    <!-- img_install: 인스톨레이션, 중앙 비네팅으로 콘텐츠 부각 -->
+    <div class="ci">
+      <img src="img_install.png" alt="" style="filter:brightness(0.6) saturate(1.35);transform:scale(1.05)">
+    </div>
+    <div class="co" style="background:
+      radial-gradient(ellipse at center, rgba(6,5,8,0.22) 0%, rgba(6,5,8,0.88) 100%)">
+    </div>
+    <div class="body-layer">
+      <svg width="72" height="72" viewBox="-70 -70 140 140" style="margin-bottom:6px"><use href="#bloom"/></svg>
+      <span class="eyebrow">INVISIBLE SEASON</span>
+      <h2 class="title">조용히,<br>당신의 오늘 곁에.</h2>
+      <p class="msg-en" style="margin-bottom:20px">Quietly, beside your today.</p>
+      <span class="cta">@invisible.season</span>
+    </div>
+    <div class="foot-bar">
+      <svg viewBox="-70 -70 140 140"><use href="#bloom"/></svg>
+      <span class="wm">INVISIBLE SEASON</span>
+      <span class="slo">@invisible.season</span>
+    </div>
+  </article>
+
+</div>
+
+<p class="demo">표기된 연락처·계정은 데모용 가상 정보입니다.</p>
+
+</body>
+</html>

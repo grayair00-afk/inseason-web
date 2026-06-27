@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>인비저블 시즌 — 현실같은 비현실</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+/* 영문: Inter / 한글: Pretendard — 브라우저가 글자 단위로 자동 분기 */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { background: #000; scroll-behavior: smooth; }
+
+body {
+  background: #060508;
+  color: #FAFAF8;
+  /* Inter가 라틴 처리, 한글은 Pretendard로 자동 폴백 */
+  font-family: 'Inter', 'Pretendard', 'Pretendard Variable', -apple-system, 'Apple SD Gothic Neo', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+img { display: block; }
+
+/* ── LAYOUT ── */
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 40px; }
+
+/* ── LABEL ── */
+.label {
+  font-size: 9.5px; font-weight: 500;
+  letter-spacing: 0.38em; text-transform: uppercase;
+  color: #E59A82;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 0 40px; height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(6,5,8,0.65);
+  backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; }
+.nav-logo svg { width: 24px; height: 24px; }
+.nav-logo-text {
+  font-size: 11.5px; font-weight: 600;
+  letter-spacing: 0.32em; color: #FAFAF8;
+  font-family: 'Inter', sans-serif;
+}
+.nav-links { display: flex; align-items: center; gap: 36px; }
+.nav-links a {
+  font-size: 11.5px; font-weight: 400;
+  letter-spacing: 0.04em; color: rgba(250,250,248,0.45);
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: #FAFAF8; }
+.nav-cta {
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.16em;
+  color: #060508; background: #E59A82;
+  padding: 9px 22px;
+  transition: background 0.2s, transform 0.2s;
+}
+.nav-cta:hover { background: #F5C4AD; transform: translateY(-1px); color: #060508; }
+
+/* ── HERO ── */
+.hero {
+  position: relative;
+  height: 100vh; min-height: 720px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; overflow: hidden;
+}
+/* .hero-img → .hero-slideshow + .hs 로 대체됨 */
+.hero-dim {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(6,5,8,0.10) 0%, rgba(6,5,8,0.04) 38%, rgba(6,5,8,0.52) 100%),
+    linear-gradient(to right, rgba(6,5,8,0.18) 0%, transparent 50%);
+}
+.hero-body {
+  position: relative; z-index: 2;
+  padding: 0 24px; max-width: 960px;
+}
+.hero-label { margin-bottom: 36px; }
+.hero-title {
+  font-size: clamp(42px, 6.8vw, 80px);
+  font-weight: 700; line-height: 1.0;
+  letter-spacing: -0.04em; color: #FAFAF8;
+  font-family: 'Pretendard', 'Pretendard Variable', sans-serif;
+  text-align: center;
+  margin-bottom: 12px;
+}
+.hero-en {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px; font-weight: 300;
+  letter-spacing: 0.25em; text-transform: uppercase;
+  color: rgba(250,250,248,0.30);
+  text-align: center;
+  margin-bottom: 28px;
+}
+.hero-sub {
+  font-size: clamp(13px, 1.3vw, 15px);
+  font-weight: 300; line-height: 2.0;
+  letter-spacing: 0.01em;
+  color: rgba(250,250,248,0.52);
+  margin-bottom: 44px;
+}
+.hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+.btn-fill {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.16em;
+  font-family: 'Inter', sans-serif;
+  color: #060508; background: #E59A82;
+  padding: 15px 30px; border: none; cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 4px 28px rgba(229,154,130,0.32);
+}
+.btn-fill:hover { background: #F5C4AD; transform: translateY(-2px); color: #060508; }
+
+.btn-line {
+  display: inline-flex; align-items: center;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.14em;
+  color: rgba(250,250,248,0.62);
+  padding: 15px 30px;
+  border: 1px solid rgba(250,250,248,0.18);
+  cursor: pointer; transition: border-color 0.2s, color 0.2s;
+}
+.btn-line:hover { border-color: rgba(250,250,248,0.45); color: #FAFAF8; }
+
+.hero-scroll {
+  position: absolute; bottom: 44px; left: 50%;
+  transform: translateX(-50%); z-index: 2;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  font-size: 9px; font-weight: 600; letter-spacing: 0.38em;
+  color: rgba(250,250,248,0.25);
+}
+.hero-scroll::after {
+  content: ''; width: 1px; height: 52px;
+  background: linear-gradient(to bottom, #E59A82, transparent);
+  animation: scrollline 1.9s ease-in-out infinite;
+}
+@keyframes scrollline {
+  0%   { opacity: 0; transform: scaleY(0); transform-origin: top; }
+  50%  { opacity: 1; }
+  100% { opacity: 0; transform: scaleY(1); transform-origin: top; }
+}
+
+/* ── STATEMENT / ABOUT ── */
+.statement {
+  padding: 148px 0;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.statement-inner {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+}
+.statement-img {
+  position: relative; aspect-ratio: 3/4; overflow: hidden;
+}
+/* statement-img → .bs 슬라이드로 대체 */
+.statement-img::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, transparent 55%, rgba(229,154,130,0.12));
+  pointer-events: none;
+}
+.statement-img-border {
+  position: absolute; inset: 0;
+  border: 1px solid rgba(229,154,130,0.18);
+  pointer-events: none; z-index: 2;
+}
+.statement-text .label { margin-bottom: 28px; }
+.statement-h {
+  font-size: clamp(22px, 2.6vw, 34px);
+  font-weight: 600; line-height: 1.3;
+  letter-spacing: -0.02em; color: #FAFAF8; margin-bottom: 24px;
+  font-family: 'Pretendard', 'Pretendard Variable', sans-serif;
+}
+.statement-h em { font-style: normal; color: #E59A82; font-weight: 700; }
+.statement-p {
+  font-size: 14px; font-weight: 300; line-height: 2.0;
+  color: rgba(250,250,248,0.48); margin-bottom: 6px;
+}
+.statement-p-en {
+  font-family: 'Inter', sans-serif;
+  font-size: 11.5px; font-weight: 300; line-height: 1.75;
+  color: rgba(250,250,248,0.28); letter-spacing: 0.01em;
+  margin-top: 22px; margin-bottom: 18px;
+}
+
+/* ── SERVICES ── */
+.services {
+  position: relative; overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.services-bg {
+  position: absolute; inset: 0;
+  background: url('img_runway.png') center center / cover no-repeat;
+  filter: brightness(0.62) saturate(1.35);
+  opacity: 0.48;
+  transform: scale(1.04);
+}
+.services-inner { position: relative; z-index: 1; padding: 148px 0; }
+.services-head { margin-bottom: 64px; }
+.services-head .label { margin-bottom: 20px; }
+.services-head h2 {
+  font-size: clamp(24px, 3vw, 40px);
+  font-weight: 600; line-height: 1.2;
+  letter-spacing: -0.025em; color: #FAFAF8;
+  font-family: 'Pretendard', 'Pretendard Variable', sans-serif;
+}
+.services-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 1px; background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.svc-card {
+  background: rgba(6,5,8,0.65);
+  padding: 50px 38px;
+  position: relative; overflow: hidden;
+  transition: background 0.3s;
+  backdrop-filter: blur(8px);
+}
+.svc-card:hover { background: rgba(15,13,20,0.96); }
+.svc-num {
+  font-size: 36px; font-weight: 700;
+  letter-spacing: -0.04em;
+  color: rgba(229,154,130,0.18);
+  line-height: 1; margin-bottom: 20px;
+  transition: color 0.3s;
+}
+.svc-card:hover .svc-num { color: rgba(229,154,130,0.30); }
+.svc-card h3 {
+  font-size: 15px; font-weight: 600;
+  letter-spacing: -0.01em; color: #FAFAF8; margin-bottom: 12px;
+  font-family: 'Pretendard', 'Pretendard Variable', sans-serif;
+}
+.svc-card p {
+  font-size: 13px; font-weight: 300; line-height: 1.9;
+  color: rgba(250,250,248,0.44);
+}
+.svc-card::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, #E59A82, transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.svc-card:hover::after { opacity: 1; }
+.svc-head-en {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px; font-weight: 300; letter-spacing: 0.01em;
+  color: rgba(250,250,248,0.28); margin-top: 8px;
+}
+.svc-card .en-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px; font-weight: 400; letter-spacing: 0.02em;
+  color: rgba(250,250,248,0.28); margin-top: -8px; margin-bottom: 12px;
+}
+.svc-card .en-desc {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px; font-weight: 300; line-height: 1.7;
+  color: rgba(250,250,248,0.22); margin-top: 6px;
+}
+.quote-en {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(11px, 1.1vw, 13px); font-weight: 300; font-style: italic;
+  line-height: 1.75; color: rgba(250,250,248,0.28);
+  max-width: 26em; margin: 18px auto 0; text-align: center;
+}
+
+/* ── NOW SHOWING ── */
+.show {
+  position: relative; min-height: 100vh;
+  display: grid; grid-template-columns: 1fr 1fr;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.show-img { position: relative; overflow: hidden; }
+.show-img::after {
+  content: ''; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(to right, transparent 52%, rgba(6,5,8,0.78));
+}
+.show-content {
+  padding: 80px 64px;
+  display: flex; flex-direction: column; justify-content: center;
+  background: #060508;
+}
+.show-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 9.5px; font-weight: 500; letter-spacing: 0.38em;
+  color: #E59A82; margin-bottom: 24px;
+  font-family: 'Inter', sans-serif;
+}
+.show-tag::before {
+  content: ''; display: block; width: 22px; height: 1px; background: #E59A82;
+}
+.show-content h2 {
+  font-size: clamp(24px, 2.8vw, 38px);
+  font-weight: 600; line-height: 1.15;
+  letter-spacing: -0.02em; color: #FAFAF8; margin-bottom: 8px;
+  font-family: 'Pretendard', 'Pretendard Variable', sans-serif;
+}
+.show-en {
+  font-size: 10.5px; font-weight: 400; letter-spacing: 0.22em;
+  color: rgba(250,250,248,0.32); margin-bottom: 24px; text-transform: uppercase;
+  font-family: 'Inter', sans-serif;
+}
+.show-content p {
+  font-size: 13.5px; font-weight: 300; line-height: 2.0;
+  color: rgba(250,250,248,0.48); margin-bottom: 32px;
+}
+.show-meta { list-style: none; border-top: 1px solid rgba(255,255,255,0.07); margin-bottom: 36px; }
+.show-meta li {
+  display: flex; gap: 24px; padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 13px;
+}
+.show-meta li span { color: rgba(250,250,248,0.28); min-width: 64px; font-weight: 300; }
+.show-meta li b { font-weight: 500; color: rgba(250,250,248,0.78); }
+.show-meta li > div { display: flex; flex-direction: column; gap: 3px; }
+.show-meta small {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px; font-weight: 300;
+  color: rgba(250,250,248,0.34); letter-spacing: 0.01em;
+}
+.cta-desc-en {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px; font-weight: 300; line-height: 1.85;
+  color: rgba(250,250,248,0.32);
+  max-width: 28em; margin: -16px auto 44px;
+  letter-spacing: 0.01em;
+}
+.cta-sig {
+  margin-top: 40px;
+  text-align: center;
+}
+.cta-sig-rule {
+  width: 28px; height: 1px;
+  background: #E59A82;
+  margin: 0 auto 20px;
+  opacity: 0.6;
+}
+.cta-sig-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px; font-weight: 400; letter-spacing: 0.06em;
+  color: rgba(250,250,248,0.65); margin-bottom: 5px;
+}
+.cta-sig-role {
+  font-family: 'Inter', sans-serif;
+  font-size: 10.5px; font-weight: 300; letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(250,250,248,0.28); margin-bottom: 7px;
+}
+.cta-sig-email {
+  font-family: 'Inter', sans-serif;
+  font-size: 10.5px; font-weight: 300; letter-spacing: 0.02em;
+  color: rgba(250,250,248,0.22);
+}
+.bgm-toggle {
+  position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid #E59A82;
+  background: rgba(10,10,10,0.55);
+  backdrop-filter: blur(8px);
+  color: #E59A82;
+  font-size: 16px; line-height: 44px; text-align: center;
+  cursor: pointer; user-select: none;
+  transition: background 0.3s, box-shadow 0.3s, color 0.3s;
+  display: flex; align-items: center; justify-content: center;
+}
+.bgm-toggle.on {
+  background: #E59A82;
+  color: #0A0A0A;
+  box-shadow: 0 0 16px rgba(229,154,130,0.50), 0 0 32px rgba(229,154,130,0.20);
+}
+.show-content .show-desc-en {
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px; font-weight: 300; line-height: 1.85;
+  letter-spacing: 0.01em;
+  color: rgba(250,250,248,0.32);
+  margin: -22px 0 32px;
+}
+.show-link {
+  font-size: 11.5px; font-weight: 600; letter-spacing: 0.14em; color: #E59A82;
+  display: inline-flex; align-items: center; gap: 8px; transition: gap 0.2s;
+}
+.show-link:hover { gap: 14px; }
+
+/* ── QUOTE ── */
+.quote {
+  position: relative; padding: 180px 0;
+  text-align: center; overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.quote-img {
+  position: absolute; inset: 0; overflow: hidden;
+}
+.quote-overlay {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 22%, rgba(6,5,8,0.62));
+}
+.quote-body { position: relative; z-index: 2; padding: 0 24px; }
+.quote-body blockquote {
+  font-size: clamp(17px, 2.4vw, 32px);
+  font-weight: 300; line-height: 1.7;
+  letter-spacing: -0.005em; color: #FAFAF8;
+  max-width: 20em; margin: 0 auto 24px;
+  font-family: 'Pretendard', 'Pretendard Variable', sans-serif;
+}
+.quote-body blockquote strong { font-weight: 600; color: #E59A82; }
+.quote-cite {
+  font-size: 9.5px; font-weight: 500;
+  letter-spacing: 0.4em; color: rgba(250,250,248,0.3); text-transform: uppercase;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── CTA ── */
+.cta-section {
+  position: relative; padding: 180px 0;
+  text-align: center; overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.cta-bg {
+  position: absolute; inset: 0; overflow: hidden;
+}
+.cta-glow {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center bottom,
+    rgba(229,154,130,0.14) 0%, transparent 62%);
+}
+.cta-body { position: relative; z-index: 2; padding: 0 24px; }
+.cta-body .label { margin-bottom: 26px; }
+.cta-body h2 {
+  font-size: clamp(32px, 4.5vw, 64px);
+  font-weight: 700; line-height: 1.05;
+  letter-spacing: -0.035em; color: #FAFAF8; margin-bottom: 18px;
+  font-family: 'Pretendard', 'Pretendard Variable', sans-serif;
+}
+.cta-body p {
+  font-size: clamp(13px, 1.2vw, 15px);
+  font-weight: 300; line-height: 2.0;
+  color: rgba(250,250,248,0.42);
+  max-width: 26em; margin: 0 auto 44px;
+}
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding: 72px 0 80px;
+}
+.foot {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px;
+  margin-bottom: 52px;
+}
+.foot-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.foot-logo svg { width: 20px; height: 20px; }
+.foot-logo-text { font-size: 11px; font-weight: 600; letter-spacing: 0.32em; color: #FAFAF8; font-family: 'Inter', sans-serif; }
+.foot-slogan { font-size: 12px; color: #E59A82; margin-bottom: 10px; font-weight: 400; }
+.foot-note { font-size: 11px; color: rgba(250,250,248,0.2); line-height: 1.7; }
+.foot-col h4 {
+  font-size: 9px; font-weight: 600; letter-spacing: 0.34em;
+  color: rgba(250,250,248,0.22); text-transform: uppercase; margin-bottom: 20px;
+}
+.foot-col a, .foot-col p {
+  display: block; font-size: 13px; font-weight: 200;
+  color: rgba(250,250,248,0.4); margin-bottom: 12px; transition: color 0.2s;
+}
+.foot-col a:hover { color: #FAFAF8; }
+.copyright {
+  padding-top: 28px; border-top: 1px solid rgba(255,255,255,0.05);
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 12px;
+  font-size: 11px; font-weight: 300; color: rgba(250,250,248,0.18); letter-spacing: 0.04em;
+}
+
+/* ── SLIDESHOW ── */
+@keyframes heroSlide {
+  0%    { opacity: 0; }
+  5%    { opacity: 1; }
+  22%   { opacity: 1; }
+  27%   { opacity: 0; }
+  100%  { opacity: 0; }
+}
+.hero-slideshow { position: absolute; inset: 0; overflow: hidden; }
+.hs {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center 30%;
+  filter: brightness(0.90) saturate(1.55) contrast(1.05);
+  transform: scale(1.06);
+  opacity: 0;
+  animation: heroSlide 60s ease-in-out infinite;
+  will-change: opacity;
+}
+.hs:nth-child(1) { animation-delay: 0s; }
+.hs:nth-child(2) { animation-delay: 10s; }
+.hs:nth-child(3) { animation-delay: 20s; }
+.hs:nth-child(4) { animation-delay: 30s; }
+.hs:nth-child(5) { animation-delay: 40s; }
+.hs:nth-child(6) { animation-delay: 50s; }
+.bs6 {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  opacity: 0; transform: scale(1.04);
+  animation: heroSlide 60s ease-in-out infinite;
+  will-change: opacity;
+}
+.bs6:nth-child(1) { animation-delay: 0s; }
+.bs6:nth-child(2) { animation-delay: 10s; }
+.bs6:nth-child(3) { animation-delay: 20s; }
+.bs6:nth-child(4) { animation-delay: 30s; }
+.bs6:nth-child(5) { animation-delay: 40s; }
+.bs6:nth-child(6) { animation-delay: 50s; }
+
+@keyframes bgSlide {
+  0%    { opacity: 0; }
+  6.7%  { opacity: 1; }
+  26.7% { opacity: 1; }
+  33.3% { opacity: 0; }
+  100%  { opacity: 0; }
+}
+.bs {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  opacity: 0;
+  transform: scale(1.04);
+  animation: bgSlide 30s ease-in-out infinite;
+  will-change: opacity;
+}
+.bs:nth-child(1) { animation-delay: 0s; }
+.bs:nth-child(2) { animation-delay: 10s; }
+.bs:nth-child(3) { animation-delay: 20s; }
+
+/* 4장 슬라이드 */
+.bs4 {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  opacity: 0;
+  transform: scale(1.04);
+  animation: heroSlide 40s ease-in-out infinite;
+  will-change: opacity;
+}
+.bs4:nth-child(1) { animation-delay: 0s; }
+.bs4:nth-child(2) { animation-delay: 10s; }
+.bs4:nth-child(3) { animation-delay: 20s; }
+.bs4:nth-child(4) { animation-delay: 30s; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .wrap { padding: 0 24px; }
+  nav { padding: 0 24px; }
+  .nav-links { display: none; }
+  .statement-inner { grid-template-columns: 1fr; }
+  .statement-img { aspect-ratio: 16/9; }
+  .services-grid { grid-template-columns: 1fr; }
+  .show { grid-template-columns: 1fr; }
+  .show-img { aspect-ratio: 16/9; min-height: unset; }
+  .show-img::after { background: linear-gradient(to bottom, transparent 50%, rgba(6,5,8,0.98)); }
+  .show-content { padding: 48px 24px; }
+  .foot { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- SVG 심볼 -->
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+  <defs>
+    <radialGradient id="bloom-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#E59A82" stop-opacity="0.38"/>
+      <stop offset="55%"  stop-color="#E59A82" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="#E59A82" stop-opacity="0"/>
+    </radialGradient>
+    <g id="bloom-sym">
+      <circle cx="0" cy="0" r="58" fill="url(#bloom-glow)"/>
+      <g fill="none" stroke="#E59A82" stroke-width="1.4" stroke-linejoin="round">
+        <path d="M0 0 C6-12 6-25 0-35 C-6-25-6-12 0 0Z" transform="rotate(0)"   opacity="0.95"/>
+        <path d="M0 0 C6-12 6-25 0-35 C-6-25-6-12 0 0Z" transform="rotate(60)"  opacity="0.50"/>
+        <path d="M0 0 C6-12 6-25 0-35 C-6-25-6-12 0 0Z" transform="rotate(120)" opacity="0.88"/>
+        <path d="M0 0 C6-12 6-25 0-35 C-6-25-6-12 0 0Z" transform="rotate(180)" opacity="0.36"/>
+        <path d="M0 0 C6-12 6-25 0-35 C-6-25-6-12 0 0Z" transform="rotate(240)" opacity="0.82"/>
+        <path d="M0 0 C6-12 6-25 0-35 C-6-25-6-12 0 0Z" transform="rotate(300)" opacity="0.46"/>
+      </g>
+      <g fill="none" stroke="#E59A82" stroke-width="1.0" opacity="0.32">
+        <path d="M0 0 C3.5-7 3.5-14 0-20 C-3.5-14-3.5-7 0 0Z" transform="rotate(30)"/>
+        <path d="M0 0 C3.5-7 3.5-14 0-20 C-3.5-14-3.5-7 0 0Z" transform="rotate(90)"/>
+        <path d="M0 0 C3.5-7 3.5-14 0-20 C-3.5-14-3.5-7 0 0Z" transform="rotate(150)"/>
+        <path d="M0 0 C3.5-7 3.5-14 0-20 C-3.5-14-3.5-7 0 0Z" transform="rotate(210)"/>
+        <path d="M0 0 C3.5-7 3.5-14 0-20 C-3.5-14-3.5-7 0 0Z" transform="rotate(270)"/>
+        <path d="M0 0 C3.5-7 3.5-14 0-20 C-3.5-14-3.5-7 0 0Z" transform="rotate(330)"/>
+      </g>
+      <circle cx="0" cy="0" r="1.8" fill="#F5C4AD"/>
+    </g>
+  </defs>
+</svg>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#top">
+    <svg viewBox="-68 -68 136 136"><use href="#bloom-sym"/></svg>
+    <span class="nav-logo-text">INVISIBLE SEASON</span>
+  </a>
+  <div class="nav-links">
+    <a href="#about">소개</a>
+    <a href="#services">하는 일</a>
+    <a href="#show">블루밍에어</a>
+    <a href="#visit">문의하기</a>
+    <a class="nav-cta" href="#visit">문의하기</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-slideshow">
+    <div class="hs" style="background-image:url('img_hero.png')"></div>
+    <div class="hs" style="background-image:url('img_realm1.png');background-position:center center"></div>
+    <div class="hs" style="background-image:url('img_mobius1.png');background-position:center center"></div>
+    <div class="hs" style="background-image:url('img_holo1.png');background-position:center center"></div>
+    <div class="hs" style="background-image:url('img_night1.png');background-position:center center"></div>
+    <div class="hs" style="background-image:url('img_atrium2.png');background-position:center center"></div>
+  </div>
+  <div class="hero-dim"></div>
+  <div class="hero-body">
+    <p class="label hero-label">MEDIA ART · INVISIBLE SEASON</p>
+    <h1 class="hero-title">현실같은<br>비현실</h1>
+    <p class="hero-en">Surreal Reality</p>
+    <p class="hero-sub">빛과 울림이 있는 미디어아트, 인비저블 시즌<br><span style="font-size:0.85em;opacity:0.6">Media art of light and resonance — Invisible Season.</span></p>
+    <div class="hero-btns">
+      <a class="btn-fill" href="#show">「블루밍에어」 보러가기</a>
+      <a class="btn-line" href="#about">브랜드 소개</a>
+    </div>
+  </div>
+  <div class="hero-scroll">SCROLL</div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="statement">
+    <div class="wrap">
+      <div class="statement-inner">
+        <div class="statement-img">
+          <div class="bs6" style="background-image:url('img_install.png');filter:brightness(0.90) saturate(1.45) contrast(1.05)"></div>
+          <div class="bs6" style="background-image:url('img_realm3.png');filter:brightness(0.88) saturate(1.3) contrast(1.05)"></div>
+          <div class="bs6" style="background-image:url('img_about.png');filter:brightness(0.90) saturate(1.45) contrast(1.05)"></div>
+          <div class="bs6" style="background-image:url('img_mobius2.png');filter:brightness(0.88) saturate(1.3) contrast(1.05)"></div>
+          <div class="bs6" style="background-image:url('img_gothic.png');filter:brightness(0.88) saturate(1.3) contrast(1.05)"></div>
+          <div class="bs6" style="background-image:url('img_realm5.png');filter:brightness(0.88) saturate(1.3) contrast(1.05)"></div>
+          <div class="statement-img-border"></div>
+        </div>
+        <div class="statement-text">
+          <p class="label">ABOUT</p>
+          <h2 class="statement-h">
+            어둠 위에서 색이 피어나는 자리,<br>
+            <em>감각이 교차하는 빛의 공간.</em>
+          </h2>
+          <p class="statement-p">인비저블 시즌은 미디어아트를 중심으로 빛과 울림, 공간을 하나로 연결합니다.</p>
+          <p class="statement-p">마음의 풍요와 고요를 느끼며 오늘의 당신을 기록할 수 있는 공간 —<br>오늘의 당신은 이곳에 있습니다.</p>
+          <p style="font-family:'Inter',sans-serif;font-size:11.5px;font-weight:400;letter-spacing:0.03em;color:rgba(250,250,248,0.36);margin-top:26px;margin-bottom:6px;">Where color blooms upon the dark — a space of light.</p>
+          <p class="statement-p-en" style="margin-top:0;">Today, you are simply here.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="services">
+    <div class="services-bg"></div>
+    <div class="services-inner">
+      <div class="wrap">
+        <div class="services-head">
+          <p class="label">WHAT WE DO</p>
+          <h2>하나의 공간,<br>여러 겹의 감각</h2>
+          <p class="svc-head-en">One space. Many layers of sensation.</p>
+        </div>
+        <div class="services-grid">
+          <div class="svc-card">
+            <div class="svc-num">01</div>
+            <h3>미디어아트 연출</h3>
+            <p class="en-title">Media Art Direction</p>
+            <p>프로젝션 매핑과 인터랙티브 영상으로 공간 전체를 살아 있는 장면으로 바꿉니다.</p>
+            <p class="en-desc">Projection mapping and interactive video transform the entire space into a living scene.</p>
+          </div>
+          <div class="svc-card">
+            <div class="svc-num">02</div>
+            <h3>빛 · 영상 연출</h3>
+            <p class="en-title">Light & Visual Direction</p>
+            <p>빛과 영상을 공간의 결에 맞춰 배치해, 눈으로만 보지 않는 경험을 만듭니다.</p>
+            <p class="en-desc">Light and image placed to match the texture of the space — an experience felt beyond sight.</p>
+          </div>
+          <div class="svc-card">
+            <div class="svc-num">03</div>
+            <h3>공간 연출</h3>
+            <p class="en-title">Exhibition Planning & Direction</p>
+            <p>주제부터 동선, 마감까지. 머무는 동안 하나의 이야기가 자연스럽게 흐르게 합니다.</p>
+            <p class="en-desc">From concept to flow to finish — one story moving naturally through the space.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NOW SHOWING -->
+<section class="show" id="show">
+  <div class="show-img">
+    <div class="bs6" style="background-image:url('img_show.png');filter:brightness(0.92) saturate(1.45) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_flower1.png');filter:brightness(0.88) saturate(1.2) contrast(1.02)"></div>
+    <div class="bs6" style="background-image:url('img_realm2.png');filter:brightness(0.88) saturate(1.35) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_flower2.png');filter:brightness(0.88) saturate(1.2) contrast(1.02)"></div>
+    <div class="bs6" style="background-image:url('img_mobius3.png');filter:brightness(0.88) saturate(1.35) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_flower3.png');filter:brightness(0.88) saturate(1.2) contrast(1.02)"></div>
+  </div>
+  <div class="show-content">
+    <div class="show-tag">A SCENE</div>
+    <h2>블루밍에어</h2>
+    <p class="show-en">Blooming Air</p>
+    <p>어둠이 내려앉은 자리에, 빛이 천천히 번집니다.<br>피고 지는 계절을 담은, 인비저블 시즌의 한 장면.</p>
+    <p class="show-desc-en">Light spreads slowly across the dark.<br>A scene that holds a season — blooming, fading, blooming again.</p>
+    <ul class="show-meta">
+      <li>
+        <span>작업<br><small>Work</small></span>
+        <div><b>블루밍에어</b><small>Blooming Air</small></div>
+      </li>
+      <li>
+        <span>형식<br><small>Form</small></span>
+        <div><b>미디어아트 · 빛과 공간</b><small>Media art · light & space</small></div>
+      </li>
+    </ul>
+    <a class="show-link" href="#about">브랜드 이야기 →</a>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<section class="quote">
+  <div class="quote-img">
+    <div class="bs6" style="background-image:url('img_crystal.png');filter:brightness(0.78) saturate(1.65) contrast(1.08)"></div>
+    <div class="bs6" style="background-image:url('img_night2.png');filter:brightness(0.76) saturate(1.4) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_bokeh.png');filter:brightness(0.78) saturate(1.65) contrast(1.08)"></div>
+    <div class="bs6" style="background-image:url('img_holo2.png');filter:brightness(0.76) saturate(1.4) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_realm4.png');filter:brightness(0.78) saturate(1.65) contrast(1.08)"></div>
+    <div class="bs6" style="background-image:url('img_corridor2.png');filter:brightness(0.76) saturate(1.3) contrast(1.05)"></div>
+  </div>
+  <div class="quote-overlay"></div>
+  <div class="quote-body">
+    <blockquote>
+      "사라지는 계절도,<br>
+      머무는 동안엔<br>
+      <strong>분명히 곁에 있었다.</strong>"
+    </blockquote>
+    <p class="quote-en">"Even a fading season was surely here, while it stayed."</p>
+    <p class="quote-cite">INVISIBLE SEASON</p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="visit">
+  <div class="cta-bg">
+    <div class="bs6" style="background-image:url('img_bokeh.png');filter:brightness(0.70) saturate(1.65) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_holo3.png');filter:brightness(0.68) saturate(1.4) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_crystal.png');filter:brightness(0.70) saturate(1.65) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_realm1.png');filter:brightness(0.68) saturate(1.4) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_night1.png');filter:brightness(0.70) saturate(1.65) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_atrium2.png');filter:brightness(0.68) saturate(1.3) contrast(1.05)"></div>
+  </div>
+  <div class="cta-glow"></div>
+  <div class="cta-body">
+    <p class="label">SAY HELLO</p>
+    <h2>오늘의 당신을<br>기록하러</h2>
+    <p>우리가 만드는 장면을 조용히 보여드립니다.<br>언젠가 당신의 오늘과 만나기를.</p>
+    <p class="cta-desc-en">We quietly show you the scenes we make.<br>Hoping to meet your today, someday.</p>
+    <a class="btn-fill" href="mailto:grayair00@gmail.com">함께 이야기하기</a>
+    <div class="cta-sig">
+      <div class="cta-sig-rule"></div>
+      <p class="cta-sig-name">Jung.K</p>
+      <p class="cta-sig-role">미디어 아티스트 · Media Artist</p>
+      <p class="cta-sig-email">grayair00@gmail.com</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div class="foot-brand">
+        <div class="foot-logo">
+          <svg viewBox="-68 -68 136 136"><use href="#bloom-sym"/></svg>
+          <span class="foot-logo-text">INVISIBLE SEASON</span>
+        </div>
+        <p class="foot-slogan">현실같은 비현실</p>
+      </div>
+      <div class="foot-col">
+        <h4>About</h4>
+        <a href="#about">소개</a>
+        <a href="#services">하는 일</a>
+        <a href="#show">블루밍에어</a>
+      </div>
+      <div class="foot-col">
+        <h4>Contact</h4>
+        <a href="#about">브랜드 소개</a>
+        <a href="#visit">문의하기</a>
+      </div>
+      <div class="foot-col">
+        <h4>Say Hello</h4>
+        <a href="mailto:grayair00@gmail.com">grayair00@gmail.com</a>
+        <a href="#">Instagram</a>
+      </div>
+    </div>
+    <div class="copyright">
+      <span>© 2026 인비저블 시즌</span>
+      <span>현실같은 비현실</span>
+    </div>
+  </div>
+</footer>
+
+<audio id="bgm" loop preload="auto">
+  <source src="Clouds_On_The_Windowsill.mp3" type="audio/mpeg">
+</audio>
+<button class="bgm-toggle" id="bgmToggle" title="배경음악 켜기/끄기">♪</button>
+
+<script>
+(function(){
+  var audio = document.getElementById('bgm');
+  var btn   = document.getElementById('bgmToggle');
+  audio.volume = 0.35;
+
+  function setMuted(muted) {
+    audio.muted = muted;
+    if (muted) {
+      btn.classList.remove('on');
+      btn.title = '음악 켜기';
+      btn.textContent = '♪';
+      btn.style.opacity = '0.45';
+    } else {
+      btn.classList.add('on');
+      btn.title = '음소거';
+      btn.textContent = '♪';
+      btn.style.opacity = '1';
+    }
+  }
+
+  function startBgm() {
+    audio.play().then(function() { setMuted(false); }).catch(function(){});
+  }
+
+  // 페이지 로드 즉시 시도 — 낙관적으로 버튼 먼저 켜고, 막히면 복구
+  setMuted(false);  // 먼저 on 상태로
+  audio.play().catch(function() {
+    // autoplay 차단 → 버튼 끄고 첫 제스처 대기
+    setMuted(true);
+    btn.style.opacity = '0.45';
+    ['scroll','click','touchstart','keydown'].forEach(function(ev) {
+      window.addEventListener(ev, startBgm, {once: true, passive: true});
+    });
+  });
+
+  // 버튼: 음소거 토글
+  btn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (audio.paused) {
+      audio.play().then(function(){ setMuted(false); }).catch(function(){});
+    } else {
+      setMuted(!audio.muted);
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
