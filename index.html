@@ -340,7 +340,7 @@ nav {
 .cta-sig-rule {
   width: 28px; height: 1px;
   background: #E59A82;
-  margin: 0 auto 20px;
+  margin: 0 auto 16px;
   opacity: 0.6;
 }
 .cta-sig-name {
@@ -350,15 +350,19 @@ nav {
 }
 .cta-sig-role {
   font-family: 'Inter', sans-serif;
-  font-size: 10.5px; font-weight: 300; letter-spacing: 0.08em;
+  font-size: 10.5px; font-weight: 300; letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(250,250,248,0.28); margin-bottom: 7px;
+  color: rgba(250,250,248,0.28); margin-bottom: 4px;
 }
 .cta-sig-email {
   font-family: 'Inter', sans-serif;
   font-size: 10.5px; font-weight: 300; letter-spacing: 0.02em;
   color: rgba(250,250,248,0.22);
+  cursor: pointer;
+  transition: color 0.2s;
 }
+.cta-sig-email:hover { color: rgba(250,250,248,0.55); }
+.cta-sig-email.copied { color: #E59A82; }
 .bgm-toggle {
   position: fixed; bottom: 28px; right: 28px; z-index: 9999;
   width: 44px; height: 44px; border-radius: 50%;
@@ -844,7 +848,7 @@ footer {
     <div class="cta-sig">
       <div class="cta-sig-rule"></div>
       <p class="cta-sig-name">Jung.K</p>
-      <p class="cta-sig-role">미디어 아티스트 · Media Artist</p>
+      <p class="cta-sig-role">Visual Artist</p>
       <p class="cta-sig-email">grayair00@gmail.com</p>
     </div>
   </div>
@@ -884,6 +888,24 @@ footer {
     </div>
   </div>
 </footer>
+
+<script>
+(function(){
+  var el = document.querySelector('.cta-sig-email');
+  if (!el) return;
+  el.addEventListener('click', function() {
+    navigator.clipboard.writeText('grayair00@gmail.com').then(function() {
+      var orig = el.textContent;
+      el.textContent = 'Copied!';
+      el.classList.add('copied');
+      setTimeout(function() {
+        el.textContent = orig;
+        el.classList.remove('copied');
+      }, 1500);
+    });
+  });
+})();
+</script>
 
 <audio id="bgm" preload="none"></audio>
 <button class="bgm-toggle" id="bgmToggle" title="음악 켜기">♪</button>
