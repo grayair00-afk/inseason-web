@@ -817,54 +817,53 @@ footer {
   </div>
 </footer>
 
-<audio id="bgm" loop preload="auto">
+<audio id="bgm" loop preload="none">
   <source src="Clouds_On_The_Windowsill.mp3" type="audio/mpeg">
 </audio>
-<button class="bgm-toggle" id="bgmToggle" title="배경음악 켜기/끄기">♪</button>
+<button class="bgm-toggle" id="bgmToggle" title="음악 켜기">♪</button>
 
 <script>
 (function(){
-  var audio = document.getElementById('bgm');
-  var btn   = document.getElementById('bgmToggle');
+  var audio   = document.getElementById('bgm');
+  var btn     = document.getElementById('bgmToggle');
+  var started = false;
   audio.volume = 0.35;
 
-  function setMuted(muted) {
-    audio.muted = muted;
-    if (muted) {
-      btn.classList.remove('on');
-      btn.title = '음악 켜기';
-      btn.textContent = '♪';
-      btn.style.opacity = '0.45';
-    } else {
-      btn.classList.add('on');
-      btn.title = '음소거';
-      btn.textContent = '♪';
-      btn.style.opacity = '1';
-    }
+  function setOn(on) {
+    btn.classList.toggle('on', on);
+    btn.title         = on ? '음소거' : '음악 켜기';
+    btn.style.opacity = on ? '1' : '0.45';
   }
+  setOn(false);
+
+  var EVENTS = ['click', 'scroll', 'touchstart', 'keydown'];
 
   function startBgm() {
-    audio.play().then(function() { setMuted(false); }).catch(function(){});
+    if (started) return;
+    started = true;
+    EVENTS.forEach(function(ev) {
+      document.removeEventListener(ev, startBgm, true);
+    });
+    audio.play().then(function() {
+      setOn(true);
+    }).catch(function() {
+      started = false;
+    });
   }
 
-  // 페이지 로드 즉시 시도 — 낙관적으로 버튼 먼저 켜고, 막히면 복구
-  setMuted(false);  // 먼저 on 상태로
-  audio.play().catch(function() {
-    // autoplay 차단 → 버튼 끄고 첫 제스처 대기
-    setMuted(true);
-    btn.style.opacity = '0.45';
-    ['scroll','click','touchstart','keydown'].forEach(function(ev) {
-      window.addEventListener(ev, startBgm, {once: true, passive: true});
-    });
+  /* 첫 상호작용(클릭·스크롤·터치·키)에 자동 시작 */
+  EVENTS.forEach(function(ev) {
+    document.addEventListener(ev, startBgm, { capture: true, once: true, passive: true });
   });
 
-  // 버튼: 음소거 토글
-  btn.addEventListener('click', function(e) {
-    e.stopPropagation();
+  /* 버튼 수동 토글 */
+  btn.addEventListener('click', function() {
+    if (!started) { startBgm(); return; }
     if (audio.paused) {
-      audio.play().then(function(){ setMuted(false); }).catch(function(){});
+      audio.play().then(function() { setOn(true); }).catch(function(){});
     } else {
-      setMuted(!audio.muted);
+      audio.pause();
+      setOn(false);
     }
   });
 })();
