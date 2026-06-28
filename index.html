@@ -488,31 +488,31 @@ footer {
 .hs {
   position: absolute; inset: 0;
   background-size: cover; background-position: center 30%;
-  filter: brightness(0.90) saturate(1.55) contrast(1.05);
+  filter: brightness(0.88) saturate(1.65) contrast(1.06);
   transform: scale(1.06);
   opacity: 0;
-  animation: heroSlide 60s ease-in-out infinite;
+  animation: heroSlide 30s ease-in-out infinite;
   will-change: opacity;
 }
 .hs:nth-child(1) { animation-delay: 0s; }
-.hs:nth-child(2) { animation-delay: 10s; }
-.hs:nth-child(3) { animation-delay: 20s; }
-.hs:nth-child(4) { animation-delay: 30s; }
-.hs:nth-child(5) { animation-delay: 40s; }
-.hs:nth-child(6) { animation-delay: 50s; }
+.hs:nth-child(2) { animation-delay: 5s; }
+.hs:nth-child(3) { animation-delay: 10s; }
+.hs:nth-child(4) { animation-delay: 15s; }
+.hs:nth-child(5) { animation-delay: 20s; }
+.hs:nth-child(6) { animation-delay: 25s; }
 .bs6 {
   position: absolute; inset: 0;
   background-size: cover; background-position: center;
   opacity: 0; transform: scale(1.04);
-  animation: heroSlide 60s ease-in-out infinite;
+  animation: heroSlide 30s ease-in-out infinite;
   will-change: opacity;
 }
 .bs6:nth-child(1) { animation-delay: 0s; }
-.bs6:nth-child(2) { animation-delay: 10s; }
-.bs6:nth-child(3) { animation-delay: 20s; }
-.bs6:nth-child(4) { animation-delay: 30s; }
-.bs6:nth-child(5) { animation-delay: 40s; }
-.bs6:nth-child(6) { animation-delay: 50s; }
+.bs6:nth-child(2) { animation-delay: 5s; }
+.bs6:nth-child(3) { animation-delay: 10s; }
+.bs6:nth-child(4) { animation-delay: 15s; }
+.bs6:nth-child(5) { animation-delay: 20s; }
+.bs6:nth-child(6) { animation-delay: 25s; }
 
 @keyframes bgSlide {
   0%    { opacity: 0; }
@@ -526,12 +526,12 @@ footer {
   background-size: cover; background-position: center;
   opacity: 0;
   transform: scale(1.04);
-  animation: bgSlide 30s ease-in-out infinite;
+  animation: bgSlide 15s ease-in-out infinite;
   will-change: opacity;
 }
 .bs:nth-child(1) { animation-delay: 0s; }
-.bs:nth-child(2) { animation-delay: 10s; }
-.bs:nth-child(3) { animation-delay: 20s; }
+.bs:nth-child(2) { animation-delay: 5s; }
+.bs:nth-child(3) { animation-delay: 10s; }
 
 /* 4장 슬라이드 */
 .bs4 {
@@ -539,13 +539,13 @@ footer {
   background-size: cover; background-position: center;
   opacity: 0;
   transform: scale(1.04);
-  animation: heroSlide 40s ease-in-out infinite;
+  animation: heroSlide 20s ease-in-out infinite;
   will-change: opacity;
 }
 .bs4:nth-child(1) { animation-delay: 0s; }
-.bs4:nth-child(2) { animation-delay: 10s; }
-.bs4:nth-child(3) { animation-delay: 20s; }
-.bs4:nth-child(4) { animation-delay: 30s; }
+.bs4:nth-child(2) { animation-delay: 5s; }
+.bs4:nth-child(3) { animation-delay: 10s; }
+.bs4:nth-child(4) { animation-delay: 15s; }
 
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
@@ -614,12 +614,12 @@ footer {
 <!-- HERO -->
 <section class="hero" id="top">
   <div class="hero-slideshow">
-    <div class="hs" style="background-image:url('img_hero.png')"></div>
-    <div class="hs" style="background-image:url('img_realm1.png');background-position:center center"></div>
-    <div class="hs" style="background-image:url('img_mobius1.png');background-position:center center"></div>
-    <div class="hs" style="background-image:url('img_holo1.png');background-position:center center"></div>
-    <div class="hs" style="background-image:url('img_night1.png');background-position:center center"></div>
-    <div class="hs" style="background-image:url('img_atrium2.png');background-position:center center"></div>
+    <div class="hs" style="background-image:url('img_holo1.png')"></div>
+    <div class="hs" style="background-image:url('img_crystal.png')"></div>
+    <div class="hs" style="background-image:url('img_holo2.png')"></div>
+    <div class="hs" style="background-image:url('img_bokeh.png')"></div>
+    <div class="hs" style="background-image:url('img_holo3.png')"></div>
+    <div class="hs" style="background-image:url('img_realm1.png')"></div>
   </div>
   <div class="hero-dim"></div>
   <div class="hero-body">
@@ -641,12 +641,12 @@ footer {
     <div class="wrap">
       <div class="statement-inner">
         <div class="statement-img">
-          <div class="bs6" style="background-image:url('img_install.png');filter:brightness(0.90) saturate(1.45) contrast(1.05)"></div>
-          <div class="bs6" style="background-image:url('img_realm3.png');filter:brightness(0.88) saturate(1.3) contrast(1.05)"></div>
-          <div class="bs6" style="background-image:url('img_about.png');filter:brightness(0.90) saturate(1.45) contrast(1.05)"></div>
-          <div class="bs6" style="background-image:url('img_mobius2.png');filter:brightness(0.88) saturate(1.3) contrast(1.05)"></div>
-          <div class="bs6" style="background-image:url('img_gothic.png');filter:brightness(0.88) saturate(1.3) contrast(1.05)"></div>
-          <div class="bs6" style="background-image:url('img_realm5.png');filter:brightness(0.88) saturate(1.3) contrast(1.05)"></div>
+          <div class="bs6" style="background-image:url('img_hero.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+          <div class="bs6" style="background-image:url('img_install.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+          <div class="bs6" style="background-image:url('img_about.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+          <div class="bs6" style="background-image:url('img_gothic.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+          <div class="bs6" style="background-image:url('img_realm2.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+          <div class="bs6" style="background-image:url('img_night1.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
           <div class="statement-img-border"></div>
         </div>
         <div class="statement-text">
@@ -707,12 +707,12 @@ footer {
 <!-- NOW SHOWING -->
 <section class="show" id="show">
   <div class="show-img">
-    <div class="bs6" style="background-image:url('img_show.png');filter:brightness(0.92) saturate(1.45) contrast(1.05)"></div>
-    <div class="bs6" style="background-image:url('img_flower1.png');filter:brightness(0.88) saturate(1.2) contrast(1.02)"></div>
-    <div class="bs6" style="background-image:url('img_realm2.png');filter:brightness(0.88) saturate(1.35) contrast(1.05)"></div>
-    <div class="bs6" style="background-image:url('img_flower2.png');filter:brightness(0.88) saturate(1.2) contrast(1.02)"></div>
-    <div class="bs6" style="background-image:url('img_mobius3.png');filter:brightness(0.88) saturate(1.35) contrast(1.05)"></div>
-    <div class="bs6" style="background-image:url('img_flower3.png');filter:brightness(0.88) saturate(1.2) contrast(1.02)"></div>
+    <div class="bs6" style="background-image:url('img_show.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_flower1.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_flower2.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_flower3.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_mobius1.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_realm3.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
   </div>
   <div class="show-content">
     <div class="show-tag">A SCENE</div>
@@ -737,12 +737,12 @@ footer {
 <!-- QUOTE -->
 <section class="quote">
   <div class="quote-img">
-    <div class="bs6" style="background-image:url('img_crystal.png');filter:brightness(0.78) saturate(1.65) contrast(1.08)"></div>
-    <div class="bs6" style="background-image:url('img_night2.png');filter:brightness(0.76) saturate(1.4) contrast(1.05)"></div>
-    <div class="bs6" style="background-image:url('img_bokeh.png');filter:brightness(0.78) saturate(1.65) contrast(1.08)"></div>
-    <div class="bs6" style="background-image:url('img_holo2.png');filter:brightness(0.76) saturate(1.4) contrast(1.05)"></div>
-    <div class="bs6" style="background-image:url('img_realm4.png');filter:brightness(0.78) saturate(1.65) contrast(1.08)"></div>
-    <div class="bs6" style="background-image:url('img_corridor2.png');filter:brightness(0.76) saturate(1.3) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_mobius2.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
+    <div class="bs6" style="background-image:url('img_night2.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
+    <div class="bs6" style="background-image:url('img_realm4.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
+    <div class="bs6" style="background-image:url('img_corridor1.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
+    <div class="bs6" style="background-image:url('img_realm5.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
+    <div class="bs6" style="background-image:url('img_corridor2.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
   </div>
   <div class="quote-overlay"></div>
   <div class="quote-body">
@@ -759,12 +759,12 @@ footer {
 <!-- CTA -->
 <section class="cta-section" id="visit">
   <div class="cta-bg">
-    <div class="bs6" style="background-image:url('img_runway.png');filter:brightness(0.70) saturate(1.65) contrast(1.05)"></div>
-    <div class="bs6" style="background-image:url('img_corridor1.png');filter:brightness(0.68) saturate(1.4) contrast(1.05)"></div>
-    <div class="bs6" style="background-image:url('img_atrium1.png');filter:brightness(0.70) saturate(1.65) contrast(1.05)"></div>
-    <div class="bs6" style="background-image:url('img_atrium3.png');filter:brightness(0.68) saturate(1.4) contrast(1.05)"></div>
-    <div class="bs6" style="background-image:url('img_atrium4.png');filter:brightness(0.70) saturate(1.65) contrast(1.05)"></div>
-    <div class="bs6" style="background-image:url('img_holo3.png');filter:brightness(0.68) saturate(1.3) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_atrium1.png');filter:brightness(0.70) saturate(1.5) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_atrium2.png');filter:brightness(0.70) saturate(1.5) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_atrium3.png');filter:brightness(0.70) saturate(1.5) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_atrium4.png');filter:brightness(0.70) saturate(1.5) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_runway.png');filter:brightness(0.70) saturate(1.5) contrast(1.05)"></div>
+    <div class="bs6" style="background-image:url('img_mobius3.png');filter:brightness(0.70) saturate(1.5) contrast(1.05)"></div>
   </div>
   <div class="cta-glow"></div>
   <div class="cta-body">
