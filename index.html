@@ -485,21 +485,75 @@ footer {
   100%  { opacity: 0; }
 }
 .hero-slideshow { position: absolute; inset: 0; overflow: hidden; }
+/* 9장 슬라이드 — 7초×9 = 63s, 1.5s 크로스페이드 */
+@keyframes slide9 {
+  0%    { opacity: 0; }
+  2.4%  { opacity: 1; }
+  11.1% { opacity: 1; }
+  13.5% { opacity: 0; }
+  100%  { opacity: 0; }
+}
+/* 8장 슬라이드 — 7초×8 = 56s */
+@keyframes slide8 {
+  0%    { opacity: 0; }
+  2.7%  { opacity: 1; }
+  12.5% { opacity: 1; }
+  15.2% { opacity: 0; }
+  100%  { opacity: 0; }
+}
+
 .hs {
   position: absolute; inset: 0;
   background-size: cover; background-position: center 30%;
   filter: brightness(0.88) saturate(1.65) contrast(1.06);
   transform: scale(1.06);
   opacity: 0;
-  animation: heroSlide 30s ease-in-out infinite;
+  animation: slide9 63s ease-in-out infinite;
   will-change: opacity;
 }
 .hs:nth-child(1) { animation-delay: 0s; }
-.hs:nth-child(2) { animation-delay: 5s; }
-.hs:nth-child(3) { animation-delay: 10s; }
-.hs:nth-child(4) { animation-delay: 15s; }
-.hs:nth-child(5) { animation-delay: 20s; }
-.hs:nth-child(6) { animation-delay: 25s; }
+.hs:nth-child(2) { animation-delay: 7s; }
+.hs:nth-child(3) { animation-delay: 14s; }
+.hs:nth-child(4) { animation-delay: 21s; }
+.hs:nth-child(5) { animation-delay: 28s; }
+.hs:nth-child(6) { animation-delay: 35s; }
+.hs:nth-child(7) { animation-delay: 42s; }
+.hs:nth-child(8) { animation-delay: 49s; }
+.hs:nth-child(9) { animation-delay: 56s; }
+
+.bs9 {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  opacity: 0; transform: scale(1.04);
+  animation: slide9 63s ease-in-out infinite;
+  will-change: opacity;
+}
+.bs9:nth-child(1) { animation-delay: 0s; }
+.bs9:nth-child(2) { animation-delay: 7s; }
+.bs9:nth-child(3) { animation-delay: 14s; }
+.bs9:nth-child(4) { animation-delay: 21s; }
+.bs9:nth-child(5) { animation-delay: 28s; }
+.bs9:nth-child(6) { animation-delay: 35s; }
+.bs9:nth-child(7) { animation-delay: 42s; }
+.bs9:nth-child(8) { animation-delay: 49s; }
+.bs9:nth-child(9) { animation-delay: 56s; }
+
+.bs8 {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  opacity: 0; transform: scale(1.04);
+  animation: slide8 56s ease-in-out infinite;
+  will-change: opacity;
+}
+.bs8:nth-child(1) { animation-delay: 0s; }
+.bs8:nth-child(2) { animation-delay: 7s; }
+.bs8:nth-child(3) { animation-delay: 14s; }
+.bs8:nth-child(4) { animation-delay: 21s; }
+.bs8:nth-child(5) { animation-delay: 28s; }
+.bs8:nth-child(6) { animation-delay: 35s; }
+.bs8:nth-child(7) { animation-delay: 42s; }
+.bs8:nth-child(8) { animation-delay: 49s; }
+
 .bs6 {
   position: absolute; inset: 0;
   background-size: cover; background-position: center;
@@ -615,8 +669,11 @@ footer {
 <section class="hero" id="top">
   <div class="hero-slideshow">
     <div class="hs" style="background-image:url('img_holo1.png')"></div>
+    <div class="hs" style="background-image:url('img_m08.png')"></div>
     <div class="hs" style="background-image:url('img_crystal.png')"></div>
+    <div class="hs" style="background-image:url('img_m09.png')"></div>
     <div class="hs" style="background-image:url('img_holo2.png')"></div>
+    <div class="hs" style="background-image:url('img_m10.png')"></div>
     <div class="hs" style="background-image:url('img_bokeh.png')"></div>
     <div class="hs" style="background-image:url('img_holo3.png')"></div>
     <div class="hs" style="background-image:url('img_realm1.png')"></div>
@@ -641,12 +698,15 @@ footer {
     <div class="wrap">
       <div class="statement-inner">
         <div class="statement-img">
-          <div class="bs6" style="background-image:url('img_hero.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
-          <div class="bs6" style="background-image:url('img_install.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
-          <div class="bs6" style="background-image:url('img_about.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
-          <div class="bs6" style="background-image:url('img_gothic.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
-          <div class="bs6" style="background-image:url('img_realm2.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
-          <div class="bs6" style="background-image:url('img_night1.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+          <div class="bs9" style="background-image:url('img_hero.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+          <div class="bs9" style="background-image:url('img_m01.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+          <div class="bs9" style="background-image:url('img_install.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+          <div class="bs9" style="background-image:url('img_m02.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+          <div class="bs9" style="background-image:url('img_about.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+          <div class="bs9" style="background-image:url('img_gothic.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+          <div class="bs9" style="background-image:url('img_realm2.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+          <div class="bs9" style="background-image:url('img_m03.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+          <div class="bs9" style="background-image:url('img_night1.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
           <div class="statement-img-border"></div>
         </div>
         <div class="statement-text">
@@ -707,12 +767,15 @@ footer {
 <!-- NOW SHOWING -->
 <section class="show" id="show">
   <div class="show-img">
-    <div class="bs6" style="background-image:url('img_show.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
-    <div class="bs6" style="background-image:url('img_flower1.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
-    <div class="bs6" style="background-image:url('img_flower2.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
-    <div class="bs6" style="background-image:url('img_flower3.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
-    <div class="bs6" style="background-image:url('img_mobius1.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
-    <div class="bs6" style="background-image:url('img_realm3.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+    <div class="bs9" style="background-image:url('img_show.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+    <div class="bs9" style="background-image:url('img_flower1.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+    <div class="bs9" style="background-image:url('img_m04.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+    <div class="bs9" style="background-image:url('img_flower2.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+    <div class="bs9" style="background-image:url('img_m05.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+    <div class="bs9" style="background-image:url('img_flower3.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+    <div class="bs9" style="background-image:url('img_mobius1.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+    <div class="bs9" style="background-image:url('img_m14.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
+    <div class="bs9" style="background-image:url('img_realm3.png');filter:brightness(0.88) saturate(1.45) contrast(1.05)"></div>
   </div>
   <div class="show-content">
     <div class="show-tag">A SCENE</div>
@@ -737,12 +800,15 @@ footer {
 <!-- QUOTE -->
 <section class="quote">
   <div class="quote-img">
-    <div class="bs6" style="background-image:url('img_mobius2.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
-    <div class="bs6" style="background-image:url('img_night2.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
-    <div class="bs6" style="background-image:url('img_realm4.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
-    <div class="bs6" style="background-image:url('img_corridor1.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
-    <div class="bs6" style="background-image:url('img_realm5.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
-    <div class="bs6" style="background-image:url('img_corridor2.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
+    <div class="bs9" style="background-image:url('img_mobius2.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
+    <div class="bs9" style="background-image:url('img_m06.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
+    <div class="bs9" style="background-image:url('img_night2.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
+    <div class="bs9" style="background-image:url('img_m07.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
+    <div class="bs9" style="background-image:url('img_realm4.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
+    <div class="bs9" style="background-image:url('img_corridor1.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
+    <div class="bs9" style="background-image:url('img_m11.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
+    <div class="bs9" style="background-image:url('img_realm5.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
+    <div class="bs9" style="background-image:url('img_corridor2.png');filter:brightness(0.78) saturate(1.5) contrast(1.06)"></div>
   </div>
   <div class="quote-overlay"></div>
   <div class="quote-body">
@@ -759,12 +825,14 @@ footer {
 <!-- CTA -->
 <section class="cta-section" id="visit">
   <div class="cta-bg">
-    <div class="bs6" style="background-image:url('img_atrium1.png');filter:brightness(0.70) saturate(1.5) contrast(1.05)"></div>
-    <div class="bs6" style="background-image:url('img_atrium2.png');filter:brightness(0.70) saturate(1.5) contrast(1.05)"></div>
-    <div class="bs6" style="background-image:url('img_atrium3.png');filter:brightness(0.70) saturate(1.5) contrast(1.05)"></div>
-    <div class="bs6" style="background-image:url('img_atrium4.png');filter:brightness(0.70) saturate(1.5) contrast(1.05)"></div>
-    <div class="bs6" style="background-image:url('img_runway.png');filter:brightness(0.70) saturate(1.5) contrast(1.05)"></div>
-    <div class="bs6" style="background-image:url('img_mobius3.png');filter:brightness(0.70) saturate(1.5) contrast(1.05)"></div>
+    <div class="bs8" style="background-image:url('img_atrium1.png');filter:brightness(0.70) saturate(1.5) contrast(1.05)"></div>
+    <div class="bs8" style="background-image:url('img_m12.png');filter:brightness(0.70) saturate(1.5) contrast(1.05)"></div>
+    <div class="bs8" style="background-image:url('img_atrium2.png');filter:brightness(0.70) saturate(1.5) contrast(1.05)"></div>
+    <div class="bs8" style="background-image:url('img_m13.png');filter:brightness(0.70) saturate(1.5) contrast(1.05)"></div>
+    <div class="bs8" style="background-image:url('img_atrium3.png');filter:brightness(0.70) saturate(1.5) contrast(1.05)"></div>
+    <div class="bs8" style="background-image:url('img_atrium4.png');filter:brightness(0.70) saturate(1.5) contrast(1.05)"></div>
+    <div class="bs8" style="background-image:url('img_runway.png');filter:brightness(0.70) saturate(1.5) contrast(1.05)"></div>
+    <div class="bs8" style="background-image:url('img_mobius3.png');filter:brightness(0.70) saturate(1.5) contrast(1.05)"></div>
   </div>
   <div class="cta-glow"></div>
   <div class="cta-body">
@@ -817,9 +885,7 @@ footer {
   </div>
 </footer>
 
-<audio id="bgm" loop preload="none">
-  <source src="Clouds_On_The_Windowsill.mp3" type="audio/mpeg">
-</audio>
+<audio id="bgm" preload="none"></audio>
 <button class="bgm-toggle" id="bgmToggle" title="음악 켜기">♪</button>
 
 <script>
@@ -836,6 +902,17 @@ footer {
   }
   setOn(false);
 
+  var tracks = ['Clouds_On_The_Windowsill.mp3', 'Echoes in Still Air.wav'];
+  var trackIdx = Math.floor(Math.random() * tracks.length);
+
+  function loadTrack(idx) { audio.src = tracks[idx]; audio.load(); }
+
+  audio.addEventListener('ended', function() {
+    trackIdx = (trackIdx + 1) % tracks.length;
+    loadTrack(trackIdx);
+    audio.play().catch(function(){});
+  });
+
   function removeListeners() {
     document.removeEventListener('click',    startBgm);
     document.removeEventListener('keydown',  startBgm);
@@ -846,6 +923,7 @@ footer {
     if (started) return;
     started = true;
     removeListeners();
+    loadTrack(trackIdx);
     audio.play().then(function() {
       setOn(true);
     }).catch(function() {
@@ -856,7 +934,6 @@ footer {
     });
   }
 
-  /* bubble 단계 사용 — 버튼 핸들러가 먼저 실행되고 나머지 클릭은 여기서 받음 */
   document.addEventListener('click',    startBgm);
   document.addEventListener('keydown',  startBgm);
   document.addEventListener('touchend', startBgm);
