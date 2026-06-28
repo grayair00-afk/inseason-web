@@ -836,25 +836,30 @@ footer {
   }
   setOn(false);
 
-  var EVENTS = ['click', 'scroll', 'touchstart', 'keydown'];
+  function removeListeners() {
+    document.removeEventListener('click',    startBgm);
+    document.removeEventListener('keydown',  startBgm);
+    document.removeEventListener('touchend', startBgm);
+  }
 
   function startBgm() {
     if (started) return;
     started = true;
-    EVENTS.forEach(function(ev) {
-      document.removeEventListener(ev, startBgm, true);
-    });
+    removeListeners();
     audio.play().then(function() {
       setOn(true);
     }).catch(function() {
       started = false;
+      document.addEventListener('click',    startBgm);
+      document.addEventListener('keydown',  startBgm);
+      document.addEventListener('touchend', startBgm);
     });
   }
 
-  /* 첫 상호작용(클릭·스크롤·터치·키)에 자동 시작 */
-  EVENTS.forEach(function(ev) {
-    document.addEventListener(ev, startBgm, { capture: true, once: true, passive: true });
-  });
+  /* bubble 단계 사용 — 버튼 핸들러가 먼저 실행되고 나머지 클릭은 여기서 받음 */
+  document.addEventListener('click',    startBgm);
+  document.addEventListener('keydown',  startBgm);
+  document.addEventListener('touchend', startBgm);
 
   /* 버튼 수동 토글 */
   btn.addEventListener('click', function() {
