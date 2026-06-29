@@ -1237,22 +1237,18 @@ footer {
 
   var tracks = [
     'Clouds_On_The_Windowsill.mp3',
-    'Echoes in Still Air.wav'
-    /* 파일 추가 시 여기에 줄 추가: 'filename.mp3', */
+    'Echoes in Still Air.mp3',
+    'Morning Light Over Quiet Fields.mp3',
+    'Glass Relay.mp3'
   ];
-  var lastIdx = -1;
+  var curIdx = -1;
 
-  function pickRandom() {
-    if (tracks.length === 1) return 0;
-    var idx;
-    do { idx = Math.floor(Math.random() * tracks.length); } while (idx === lastIdx);
-    return idx;
-  }
+  function nextIdx() { curIdx = (curIdx + 1) % tracks.length; return curIdx; }
 
-  function loadTrack(idx) { lastIdx = idx; audio.src = tracks[idx]; audio.load(); }
+  function loadTrack(idx) { curIdx = idx; audio.src = tracks[idx]; audio.load(); }
 
   audio.addEventListener('ended', function() {
-    loadTrack(pickRandom());
+    loadTrack(nextIdx());
     audio.play().catch(function(){});
   });
 
@@ -1266,7 +1262,7 @@ footer {
     if (started) return;
     started = true;
     removeListeners();
-    loadTrack(pickRandom());
+    loadTrack(nextIdx());
     audio.play().then(function() {
       setOn(true);
     }).catch(function() {
