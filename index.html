@@ -812,6 +812,93 @@ footer {
   .vc-title { font-size: 15px; }
   .vc-gap { margin-top: 12px; }
 }
+
+/* ── Works 영상관 시네마 레이아웃 ── */
+#worksOverlay { display: flex; flex-direction: column; overflow: hidden; }
+
+.wo-header { flex-shrink: 0; padding: 20px 32px 0; }
+.wo-label {
+  font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: rgba(250,250,248,0.16);
+}
+
+.wo-main {
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 16px 40px 18px;
+  overflow: hidden;
+}
+.wo-player-wrap { width: 100%; max-width: 860px; }
+
+.wo-frame {
+  width: 100%; aspect-ratio: 16/9;
+  background: #000; position: relative;
+}
+.wo-frame iframe {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; border: none;
+}
+
+.wo-credits {
+  text-align: center;
+  display: flex; flex-direction: column; gap: 4px;
+  margin-top: 14px; min-height: 54px;
+}
+
+/* 하단 필름스트립 */
+.wo-strip-wrap {
+  flex-shrink: 0;
+  padding: 12px 28px 18px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.wo-strip {
+  display: flex; gap: 10px;
+  overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
+  padding-bottom: 2px;
+}
+.wo-strip::-webkit-scrollbar { height: 2px; }
+.wo-strip::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.10); }
+
+.wo-strip-item {
+  flex-shrink: 0; width: 148px;
+  cursor: pointer; background: none; border: none; padding: 0; text-align: left;
+}
+.wo-strip-thumb {
+  width: 148px; aspect-ratio: 16/9;
+  overflow: hidden; display: block; position: relative;
+  outline: 1.5px solid transparent; outline-offset: -1px;
+  transition: outline-color 0.2s;
+}
+.wo-strip-thumb img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  opacity: 0.50; transition: opacity 0.3s;
+}
+.wo-strip-item:hover .wo-strip-thumb img { opacity: 0.76; }
+.wo-strip-item.active .wo-strip-thumb { outline-color: rgba(229,154,130,0.58); }
+.wo-strip-item.active .wo-strip-thumb img { opacity: 0.95; }
+
+.wo-strip-name {
+  display: block; font-size: 10px; letter-spacing: 0.04em;
+  color: rgba(250,250,248,0.28); margin-top: 5px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.wo-strip-item.active .wo-strip-name { color: rgba(250,250,248,0.62); }
+
+@media (max-width: 600px) {
+  .wo-header { padding: 14px 18px 0; }
+  .wo-main { padding: 10px 14px 12px; }
+  .wo-strip-wrap { padding: 10px 14px 14px; }
+  .wo-strip-item { width: 116px; }
+  .wo-strip-thumb { width: 116px; }
+  .wo-credits { margin-top: 10px; min-height: 44px; }
+  .vc-title { font-size: 16px; }
+  .vc-gap { margin-top: 13px; }
+}
+@media (max-width: 480px) {
+  .wo-strip-item { width: 100px; }
+  .wo-strip-thumb { width: 100px; }
+}
 </style>
 </head>
 <body>
@@ -1183,71 +1270,61 @@ footer {
 </script>
 
 <!-- ════════════════════════════════════════════════════════════════════
-     WORKS 갤러리 오버레이 — nav 'Works' 클릭 시 열림
+     WORKS 영상관 — 갤러리 + 플레이어 통합 오버레이
      ════════════════════════════════════════════════════════════════════ -->
 <div class="overlay-full" id="worksOverlay" role="dialog" aria-modal="true" aria-label="Works">
   <button class="overlay-close" id="worksClose" aria-label="닫기">×</button>
-  <div class="works-ol-inner">
-    <p class="works-ol-eyebrow">Invisible Season</p>
-    <p class="works-ol-title">Works</p>
 
-    <div class="works-ol-grid">
+  <!-- WORKS 라벨 -->
+  <div class="wo-header">
+    <span class="wo-label">Works</span>
+  </div>
 
-      <!--
-      ─── 새 영상 추가 패턴 ────────────────────────────────────────────
-      (a) 아래 work-card 버튼을 복사해 onclick의 overlay ID를 새 ID로 교체
-      (b) 아래 videoOverlay 블록을 복사해 id · data-yt · 제목 · credits 교체
-      (c) 원하면 CTA 섹션에 버튼 추가:
-          <a class="btn-fill" href="#" id="ctaVideoBtn2" >「새 영상 제목」 보러가기</a>
-          그 다음 JS에서: getElementById('ctaVideoBtn2').addEventListener(...)
-      ──────────────────────────────────────────────────────────────────── -->
+  <!-- 중앙 플레이어 + 크레딧 (기본 상태: 빈 블랙) -->
+  <div class="wo-main">
+    <div class="wo-player-wrap">
+      <div class="wo-frame" id="woFrame"></div>
+      <div class="wo-credits" id="woCredits"></div>
+    </div>
+  </div>
+
+  <!-- 하단 필름스트립 -->
+  <div class="wo-strip-wrap">
+    <!--
+    ─── 새 영상 추가 패턴 ─────────────────────────────────────────────
+    아래 wo-strip-item 버튼을 복사해 data 속성·img src 교체:
+      data-yt     → 유튜브 영상 ID
+      data-title  → 한국어 제목
+      data-en     → 영문 제목
+      data-meta1  → 첫 번째 크레딧 줄  (예: "Invisible Season")
+      data-credit → 두 번째 크레딧 줄  (예: "Music · Silver Still Water")
+      data-meta2  → 세 번째 크레딧 줄  (예: "Art Director · Jung.K")
+      img src     → 썸네일 이미지
+    클릭 시 가운데 플레이어에서 소리와 함께 재생됩니다.
+    ──────────────────────────────────────────────────────────────────── -->
+    <div class="wo-strip" id="woStrip">
 
       <!-- 블루밍에어 -->
-      <button class="work-card" onclick="openVideoOverlay('videoOverlay-ba')">
-        <div class="work-thumb">
+      <button class="wo-strip-item" type="button"
+              data-yt="IVzu4799ERA"
+              data-title="블루밍에어" data-en="Blooming Air"
+              data-meta1="Invisible Season"
+              data-credit="Music · Silver Still Water"
+              data-meta2="Art Director · Jung.K">
+        <div class="wo-strip-thumb">
           <img src="img_show.webp" alt="블루밍에어">
-          <div class="work-play-icon">
-            <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="26" cy="26" r="23" stroke="currentColor" stroke-width="1.1" opacity="0.6"/>
-              <polygon points="22,18 36,26 22,34" fill="currentColor"/>
-            </svg>
-          </div>
         </div>
-        <div class="work-info">
-          <span class="work-title">블루밍에어</span>
-          <span class="work-role">Art Director · Jung.K</span>
-        </div>
+        <span class="wo-strip-name">블루밍에어</span>
       </button>
 
     </div>
   </div>
 </div>
 
-<!--
-  ════════════════════════════════════════════════════════════════════
-  영상관 오버레이: 블루밍에어
-  새 영상 추가: 이 블록 복사 → id · data-yt · 제목 · credits 교체
-  ════════════════════════════════════════════════════════════════════ -->
-<div class="overlay-full overlay-video" id="videoOverlay-ba" data-yt="IVzu4799ERA"
-     role="dialog" aria-modal="true" aria-label="블루밍에어 영상">
-  <button class="overlay-close" onclick="closeVideoOverlay('videoOverlay-ba')" aria-label="닫기">×</button>
-  <div class="video-ol-inner">
-    <div class="v-frame" id="vFrame-ba"></div>
-    <div class="v-credits">
-      <p class="vc-title">블루밍에어</p>
-      <p class="vc-en">Blooming Air</p>
-      <div class="vc-divider"></div>
-      <p class="vc-meta vc-gap">Invisible Season</p>
-      <p class="vc-credit">Music · Silver Still Water</p>
-      <p class="vc-meta vc-gap">Art Director · Jung.K</p>
-    </div>
-  </div>
-</div>
-
 <script>
-/* ── 오버레이 컨트롤러 ──
-   핵심: iframe을 클릭/탭 핸들러 안에서 즉시(동기적으로) 삽입해야
-   브라우저가 사용자 제스처로 인식, PC·모바일 모두 소리 포함 자동재생 허용 */
+/* ── Works 영상관 컨트롤러 ──
+   iframe을 클릭 핸들러 동기 스택 안에서 삽입 → 브라우저가 사용자 제스처로 인식
+   → PC·폰 모두 소리 포함 자동재생 허용 */
 (function () {
   var _bgmPaused = false;
 
@@ -1266,72 +1343,90 @@ footer {
     if (a) a.play().then(function () { if (window._bgmSetOn) window._bgmSetOn(true); }).catch(function () {});
   }
 
-  /* ── 영상관 오버레이 ── */
-  window.openVideoOverlay = function (overlayId) {
-    pauseBgm();
-    var ol = document.getElementById(overlayId);
-    var frame = ol.querySelector('.v-frame');
-
-    /* iframe 즉시 삽입 — setTimeout 없이 클릭 이벤트 콜스택 안에서 실행해야
-       브라우저가 사용자 제스처 컨텍스트를 유지하며 소리 포함 자동재생을 허용한다 */
+  /* 중앙 플레이어에 iframe 삽입 — 반드시 클릭 핸들러 동기 스택 안에서 호출 */
+  function playInWorks(ytId, btn) {
+    var frame = document.getElementById('woFrame');
+    frame.innerHTML = '';
     var iframe = document.createElement('iframe');
-    iframe.src = 'https://www.youtube.com/embed/' + ol.dataset.yt
+    iframe.src = 'https://www.youtube.com/embed/' + ytId
       + '?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1';
     iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
     iframe.allowFullscreen = true;
     iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;';
     frame.appendChild(iframe);
 
-    ol.classList.add('open');
-    document.body.style.overflow = 'hidden';
-  };
+    /* 활성 썸네일 강조 */
+    document.querySelectorAll('.wo-strip-item').forEach(function (el) {
+      el.classList.toggle('active', el === btn);
+    });
 
-  window.closeVideoOverlay = function (overlayId) {
-    var ol = document.getElementById(overlayId);
-    ol.querySelector('.v-frame').innerHTML = ''; /* iframe 제거 → 영상·소리 즉시 정지 */
-    ol.classList.remove('open');
-    if (!document.querySelector('.overlay-full.open')) {
-      document.body.style.overflow = '';
-      resumeBgm();
+    /* 크레딧 표시 */
+    if (btn) {
+      document.getElementById('woCredits').innerHTML =
+        '<p class="vc-title">' + (btn.dataset.title || '') + '</p>'
+        + '<p class="vc-en">' + (btn.dataset.en || '') + '</p>'
+        + '<div class="vc-divider"></div>'
+        + '<p class="vc-meta vc-gap">' + (btn.dataset.meta1 || '') + '</p>'
+        + '<p class="vc-credit">' + (btn.dataset.credit || '') + '</p>'
+        + '<p class="vc-meta vc-gap">' + (btn.dataset.meta2 || '') + '</p>';
     }
-  };
+  }
 
-  /* ── Works 갤러리 오버레이 ── */
-  function openWorksOverlay() {
+  /* Works 열기 */
+  function openWorks() {
     document.getElementById('worksOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
-  function closeWorksOverlay() {
+
+  /* Works 열기 + 특정 영상 즉시 재생 (CTA·footer 링크에서 호출) */
+  window.openWorksWithVideo = function (ytId) {
+    pauseBgm();
+    openWorks();
+    var btn = document.querySelector('.wo-strip-item[data-yt="' + ytId + '"]');
+    playInWorks(ytId, btn); /* 클릭 핸들러 동기 스택 → autoplay 허용 */
+  };
+
+  /* Works 닫기 */
+  function closeWorks() {
+    document.getElementById('woFrame').innerHTML = '';
+    document.getElementById('woCredits').innerHTML = '';
+    document.querySelectorAll('.wo-strip-item').forEach(function (el) { el.classList.remove('active'); });
     document.getElementById('worksOverlay').classList.remove('open');
-    if (!document.querySelector('.overlay-video.open')) {
-      document.body.style.overflow = '';
-    }
+    document.body.style.overflow = '';
+    resumeBgm();
   }
 
-  /* 이벤트 바인딩 */
-  document.getElementById('worksClose').addEventListener('click', closeWorksOverlay);
+  /* 필름스트립 클릭 → 해당 영상 재생 */
+  document.getElementById('woStrip').addEventListener('click', function (e) {
+    var btn = e.target.closest('.wo-strip-item');
+    if (!btn) return;
+    pauseBgm();
+    playInWorks(btn.dataset.yt, btn); /* 클릭 핸들러 동기 → autoplay 허용 */
+  });
+
+  document.getElementById('worksClose').addEventListener('click', closeWorks);
   document.getElementById('worksOverlay').addEventListener('click', function (e) {
-    if (e.target === this) closeWorksOverlay();
+    if (e.target === this) closeWorks();
   });
-  document.querySelectorAll('.overlay-video').forEach(function (ol) {
-    ol.addEventListener('click', function (e) { if (e.target === ol) window.closeVideoOverlay(ol.id); });
-  });
+
+  /* nav 'Works' → 기본 빈 블랙 상태로 열기 */
   document.getElementById('navWorks').addEventListener('click', function (e) {
-    e.preventDefault(); openWorksOverlay();
+    e.preventDefault(); openWorks();
   });
+
+  /* CTA '보러가기' → 블루밍에어 즉시 재생 */
   document.getElementById('ctaVideoBtn').addEventListener('click', function (e) {
-    e.preventDefault(); window.openVideoOverlay('videoOverlay-ba');
+    e.preventDefault(); window.openWorksWithVideo('IVzu4799ERA');
   });
+
+  /* footer 링크 → 블루밍에어 즉시 재생 */
   document.getElementById('footerVideoLink').addEventListener('click', function (e) {
-    e.preventDefault(); window.openVideoOverlay('videoOverlay-ba');
+    e.preventDefault(); window.openWorksWithVideo('IVzu4799ERA');
   });
 
   /* Escape 키 */
   document.addEventListener('keydown', function (e) {
-    if (e.key !== 'Escape') return;
-    var openVid = document.querySelector('.overlay-video.open');
-    if (openVid) { window.closeVideoOverlay(openVid.id); return; }
-    if (document.getElementById('worksOverlay').classList.contains('open')) closeWorksOverlay();
+    if (e.key === 'Escape' && document.getElementById('worksOverlay').classList.contains('open')) closeWorks();
   });
 })();
 </script>
