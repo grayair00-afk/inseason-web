@@ -475,8 +475,17 @@ footer {
   color: rgba(250,250,248,0.4); margin-bottom: 12px; transition: color 0.2s;
 }
 .foot-col a:hover { color: #FAFAF8; }
-.foot-email { color: rgba(250,250,248,0.42); transition: color 0.2s; display: block; font-size: 11.5px; font-weight: 300; }
-.foot-email:hover { color: #FAFAF8; }
+.foot-email {
+  color: rgba(250,250,248,0.42);
+  display: block; font-size: 11.5px; font-weight: 300;
+  cursor: pointer;
+  transition: color 0.25s, text-shadow 0.25s;
+}
+.foot-email:hover { color: rgba(250,250,248,0.75); }
+.foot-email.copied {
+  color: #FAFAF8;
+  text-shadow: 0 0 18px rgba(250,250,248,0.55);
+}
 .copyright {
   padding-top: 28px; border-top: 1px solid rgba(255,255,255,0.05);
   display: flex; justify-content: space-between; align-items: center;
