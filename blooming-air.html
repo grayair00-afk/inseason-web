@@ -235,7 +235,8 @@ function loadVideo() {
   poster.style.transition = 'opacity 0.3s';
   poster.style.opacity = '0';
 
-  /* iframe 삽입 */
+  /* iframe을 클릭 이벤트 콜스택 안에서 즉시 삽입 — setTimeout 사용 시
+     브라우저가 사용자 제스처 컨텍스트를 잃어 autoplay가 차단됨 */
   var iframe = document.createElement('iframe');
   iframe.id = 'ytPlayer';
   iframe.src = 'https://www.youtube.com/embed/IVzu4799ERA'
@@ -244,18 +245,17 @@ function loadVideo() {
   iframe.allowFullscreen = true;
   iframe.title = '블루밍에어 — 인비저블 시즌';
   iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;';
+  frame.appendChild(iframe);
 
-  setTimeout(function() {
-    frame.appendChild(iframe);
-    poster.style.display = 'none';
+  /* 포스터는 페이드 후 숨김 */
+  setTimeout(function() { poster.style.display = 'none'; }, 400);
 
-    /* YT API로 플레이어 연결 — BGM 정지 */
-    if (window.YT && YT.Player) {
-      attachPlayer(iframe.id);
-    } else {
-      window.onYouTubeIframeAPIReady = function() { attachPlayer(iframe.id); };
-    }
-  }, 300);
+  /* YT API로 플레이어 연결 */
+  if (window.YT && YT.Player) {
+    attachPlayer(iframe.id);
+  } else {
+    window.onYouTubeIframeAPIReady = function() { attachPlayer(iframe.id); };
+  }
 }
 
 function attachPlayer(iframeId) {
