@@ -911,11 +911,17 @@ footer {
   background: rgba(6,5,8,0.54); border: none; cursor: pointer;
   color: rgba(250,250,248,0.72); font-size: 19px;
   font-weight: 300; line-height: 1; padding: 10px 13px;
-  font-family: 'Inter', sans-serif; transition: color 0.18s, background 0.18s;
-  display: none;
+  font-family: 'Inter', sans-serif;
+  transition: color 0.18s, background 0.18s, opacity 0.24s ease;
+  display: none; opacity: 0; pointer-events: none;
 }
 .wo-player.visible .wo-player-close { display: block; }
+.wo-player.visible:hover .wo-player-close { opacity: 1; pointer-events: auto; }
 .wo-player-close:hover { color: #FAFAF8; background: rgba(6,5,8,0.82); }
+/* 터치 기기: hover 없으므로 항상 표시 */
+@media (hover: none) {
+  .wo-player.visible .wo-player-close { opacity: 1; pointer-events: auto; }
+}
 
 /* 하단 갤러리 영역 — 카드 위로 올리기 */
 .wo-gallery {
