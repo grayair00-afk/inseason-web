@@ -1027,6 +1027,124 @@ footer {
   .wo-card    { width: 240px; }
   .wo-scene   { padding-top: 10px; padding-bottom: 6px; }
 }
+
+/* ── SELFIE SECTION: 오늘의 나 ── */
+.selfie-section {
+  position: relative; padding: 140px 0;
+  text-align: center; overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.selfie-bg { position: absolute; inset: 0; }
+.selfie-bg-dim { position: absolute; inset: 0; background: rgba(6,5,8,0.74); }
+.selfie-inner {
+  position: relative; z-index: 2;
+  max-width: 480px; margin: 0 auto; padding: 0 24px;
+}
+.selfie-inner .label { margin-bottom: 20px; }
+.selfie-h {
+  font-family: 'Pretendard', 'Pretendard Variable', sans-serif;
+  font-size: clamp(24px, 3.2vw, 40px);
+  font-weight: 600; line-height: 1.2;
+  letter-spacing: -0.02em; color: #FAFAF8; margin-bottom: 10px;
+}
+.selfie-sub {
+  font-family: 'Inter', sans-serif;
+  font-size: 10.5px; font-weight: 300; letter-spacing: 0.30em;
+  text-transform: uppercase; color: rgba(250,250,248,0.30); margin-bottom: 52px;
+}
+.selfie-hint {
+  font-size: 11.5px; font-weight: 300; letter-spacing: 0.02em;
+  color: rgba(250,250,248,0.34); margin-top: 16px;
+}
+/* 공유 버튼 */
+.selfie-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-size: 10.5px; font-weight: 600; letter-spacing: 0.18em;
+  font-family: 'Inter', sans-serif; border: none; cursor: pointer; padding: 13px 28px;
+  transition: background 0.2s, transform 0.2s, color 0.2s, border-color 0.2s;
+}
+.selfie-btn-primary {
+  color: #060508; background: #E59A82;
+  box-shadow: 0 4px 20px rgba(229,154,130,0.28);
+}
+.selfie-btn-primary:hover { background: #F5C4AD; transform: translateY(-1px); }
+.selfie-btn-ghost {
+  color: rgba(250,250,248,0.44); background: none;
+  border: 1px solid rgba(255,255,255,0.14);
+}
+.selfie-btn-ghost:hover { color: #FAFAF8; border-color: rgba(255,255,255,0.36); }
+/* 라이브 뷰 */
+.selfie-live { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+.selfie-viewport {
+  position: relative;
+  width: 100%; max-width: 360px; aspect-ratio: 1;
+  overflow: hidden; background: #000;
+  border: 1px solid rgba(229,154,130,0.16);
+}
+#selfieVideo {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transform: scaleX(-1);
+}
+.selfie-frame {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+}
+.selfie-frame svg { width: 100%; height: 100%; display: block; }
+/* 촬영 플래시 */
+.selfie-viewport::before {
+  content: ''; position: absolute; inset: 0; z-index: 10;
+  background: #fff; opacity: 0; pointer-events: none;
+  transition: opacity 0.06s ease;
+}
+.selfie-viewport.flash::before { opacity: 0.88; }
+.selfie-live-btns { display: flex; gap: 12px; }
+/* 폴라로이드 결과 */
+.selfie-result { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+.selfie-polaroid {
+  background: #FAFAF8; padding: 13px 13px 0; display: inline-block;
+  box-shadow: 0 16px 56px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.28);
+}
+#selfieCanvas {
+  display: block;
+  width: min(320px, calc(100vw - 80px));
+  aspect-ratio: 1 / 1;
+}
+.polaroid-bottom {
+  padding: 12px 4px 15px;
+  display: flex; flex-direction: column; gap: 8px;
+  width: min(320px, calc(100vw - 80px));
+}
+.polaroid-date {
+  font-family: 'Inter', sans-serif;
+  font-size: 8.5px; font-weight: 400; letter-spacing: 0.20em;
+  color: rgba(0,0,0,0.28); text-transform: uppercase; text-align: left;
+}
+.polaroid-msg {
+  background: none; border: none;
+  border-bottom: 1px solid rgba(0,0,0,0.10);
+  font-family: 'Noto Serif KR', serif;
+  font-size: 12.5px; font-weight: 300; letter-spacing: 0.02em;
+  color: rgba(0,0,0,0.65); padding: 4px 0; width: 100%; outline: none;
+}
+.polaroid-msg::placeholder { color: rgba(0,0,0,0.22); }
+.selfie-result-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+/* 권한 거부 */
+.selfie-denied {
+  padding: 40px 20px; border: 1px solid rgba(255,255,255,0.07);
+}
+.selfie-denied p {
+  font-size: 13px; font-weight: 300; line-height: 2.0;
+  color: rgba(250,250,248,0.40); margin-bottom: 18px;
+}
+.selfie-denied-retry {
+  background: none; border: none; cursor: pointer;
+  font-size: 10px; font-weight: 500; letter-spacing: 0.16em;
+  color: #E59A82; text-decoration: underline; text-underline-offset: 3px;
+  font-family: 'Inter', sans-serif;
+}
+@media (max-width: 480px) {
+  .selfie-section { padding: 96px 0; }
+}
 </style>
 </head>
 <body>
@@ -1256,6 +1374,97 @@ footer {
       <p class="cta-sig-role">Art Director</p>
       <p class="cta-sig-name">Jung.K</p>
       <p class="cta-sig-email">grayair00@gmail.com</p>
+    </div>
+  </div>
+</section>
+
+<!-- SELFIE: 오늘의 나 ── closing 섹션 -->
+<section class="selfie-section" id="today">
+  <!-- 배경: 브랜드 몽환 이미지 (bs4 슬라이드 재사용) -->
+  <div class="selfie-bg">
+    <div class="bs4" style="background-image:url('img_bokeh.webp');filter:brightness(0.55) saturate(1.3)"></div>
+    <div class="bs4" style="background-image:url('img_holo1.webp');filter:brightness(0.55) saturate(1.3)"></div>
+    <div class="bs4" style="background-image:url('img_crystal.webp');filter:brightness(0.55) saturate(1.3)"></div>
+    <div class="bs4" style="background-image:url('img_holo3.webp');filter:brightness(0.55) saturate(1.3)"></div>
+    <div class="selfie-bg-dim"></div>
+  </div>
+
+  <div class="selfie-inner">
+    <p class="label">TODAY'S YOU</p>
+    <h2 class="selfie-h">오늘의 나를<br>기록하세요</h2>
+    <p class="selfie-sub">Record today's you</p>
+
+    <div class="selfie-cam-area">
+
+      <!-- [1] 시작 -->
+      <div id="selfieStart">
+        <button class="selfie-btn selfie-btn-primary" id="selfieStartBtn">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="8" cy="8.5" r="2.8" fill="currentColor"/>
+            <path d="M2 6C2 5 2.9 4.2 3.9 4.2H5.5L6.8 2.5H9.2L10.5 4.2H12.1C13.1 4.2 14 5 14 6V11.5C14 12.5 13.1 13.3 12.1 13.3H3.9C2.9 13.3 2 12.5 2 11.5V6Z" stroke="currentColor" stroke-width="1.1" fill="none"/>
+          </svg>
+          카메라 켜기
+        </button>
+        <p class="selfie-hint">전면 카메라로 오늘의 순간을 담아보세요</p>
+      </div>
+
+      <!-- [2] 라이브 카메라 -->
+      <div id="selfieLive" style="display:none" class="selfie-live">
+        <div class="selfie-viewport" id="selfieViewport">
+          <video id="selfieVideo" autoplay playsinline muted></video>
+          <!-- 프레임 오버레이: SVG → 나중에 <img src="frame.png">으로 교체 가능 -->
+          <div class="selfie-frame">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="sf-vig" cx="50%" cy="50%" r="70.7%">
+                  <stop offset="35%" stop-color="rgba(6,5,8,0)"/>
+                  <stop offset="100%" stop-color="rgba(6,5,8,0.60)"/>
+                </radialGradient>
+              </defs>
+              <rect width="100" height="100" fill="url(#sf-vig)"/>
+              <!-- 코너 L마크 (brand color) -->
+              <g stroke="#E59A82" stroke-width="0.9" stroke-linecap="square" fill="none" opacity="0.68">
+                <polyline points="5,13 5,5 13,5"/>
+                <polyline points="87,5 95,5 95,13"/>
+                <polyline points="5,87 5,95 13,95"/>
+                <polyline points="95,87 95,95 87,95"/>
+              </g>
+              <!-- 중앙 가이드선 -->
+              <g stroke="#E59A82" stroke-width="0.35" opacity="0.22">
+                <line x1="50" y1="43" x2="50" y2="57"/>
+                <line x1="43" y1="50" x2="57" y2="50"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+        <div class="selfie-live-btns">
+          <button class="selfie-btn selfie-btn-primary" id="selfieShootBtn">촬영</button>
+          <button class="selfie-btn selfie-btn-ghost"   id="selfieStopBtn">끄기</button>
+        </div>
+      </div>
+
+      <!-- [3] 폴라로이드 결과 -->
+      <div id="selfieResult" style="display:none" class="selfie-result">
+        <div class="selfie-polaroid">
+          <canvas id="selfieCanvas"></canvas>
+          <div class="polaroid-bottom">
+            <span class="polaroid-date" id="polaroidDate"></span>
+            <input class="polaroid-msg" id="polaroidMsg" type="text" maxlength="36"
+                   placeholder="오늘의 한마디 — 인비저블 시즌">
+          </div>
+        </div>
+        <div class="selfie-result-btns">
+          <button class="selfie-btn selfie-btn-primary" id="selfieSaveBtn">저장하기</button>
+          <button class="selfie-btn selfie-btn-ghost"   id="selfieRetakeBtn">다시 찍기</button>
+        </div>
+      </div>
+
+      <!-- 권한 거부 안내 -->
+      <div id="selfieDenied" style="display:none" class="selfie-denied">
+        <p>카메라 권한이 필요합니다.<br>브라우저 설정에서 카메라를 허용한 뒤 다시 시도해 주세요.</p>
+        <button class="selfie-denied-retry" id="selfieRetryBtn">처음으로 돌아가기</button>
+      </div>
+
     </div>
   </div>
 </section>
@@ -1655,6 +1864,225 @@ footer {
     if (e.key === 'Escape' && document.getElementById('worksOverlay').classList.contains('open')) closeWorks();
   });
 })();
+</script>
+
+
+<script>
+/* ══════════════════════════════════════════════════════════════════════
+   SELFIE MODULE — "오늘의 나"
+   구조: startCamera → capture → renderPolaroid → download
+   B안(AI 배경 합성) 연결 포인트: SelfieModule.bgProcessor 교체
+   ══════════════════════════════════════════════════════════════════════ */
+var SelfieModule = (function () {
+  'use strict';
+  var PHOTO_PX = 340;    /* 캔버스 물리 픽셀 (1:1 정사각) */
+  var PAD = 13, PAD_BOT = 82; /* 폴라로이드 다운로드 여백 */
+
+  var stream   = null;
+  var photoUrl = null;
+  var refs     = {};
+
+  /* ── 상태 전환 ── */
+  var STATES = ['selfieStart', 'selfieLive', 'selfieResult', 'selfieDenied'];
+  function show(id) {
+    STATES.forEach(function (n) {
+      var el = document.getElementById(n);
+      if (el) el.style.display = (n === id) ? '' : 'none';
+    });
+  }
+
+  /* ── 카메라 ── */
+  function startCamera(onOk, onFail) {
+    navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 1280 } },
+      audio: false
+    }).then(function (s) {
+      stream = s;
+      refs.video.srcObject = s;
+      onOk();
+    }).catch(function (err) {
+      console.warn('Camera:', err);
+      if (onFail) onFail(err);
+    });
+  }
+  function stopCamera() {
+    if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
+    if (refs.video) refs.video.srcObject = null;
+  }
+
+  /* ── 프레임 드로잉 ──
+     B안 교체 포인트: SelfieModule.bgProcessor(ctx, videoEl, size) 설정 시
+     capture() 에서 영상 위에 AI 배경 합성 후 이 함수로 오버레이 추가 */
+  function drawFrame(ctx, size) {
+    /* 비네팅 */
+    var g = ctx.createRadialGradient(size/2, size/2, size*0.28, size/2, size/2, size*0.75);
+    g.addColorStop(0, 'rgba(6,5,8,0)');
+    g.addColorStop(1, 'rgba(6,5,8,0.58)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, size, size);
+
+    /* 코너 L마크 */
+    var m = size * 0.05, l = size * 0.09;
+    ctx.strokeStyle = 'rgba(229,154,130,0.65)';
+    ctx.lineWidth   = size * 0.009;
+    ctx.lineCap     = 'square';
+    ctx.beginPath();
+    ctx.moveTo(m, m+l);      ctx.lineTo(m, m);        ctx.lineTo(m+l, m);
+    ctx.moveTo(size-m-l, m); ctx.lineTo(size-m, m);   ctx.lineTo(size-m, m+l);
+    ctx.moveTo(m, size-m-l); ctx.lineTo(m, size-m);   ctx.lineTo(m+l, size-m);
+    ctx.moveTo(size-m-l, size-m); ctx.lineTo(size-m, size-m); ctx.lineTo(size-m, size-m-l);
+    ctx.stroke();
+
+    /* 가이드 십자 */
+    ctx.strokeStyle = 'rgba(229,154,130,0.18)';
+    ctx.lineWidth   = size * 0.003;
+    ctx.beginPath();
+    ctx.moveTo(size/2, size/2 - size*0.07); ctx.lineTo(size/2, size/2 + size*0.07);
+    ctx.moveTo(size/2 - size*0.07, size/2); ctx.lineTo(size/2 + size*0.07, size/2);
+    ctx.stroke();
+  }
+
+  /* ── 촬영: video → canvas (미러 정사각 크롭 + 프레임) ── */
+  function capture() {
+    var s = PHOTO_PX;
+    var c = refs.canvas;
+    c.width = s; c.height = s;
+    var ctx = c.getContext('2d');
+
+    /* 미러 크롭 */
+    ctx.save();
+    ctx.scale(-1, 1);
+    ctx.translate(-s, 0);
+    var vw = refs.video.videoWidth  || s;
+    var vh = refs.video.videoHeight || s;
+    var side = Math.min(vw, vh);
+    ctx.drawImage(refs.video, (vw - side) / 2, (vh - side) / 2, side, side, 0, 0, s, s);
+    ctx.restore();
+
+    /* B안 hook */
+    if (typeof SelfieModule.bgProcessor === 'function') {
+      SelfieModule.bgProcessor(ctx, refs.video, s);
+    }
+
+    drawFrame(ctx, s);
+    photoUrl = c.toDataURL('image/jpeg', 0.93);
+  }
+
+  /* ── 다운로드용 폴라로이드 캔버스 빌드 ── */
+  function buildDownloadCanvas(msg, date, cb) {
+    var s = PHOTO_PX;
+    var W = s + PAD * 2, H = s + PAD + PAD_BOT;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var fc = document.createElement('canvas');
+    fc.width  = W * dpr;
+    fc.height = H * dpr;
+    var ctx = fc.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    ctx.fillStyle = '#FAFAF8';
+    ctx.fillRect(0, 0, W, H);
+
+    var img = new Image();
+    img.onload = function () {
+      ctx.drawImage(img, PAD, PAD, s, s);
+
+      /* 날짜 */
+      ctx.fillStyle = 'rgba(0,0,0,0.28)';
+      ctx.font = '400 9px Inter, Arial, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(date.toUpperCase(), PAD + 4, PAD + s + 22);
+
+      /* 메시지 */
+      if (msg) {
+        ctx.fillStyle = 'rgba(0,0,0,0.62)';
+        ctx.font = '300 13px "Noto Serif KR", Georgia, serif';
+        ctx.fillText(msg, PAD + 4, PAD + s + 46);
+      }
+
+      /* 브랜드 서명 */
+      ctx.fillStyle = 'rgba(229,154,130,0.42)';
+      ctx.font = '400 8px Inter, Arial, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText('INVISIBLE SEASON', W - PAD - 4, H - 11);
+
+      cb(fc);
+    };
+    img.src = photoUrl;
+  }
+
+  /* ── 촬영 플래시 ── */
+  function flashEffect() {
+    var vp = document.getElementById('selfieViewport');
+    if (!vp) return;
+    vp.classList.add('flash');
+    setTimeout(function () { vp.classList.remove('flash'); }, 160);
+  }
+
+  /* ── Public API ── */
+  return {
+    bgProcessor: null, /* B안: function(ctx, videoEl, size){} 교체 */
+
+    init: function () {
+      refs.video    = document.getElementById('selfieVideo');
+      refs.canvas   = document.getElementById('selfieCanvas');
+      refs.dateSpan = document.getElementById('polaroidDate');
+      refs.msgInput = document.getElementById('polaroidMsg');
+
+      var now = new Date();
+      var dateStr = now.getFullYear() + '.'
+        + String(now.getMonth() + 1).padStart(2, '0') + '.'
+        + String(now.getDate()).padStart(2, '0');
+      if (refs.dateSpan) refs.dateSpan.textContent = dateStr;
+
+      document.getElementById('selfieStartBtn').addEventListener('click', function () {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          show('selfieDenied'); return;
+        }
+        startCamera(
+          function () { show('selfieLive'); },
+          function () { show('selfieDenied'); }
+        );
+      });
+
+      document.getElementById('selfieShootBtn').addEventListener('click', function () {
+        flashEffect();
+        setTimeout(function () {
+          capture();
+          stopCamera();
+          show('selfieResult');
+        }, 80);
+      });
+
+      document.getElementById('selfieStopBtn').addEventListener('click', function () {
+        stopCamera(); show('selfieStart');
+      });
+
+      document.getElementById('selfieRetakeBtn').addEventListener('click', function () {
+        startCamera(
+          function () { show('selfieLive'); },
+          function () { show('selfieDenied'); }
+        );
+      });
+
+      document.getElementById('selfieSaveBtn').addEventListener('click', function () {
+        var msg  = refs.msgInput  ? refs.msgInput.value.trim() : '';
+        var date = refs.dateSpan  ? refs.dateSpan.textContent  : '';
+        buildDownloadCanvas(msg, date, function (fc) {
+          var a = document.createElement('a');
+          a.download = 'invisible-season-' + Date.now() + '.jpg';
+          a.href = fc.toDataURL('image/jpeg', 0.93);
+          a.click();
+        });
+      });
+
+      document.getElementById('selfieRetryBtn').addEventListener('click', function () {
+        show('selfieStart');
+      });
+    }
+  };
+})();
+
+SelfieModule.init();
 </script>
 
 </body>
