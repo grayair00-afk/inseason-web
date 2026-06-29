@@ -475,6 +475,8 @@ footer {
   color: rgba(250,250,248,0.4); margin-bottom: 12px; transition: color 0.2s;
 }
 .foot-col a:hover { color: #FAFAF8; }
+.foot-email { color: rgba(250,250,248,0.42); transition: color 0.2s; display: block; font-size: 11.5px; font-weight: 300; }
+.foot-email:hover { color: #FAFAF8; }
 .copyright {
   padding-top: 28px; border-top: 1px solid rgba(255,255,255,0.05);
   display: flex; justify-content: space-between; align-items: center;
@@ -665,7 +667,7 @@ footer {
   <div class="nav-links">
     <a href="#about">소개</a>
     <a href="#services">하는 일</a>
-    <a href="#show">블루밍에어</a>
+    <a href="blooming-air.html">블루밍에어</a>
     <a href="#visit">문의하기</a>
     <a class="nav-cta" href="#visit">문의하기</a>
   </div>
@@ -691,7 +693,7 @@ footer {
     <p class="hero-en">Surreal Reality</p>
     <p class="hero-sub">빛과 울림이 있는 미디어아트, 인비저블 시즌<br><span style="font-size:0.85em;opacity:0.6">Media art of light and resonance — Invisible Season.</span></p>
     <div class="hero-btns">
-      <a class="btn-fill" href="#show">「블루밍에어」 보러가기</a>
+      <a class="btn-fill" href="blooming-air.html">「블루밍에어」 보러가기</a>
       <a class="btn-line" href="#about">브랜드 소개</a>
     </div>
   </div>
@@ -871,7 +873,7 @@ footer {
         <h4>About</h4>
         <a href="#about">소개</a>
         <a href="#services">하는 일</a>
-        <a href="#show">블루밍에어</a>
+        <a href="blooming-air.html">블루밍에어</a>
       </div>
       <div class="foot-col">
         <h4>Contact</h4>
@@ -880,7 +882,7 @@ footer {
       </div>
       <div class="foot-col">
         <h4>Say Hello</h4>
-        <a href="mailto:grayair00@gmail.com">grayair00@gmail.com</a>
+        <span class="foot-email" style="cursor:pointer">grayair00@gmail.com</span>
         <a href="#">Instagram</a>
       </div>
     </div>
@@ -893,19 +895,22 @@ footer {
 
 <script>
 (function(){
-  var el = document.querySelector('.cta-sig-email');
-  if (!el) return;
-  el.addEventListener('click', function() {
-    navigator.clipboard.writeText('grayair00@gmail.com').then(function() {
-      var orig = el.textContent;
-      el.textContent = 'Copied!';
-      el.classList.add('copied');
-      setTimeout(function() {
-        el.textContent = orig;
-        el.classList.remove('copied');
-      }, 1500);
+  function makeCopyable(el) {
+    if (!el) return;
+    el.addEventListener('click', function() {
+      navigator.clipboard.writeText('grayair00@gmail.com').then(function() {
+        var orig = el.textContent;
+        el.textContent = 'Copied!';
+        el.classList.add('copied');
+        setTimeout(function() {
+          el.textContent = orig;
+          el.classList.remove('copied');
+        }, 1500);
+      });
     });
-  });
+  }
+  makeCopyable(document.querySelector('.cta-sig-email'));
+  makeCopyable(document.querySelector('.foot-email'));
 })();
 </script>
 
@@ -926,14 +931,24 @@ footer {
   }
   setOn(false);
 
-  var tracks = ['Clouds_On_The_Windowsill.mp3', 'Echoes in Still Air.wav'];
-  var trackIdx = Math.floor(Math.random() * tracks.length);
+  var tracks = [
+    'Clouds_On_The_Windowsill.mp3',
+    'Echoes in Still Air.wav'
+    /* 파일 추가 시 여기에 줄 추가: 'filename.mp3', */
+  ];
+  var lastIdx = -1;
 
-  function loadTrack(idx) { audio.src = tracks[idx]; audio.load(); }
+  function pickRandom() {
+    if (tracks.length === 1) return 0;
+    var idx;
+    do { idx = Math.floor(Math.random() * tracks.length); } while (idx === lastIdx);
+    return idx;
+  }
+
+  function loadTrack(idx) { lastIdx = idx; audio.src = tracks[idx]; audio.load(); }
 
   audio.addEventListener('ended', function() {
-    trackIdx = (trackIdx + 1) % tracks.length;
-    loadTrack(trackIdx);
+    loadTrack(pickRandom());
     audio.play().catch(function(){});
   });
 
@@ -947,7 +962,7 @@ footer {
     if (started) return;
     started = true;
     removeListeners();
-    loadTrack(trackIdx);
+    loadTrack(pickRandom());
     audio.play().then(function() {
       setOn(true);
     }).catch(function() {
@@ -971,6 +986,27 @@ footer {
       audio.pause();
       setOn(false);
     }
+  });
+
+  /* 영상 페이지로 이동 시 BGM 페이드아웃 후 이동 */
+  document.querySelectorAll('a[href="blooming-air.html"]').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      if (audio.paused) return;
+      e.preventDefault();
+      var dest = link.href;
+      var vol = audio.volume;
+      var step = vol / 15;
+      var fade = setInterval(function() {
+        if (audio.volume > step) {
+          audio.volume = Math.max(0, audio.volume - step);
+        } else {
+          clearInterval(fade);
+          audio.pause();
+          audio.volume = vol;
+          window.location.href = dest;
+        }
+      }, 20);
+    });
   });
 })();
 </script>

@@ -1,0 +1,286 @@
+<!DOCTYPE html><!-- Invisible Season — Show Page -->
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>「블루밍에어」— 인비저블 시즌</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: #000;
+  color: #FAFAF8;
+  font-family: 'Inter', 'Pretendard', 'Pretendard Variable', -apple-system, 'Apple SD Gothic Neo', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 0 40px; height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(0,0,0,0.72);
+  backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  transition: opacity 0.4s;
+}
+nav.hide { opacity: 0; pointer-events: none; }
+
+.nav-logo { display: flex; align-items: center; gap: 10px; }
+.nav-logo svg { width: 24px; height: 24px; }
+.nav-logo-text {
+  font-size: 11.5px; font-weight: 600;
+  letter-spacing: 0.32em; color: #FAFAF8;
+  font-family: 'Inter', sans-serif;
+}
+
+.nav-back {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 10.5px; font-weight: 500; letter-spacing: 0.12em;
+  color: rgba(250,250,248,0.52);
+  transition: color 0.2s;
+}
+.nav-back:hover { color: #FAFAF8; }
+.nav-back svg { width: 16px; height: 16px; }
+
+/* ── MAIN ── */
+main {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 80px 24px 48px;
+  gap: 0;
+}
+
+/* ── VIDEO WRAP ── */
+.video-wrap {
+  width: 100%; max-width: 1080px;
+  position: relative;
+}
+
+.video-label {
+  font-size: 9.5px; font-weight: 500;
+  letter-spacing: 0.38em; text-transform: uppercase;
+  color: #E59A82;
+  font-family: 'Inter', sans-serif;
+  margin-bottom: 20px;
+}
+
+.video-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #0a0a0a;
+  overflow: hidden;
+}
+
+.video-container iframe {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  border: none;
+}
+
+/* ── CONTROLS ── */
+.video-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding: 0 2px;
+}
+
+.video-title-block {}
+.video-title {
+  font-size: clamp(18px, 2.4vw, 26px);
+  font-weight: 700; letter-spacing: -0.02em;
+  color: #FAFAF8;
+  font-family: 'Pretendard', 'Pretendard Variable', sans-serif;
+  line-height: 1.2;
+}
+.video-sub {
+  font-size: 11px; font-weight: 300; letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(250,250,248,0.30);
+  margin-top: 6px;
+  font-family: 'Inter', sans-serif;
+}
+
+.btn-fullscreen {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.18em;
+  font-family: 'Inter', sans-serif;
+  color: rgba(250,250,248,0.55);
+  padding: 10px 18px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: transparent;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.btn-fullscreen:hover {
+  color: #FAFAF8;
+  border-color: rgba(255,255,255,0.38);
+  background: rgba(255,255,255,0.04);
+}
+.btn-fullscreen svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* ── FOOTER INFO ── */
+.show-meta {
+  width: 100%; max-width: 1080px;
+  margin-top: 40px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+}
+.show-meta-left {
+  font-size: 11px; font-weight: 300;
+  color: rgba(250,250,248,0.30);
+  letter-spacing: 0.04em;
+  line-height: 1.8;
+}
+.show-meta-right a {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.16em;
+  color: #E59A82;
+  border-bottom: 1px solid rgba(229,154,130,0.32);
+  padding-bottom: 2px;
+  transition: border-color 0.2s;
+}
+.show-meta-right a:hover { border-color: #E59A82; }
+
+/* ── MOBILE ── */
+@media (max-width: 600px) {
+  nav { padding: 0 20px; }
+  main { padding: 72px 16px 40px; }
+  .video-controls { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .btn-fullscreen { align-self: flex-end; }
+  .show-meta { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<!-- SVG DEFS (로고 심볼) -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <g id="bloom-sym">
+      <circle cx="0" cy="-44" r="14" fill="none" stroke="#E59A82" stroke-width="5"/>
+      <circle cx="38.1" cy="-22" r="14" fill="none" stroke="#E59A82" stroke-width="5"/>
+      <circle cx="38.1" cy="22"  r="14" fill="none" stroke="#E59A82" stroke-width="5"/>
+      <circle cx="0"    cy="44"  r="14" fill="none" stroke="#E59A82" stroke-width="5"/>
+      <circle cx="-38.1" cy="22" r="14" fill="none" stroke="#E59A82" stroke-width="5"/>
+      <circle cx="-38.1" cy="-22" r="14" fill="none" stroke="#E59A82" stroke-width="5"/>
+      <circle cx="0" cy="0"     r="16" fill="none" stroke="#E59A82" stroke-width="5"/>
+    </g>
+  </defs>
+</svg>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="nav-logo" href="index.html">
+    <svg viewBox="-68 -68 136 136"><use href="#bloom-sym"/></svg>
+    <span class="nav-logo-text">INVISIBLE SEASON</span>
+  </a>
+  <a class="nav-back" href="index.html">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+      <polyline points="10,3 5,8 10,13"/>
+    </svg>
+    돌아가기
+  </a>
+</nav>
+
+<!-- MAIN -->
+<main>
+  <div class="video-wrap">
+    <p class="video-label">A SCENE · BLOOMING AIR</p>
+
+    <div class="video-container" id="videoContainer">
+      <!-- YouTube URL 받으면 YOUTUBE_VIDEO_ID 교체 -->
+      <iframe
+        id="yt"
+        src="https://www.youtube.com/embed/YOUTUBE_VIDEO_ID?rel=0&modestbranding=1&color=white"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+        allowfullscreen
+        title="블루밍에어 — 인비저블 시즌">
+      </iframe>
+    </div>
+
+    <div class="video-controls">
+      <div class="video-title-block">
+        <div class="video-title">「블루밍에어」</div>
+        <div class="video-sub">Blooming Air · Invisible Season · 2025</div>
+      </div>
+      <button class="btn-fullscreen" id="btnFs" onclick="toggleFullscreen()">
+        <svg id="fsIcon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+          <polyline points="1,5 1,1 5,1"/>
+          <polyline points="9,1 13,1 13,5"/>
+          <polyline points="13,9 13,13 9,13"/>
+          <polyline points="5,13 1,13 1,9"/>
+        </svg>
+        확대 보기
+      </button>
+    </div>
+  </div>
+
+  <div class="show-meta">
+    <div class="show-meta-left">
+      미디어아트 스튜디오 인비저블 시즌<br>
+      Media Art Studio · Invisible Season © 2025
+    </div>
+    <div class="show-meta-right">
+      <a href="index.html">메인으로 돌아가기 →</a>
+    </div>
+  </div>
+</main>
+
+<script>
+const container = document.getElementById('videoContainer');
+const nav = document.getElementById('nav');
+const fsIcon = document.getElementById('fsIcon');
+
+const ICON_EXPAND = `<polyline points="1,5 1,1 5,1"/><polyline points="9,1 13,1 13,5"/><polyline points="13,9 13,13 9,13"/><polyline points="5,13 1,13 1,9"/>`;
+const ICON_SHRINK = `<polyline points="5,1 1,1 1,5"/><polyline points="13,5 13,1 9,1"/><polyline points="9,13 13,13 13,9"/><polyline points="1,9 1,13 5,13"/>`;
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    container.requestFullscreen && container.requestFullscreen();
+  } else {
+    document.exitFullscreen && document.exitFullscreen();
+  }
+}
+
+document.addEventListener('fullscreenchange', () => {
+  const btn = document.getElementById('btnFs');
+  if (document.fullscreenElement) {
+    fsIcon.innerHTML = ICON_SHRINK;
+    btn.childNodes[btn.childNodes.length - 1].textContent = ' 축소';
+    nav.classList.add('hide');
+  } else {
+    fsIcon.innerHTML = ICON_EXPAND;
+    btn.childNodes[btn.childNodes.length - 1].textContent = ' 확대 보기';
+    nav.classList.remove('hide');
+  }
+});
+
+// 마우스 정지 시 nav 숨기기 (풀스크린 상태일 때만)
+let navTimer;
+document.addEventListener('mousemove', () => {
+  if (!document.fullscreenElement) return;
+  nav.classList.remove('hide');
+  clearTimeout(navTimer);
+  navTimer = setTimeout(() => {
+    if (document.fullscreenElement) nav.classList.add('hide');
+  }, 2500);
+});
+</script>
+
+</body>
+</html>
