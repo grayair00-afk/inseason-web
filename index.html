@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>인비저블 시즌 — 현실같은 비현실</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@300;400&display=swap');
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
 /* 영문: Inter / 한글: Pretendard — 브라우저가 글자 단위로 자동 분기 */
@@ -365,6 +365,66 @@ nav {
 }
 .cta-body .cta-sig-email:hover { color: #F5C4AD; }
 .cta-body .cta-sig-email.copied { color: #E59A82; }
+/* ── VIDEO MODAL ── */
+.v-modal {
+  position: fixed; inset: 0; z-index: 300;
+  background: #000;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 24px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s;
+}
+.v-modal.open { opacity: 1; pointer-events: auto; }
+
+.v-modal-close {
+  position: absolute; top: 20px; right: 28px;
+  background: none; border: none; cursor: pointer;
+  color: rgba(250,250,248,0.38); font-size: 30px;
+  font-weight: 300; line-height: 1; padding: 8px;
+  font-family: 'Inter', sans-serif;
+  transition: color 0.2s;
+}
+.v-modal-close:hover { color: #FAFAF8; }
+
+.v-modal-inner {
+  width: 100%; max-width: 960px;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 24px;
+}
+
+.v-modal-frame {
+  position: relative; width: 100%; aspect-ratio: 16/9;
+  background: #060508;
+}
+.v-modal-frame iframe {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; border: none;
+}
+
+.v-modal-credits {
+  text-align: center;
+  display: flex; flex-direction: column; gap: 5px;
+}
+.v-modal-title {
+  font-family: 'Noto Serif KR', 'Pretendard', serif;
+  font-size: 20px; font-weight: 400;
+  letter-spacing: 0.04em; color: #FAFAF8;
+}
+.v-modal-meta {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px; font-weight: 400;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(250,250,248,0.36);
+}
+.v-modal-credit {
+  font-family: 'Inter', sans-serif;
+  font-size: 9px; font-weight: 300;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(250,250,248,0.16);
+  margin-top: 2px;
+}
+
 .bgm-toggle {
   position: fixed; bottom: 28px; right: 28px; z-index: 9999;
   width: 44px; height: 44px; border-radius: 50%;
@@ -702,7 +762,7 @@ footer {
     <p class="hero-en">Surreal Reality</p>
     <p class="hero-sub">빛과 울림이 있는 미디어아트, 인비저블 시즌<br><span style="font-size:0.85em;opacity:0.6">Media art of light and resonance — Invisible Season.</span></p>
     <div class="hero-btns">
-      <a class="btn-fill" href="blooming-air.html">「블루밍에어」 보러가기</a>
+      <a class="btn-fill" href="blooming-air.html" id="btnShow">「블루밍에어」 보러가기</a>
       <a class="btn-line" href="#about">브랜드 소개</a>
     </div>
   </div>
@@ -997,8 +1057,8 @@ footer {
     }
   });
 
-  /* 영상 페이지로 이동 시 BGM 페이드아웃 후 이동 */
-  document.querySelectorAll('a[href="blooming-air.html"]').forEach(function(link) {
+  /* nav/footer의 블루밍에어 링크 — 페이지 이동 전 BGM 페이드아웃 */
+  document.querySelectorAll('a[href="blooming-air.html"]:not(#btnShow)').forEach(function(link) {
     link.addEventListener('click', function(e) {
       if (audio.paused) return;
       e.preventDefault();
@@ -1017,6 +1077,98 @@ footer {
       }, 20);
     });
   });
+
+  /* BGM 외부 참조용 */
+  window._bgmAudio = audio;
+  window._bgmSetOn = setOn;
+})();
+</script>
+
+<!-- VIDEO MODAL -->
+<div class="v-modal" id="vModal">
+  <button class="v-modal-close" id="vModalClose">×</button>
+  <div class="v-modal-inner">
+    <div class="v-modal-frame" id="vModalFrame"></div>
+    <div class="v-modal-credits">
+      <p class="v-modal-title">블루밍에어</p>
+      <p class="v-modal-meta">Director · Jung.K</p>
+      <p class="v-modal-meta">Invisible Season</p>
+      <p class="v-modal-credit">Music · Silver Still Water</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+(function() {
+  var modal   = document.getElementById('vModal');
+  var frame   = document.getElementById('vModalFrame');
+  var btnOpen = document.getElementById('btnShow');
+  var btnClose= document.getElementById('vModalClose');
+  var ytPlayer = null;
+
+  function pauseBgm() {
+    var a = window._bgmAudio;
+    if (a && !a.paused) {
+      a.pause();
+      if (window._bgmSetOn) window._bgmSetOn(false);
+    }
+  }
+
+  function openModal(e) {
+    e.preventDefault();
+    pauseBgm();
+
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    var iframe = document.createElement('iframe');
+    iframe.id = 'vModalYT';
+    iframe.src = 'https://www.youtube.com/embed/IVzu4799ERA'
+      + '?autoplay=1&rel=0&modestbranding=1&enablejsapi=1&playsinline=1';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+    iframe.allowFullscreen = true;
+    iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;';
+    frame.appendChild(iframe);
+
+    if (window.YT && YT.Player) {
+      bindPlayer();
+    } else {
+      window._onYTReady = bindPlayer;
+    }
+  }
+
+  function bindPlayer() {
+    ytPlayer = new YT.Player('vModalYT', {
+      events: {
+        onStateChange: function(e) {
+          if (e.data === YT.PlayerState.PLAYING) pauseBgm();
+        }
+      }
+    });
+  }
+
+  function closeModal() {
+    if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo();
+    ytPlayer = null;
+    frame.innerHTML = '';
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  btnOpen.addEventListener('click', openModal);
+  btnClose.addEventListener('click', closeModal);
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  /* YT API 준비 콜백 */
+  window.onYouTubeIframeAPIReady = function() {
+    if (window._onYTReady) { window._onYTReady(); window._onYTReady = null; }
+  };
 })();
 </script>
 
