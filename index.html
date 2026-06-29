@@ -813,91 +813,108 @@ footer {
   .vc-gap { margin-top: 12px; }
 }
 
-/* ── Works 영상관 시네마 레이아웃 ── */
+/* ── Works 영상관: 씬(scene) + 갤러리 레이아웃 ── */
 #worksOverlay { display: flex; flex-direction: column; overflow: hidden; }
 
-.wo-header { flex-shrink: 0; padding: 20px 32px 0; }
+.wo-header { flex-shrink: 0; padding: 22px 40px 0; }
 .wo-label {
-  font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase;
+  font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase;
   color: rgba(250,250,248,0.16);
 }
 
-.wo-main {
+/* 상단 씬 영역: 기본 순수 블랙, 영상 선택 시 플레이어 출현 */
+.wo-scene {
   flex: 1; min-height: 0;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 16px 40px 18px;
-  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  padding: 28px 40px;
 }
-.wo-player-wrap { width: 100%; max-width: 860px; }
 
-.wo-frame {
-  width: 100%; aspect-ratio: 16/9;
-  background: #000; position: relative;
+/* 플레이어 — 기본 숨김, .visible 클래스 추가 시 표시 */
+.wo-player {
+  width: 100%; max-width: 820px;
+  position: relative; aspect-ratio: 16/9;
+  background: #000;
+  display: none;
 }
-.wo-frame iframe {
+.wo-player.visible { display: block; }
+.wo-player iframe {
   position: absolute; inset: 0;
   width: 100%; height: 100%; border: none;
 }
 
-.wo-credits {
-  text-align: center;
-  display: flex; flex-direction: column; gap: 4px;
-  margin-top: 14px; min-height: 54px;
-}
-
-/* 하단 필름스트립 */
-.wo-strip-wrap {
+/* 하단 갤러리 영역 */
+.wo-gallery {
   flex-shrink: 0;
-  padding: 12px 28px 18px;
   border-top: 1px solid rgba(255,255,255,0.05);
+  padding: 32px 40px 44px;
 }
-.wo-strip {
-  display: flex; gap: 10px;
+.wo-cards {
+  display: flex; gap: 28px;
   overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
-  padding-bottom: 2px;
+  padding-bottom: 4px;
 }
-.wo-strip::-webkit-scrollbar { height: 2px; }
-.wo-strip::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.10); }
+.wo-cards::-webkit-scrollbar { height: 2px; }
+.wo-cards::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.10); }
 
-.wo-strip-item {
-  flex-shrink: 0; width: 148px;
+/* 카드 — 중간 크기 썸네일 + 제목 */
+.wo-card {
+  flex-shrink: 0; width: 268px;
   cursor: pointer; background: none; border: none; padding: 0; text-align: left;
 }
-.wo-strip-thumb {
-  width: 148px; aspect-ratio: 16/9;
-  overflow: hidden; display: block; position: relative;
+.wo-card-thumb {
+  width: 100%; aspect-ratio: 16/9; position: relative;
+  overflow: hidden; background: #0c0b0f;
   outline: 1.5px solid transparent; outline-offset: -1px;
   transition: outline-color 0.2s;
 }
-.wo-strip-thumb img {
+.wo-card-thumb::after {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(6,5,8,0.22); transition: background 0.4s;
+}
+.wo-card:hover .wo-card-thumb::after { background: rgba(6,5,8,0.06); }
+.wo-card.active .wo-card-thumb { outline-color: rgba(229,154,130,0.58); }
+
+.wo-card-thumb img {
   width: 100%; height: 100%; object-fit: cover; display: block;
-  opacity: 0.50; transition: opacity 0.3s;
+  opacity: 0.76; transition: opacity 0.4s, transform 0.7s ease;
 }
-.wo-strip-item:hover .wo-strip-thumb img { opacity: 0.76; }
-.wo-strip-item.active .wo-strip-thumb { outline-color: rgba(229,154,130,0.58); }
-.wo-strip-item.active .wo-strip-thumb img { opacity: 0.95; }
+.wo-card:hover .wo-card-thumb img { opacity: 0.95; transform: scale(1.03); }
+.wo-card.active .wo-card-thumb img { opacity: 1; }
 
-.wo-strip-name {
-  display: block; font-size: 10px; letter-spacing: 0.04em;
-  color: rgba(250,250,248,0.28); margin-top: 5px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+.wo-card-play {
+  position: absolute; inset: 0; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.3s;
 }
-.wo-strip-item.active .wo-strip-name { color: rgba(250,250,248,0.62); }
+.wo-card:hover .wo-card-play { opacity: 1; }
+.wo-card.active .wo-card-play { opacity: 0; }
+.wo-card-play svg { width: 42px; height: 42px; color: rgba(250,250,248,0.82); }
 
-@media (max-width: 600px) {
-  .wo-header { padding: 14px 18px 0; }
-  .wo-main { padding: 10px 14px 12px; }
-  .wo-strip-wrap { padding: 10px 14px 14px; }
-  .wo-strip-item { width: 116px; }
-  .wo-strip-thumb { width: 116px; }
-  .wo-credits { margin-top: 10px; min-height: 44px; }
-  .vc-title { font-size: 16px; }
-  .vc-gap { margin-top: 13px; }
+.wo-card-info { margin-top: 14px; display: flex; flex-direction: column; gap: 5px; }
+.wo-card-title {
+  font-family: 'Noto Serif KR', 'Pretendard', serif;
+  font-size: 15px; font-weight: 400; letter-spacing: 0.03em;
+  color: rgba(250,250,248,0.82);
+}
+.wo-card-role {
+  font-size: 10px; letter-spacing: 0.20em; text-transform: uppercase;
+  color: rgba(250,250,248,0.24);
+}
+
+@media (max-width: 768px) {
+  .wo-header { padding: 18px 24px 0; }
+  .wo-scene { padding: 20px 24px; }
+  .wo-gallery { padding: 24px 24px 36px; }
+  .wo-card { width: 220px; }
+  .wo-cards { gap: 20px; }
 }
 @media (max-width: 480px) {
-  .wo-strip-item { width: 100px; }
-  .wo-strip-thumb { width: 100px; }
+  .wo-header { padding: 14px 18px 0; }
+  .wo-scene { padding: 14px 16px; }
+  .wo-gallery { padding: 18px 18px 28px; }
+  .wo-card { width: 180px; }
+  .wo-card-title { font-size: 13px; }
+  .wo-card-info { margin-top: 10px; gap: 4px; }
 }
 </style>
 </head>
@@ -1270,51 +1287,51 @@ footer {
 </script>
 
 <!-- ════════════════════════════════════════════════════════════════════
-     WORKS 영상관 — 갤러리 + 플레이어 통합 오버레이
+     WORKS 영상관 오버레이
      ════════════════════════════════════════════════════════════════════ -->
 <div class="overlay-full" id="worksOverlay" role="dialog" aria-modal="true" aria-label="Works">
   <button class="overlay-close" id="worksClose" aria-label="닫기">×</button>
 
-  <!-- WORKS 라벨 -->
   <div class="wo-header">
-    <span class="wo-label">Works</span>
+    <span class="wo-label">Invisible Season &nbsp;·&nbsp; Works</span>
   </div>
 
-  <!-- 중앙 플레이어 + 크레딧 (기본 상태: 빈 블랙) -->
-  <div class="wo-main">
-    <div class="wo-player-wrap">
-      <div class="wo-frame" id="woFrame"></div>
-      <div class="wo-credits" id="woCredits"></div>
-    </div>
+  <!-- 상단 씬: 기본 순수 블랙 / 선택 시 플레이어 출현 -->
+  <div class="wo-scene">
+    <div class="wo-player" id="woPlayer"></div>
   </div>
 
-  <!-- 하단 필름스트립 -->
-  <div class="wo-strip-wrap">
+  <!-- 하단 갤러리 -->
+  <div class="wo-gallery">
     <!--
     ─── 새 영상 추가 패턴 ─────────────────────────────────────────────
-    아래 wo-strip-item 버튼을 복사해 data 속성·img src 교체:
-      data-yt     → 유튜브 영상 ID
-      data-title  → 한국어 제목
-      data-en     → 영문 제목
-      data-meta1  → 첫 번째 크레딧 줄  (예: "Invisible Season")
-      data-credit → 두 번째 크레딧 줄  (예: "Music · Silver Still Water")
-      data-meta2  → 세 번째 크레딧 줄  (예: "Art Director · Jung.K")
-      img src     → 썸네일 이미지
-    클릭 시 가운데 플레이어에서 소리와 함께 재생됩니다.
+    wo-card 버튼을 복사해 data 속성·img src 교체:
+      data-yt    → 유튜브 영상 ID
+      data-title → 한국어 제목
+      data-role  → 하단 역할 텍스트  (예: "Art Director · Jung.K")
+      img src    → 썸네일 이미지
+    클릭 시 위 씬 영역에서 소리와 함께 재생됩니다.
     ──────────────────────────────────────────────────────────────────── -->
-    <div class="wo-strip" id="woStrip">
+    <div class="wo-cards" id="woCards">
 
       <!-- 블루밍에어 -->
-      <button class="wo-strip-item" type="button"
+      <button class="wo-card" type="button"
               data-yt="IVzu4799ERA"
-              data-title="블루밍에어" data-en="Blooming Air"
-              data-meta1="Invisible Season"
-              data-credit="Music · Silver Still Water"
-              data-meta2="Art Director · Jung.K">
-        <div class="wo-strip-thumb">
+              data-title="블루밍에어"
+              data-role="Art Director · Jung.K">
+        <div class="wo-card-thumb">
           <img src="img_show.webp" alt="블루밍에어">
+          <div class="wo-card-play">
+            <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="26" cy="26" r="23" stroke="currentColor" stroke-width="1.1" opacity="0.65"/>
+              <polygon points="22,18 36,26 22,34" fill="currentColor"/>
+            </svg>
+          </div>
         </div>
-        <span class="wo-strip-name">블루밍에어</span>
+        <div class="wo-card-info">
+          <span class="wo-card-title">블루밍에어</span>
+          <span class="wo-card-role">Art Director · Jung.K</span>
+        </div>
       </button>
 
     </div>
@@ -1323,8 +1340,7 @@ footer {
 
 <script>
 /* ── Works 영상관 컨트롤러 ──
-   iframe을 클릭 핸들러 동기 스택 안에서 삽입 → 브라우저가 사용자 제스처로 인식
-   → PC·폰 모두 소리 포함 자동재생 허용 */
+   iframe을 클릭 핸들러 동기 스택 안에서 삽입 → PC·폰 모두 소리 포함 자동재생 허용 */
 (function () {
   var _bgmPaused = false;
 
@@ -1343,65 +1359,58 @@ footer {
     if (a) a.play().then(function () { if (window._bgmSetOn) window._bgmSetOn(true); }).catch(function () {});
   }
 
-  /* 중앙 플레이어에 iframe 삽입 — 반드시 클릭 핸들러 동기 스택 안에서 호출 */
-  function playInWorks(ytId, btn) {
-    var frame = document.getElementById('woFrame');
-    frame.innerHTML = '';
+  /* 카드 선택 → 플레이어 표시 + iframe 즉시 삽입 (동기) */
+  function playCard(card) {
+    var player = document.getElementById('woPlayer');
+    player.innerHTML = '';
+    /* iframe을 클릭 핸들러 스택 안에서 동기적으로 삽입 — 이래야 autoplay 허용 */
     var iframe = document.createElement('iframe');
-    iframe.src = 'https://www.youtube.com/embed/' + ytId
+    iframe.src = 'https://www.youtube.com/embed/' + card.dataset.yt
       + '?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1';
     iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
     iframe.allowFullscreen = true;
     iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;';
-    frame.appendChild(iframe);
+    player.appendChild(iframe);
+    player.classList.add('visible');
 
-    /* 활성 썸네일 강조 */
-    document.querySelectorAll('.wo-strip-item').forEach(function (el) {
-      el.classList.toggle('active', el === btn);
+    document.querySelectorAll('.wo-card').forEach(function (c) {
+      c.classList.toggle('active', c === card);
     });
-
-    /* 크레딧 표시 */
-    if (btn) {
-      document.getElementById('woCredits').innerHTML =
-        '<p class="vc-title">' + (btn.dataset.title || '') + '</p>'
-        + '<p class="vc-en">' + (btn.dataset.en || '') + '</p>'
-        + '<div class="vc-divider"></div>'
-        + '<p class="vc-meta vc-gap">' + (btn.dataset.meta1 || '') + '</p>'
-        + '<p class="vc-credit">' + (btn.dataset.credit || '') + '</p>'
-        + '<p class="vc-meta vc-gap">' + (btn.dataset.meta2 || '') + '</p>';
-    }
   }
 
-  /* Works 열기 */
+  function stopPlayer() {
+    var player = document.getElementById('woPlayer');
+    player.innerHTML = '';
+    player.classList.remove('visible');
+    document.querySelectorAll('.wo-card').forEach(function (c) { c.classList.remove('active'); });
+  }
+
   function openWorks() {
     document.getElementById('worksOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
 
-  /* Works 열기 + 특정 영상 즉시 재생 (CTA·footer 링크에서 호출) */
+  /* CTA·footer 링크: 오버레이 열기 + 즉시 재생 */
   window.openWorksWithVideo = function (ytId) {
     pauseBgm();
     openWorks();
-    var btn = document.querySelector('.wo-strip-item[data-yt="' + ytId + '"]');
-    playInWorks(ytId, btn); /* 클릭 핸들러 동기 스택 → autoplay 허용 */
+    var card = document.querySelector('.wo-card[data-yt="' + ytId + '"]');
+    if (card) playCard(card); /* 클릭 핸들러 동기 스택 → autoplay 허용 */
   };
 
-  /* Works 닫기 */
   function closeWorks() {
-    document.getElementById('woFrame').innerHTML = '';
-    document.getElementById('woCredits').innerHTML = '';
-    document.querySelectorAll('.wo-strip-item').forEach(function (el) { el.classList.remove('active'); });
+    stopPlayer();
     document.getElementById('worksOverlay').classList.remove('open');
     document.body.style.overflow = '';
     resumeBgm();
   }
 
-  /* 필름스트립 클릭 → 해당 영상 재생 */
-  document.getElementById('woStrip').addEventListener('click', function (e) {
-    var btn = e.target.closest('.wo-strip-item');
-    if (!btn) return;
+  /* 카드 클릭 */
+  document.getElementById('woCards').addEventListener('click', function (e) {
+    var card = e.target.closest('.wo-card');
+    if (!card) return;
     pauseBgm();
-    playInWorks(btn.dataset.yt, btn); /* 클릭 핸들러 동기 → autoplay 허용 */
+    playCard(card); /* 동기 → autoplay 허용 */
   });
 
   document.getElementById('worksClose').addEventListener('click', closeWorks);
@@ -1409,22 +1418,18 @@ footer {
     if (e.target === this) closeWorks();
   });
 
-  /* nav 'Works' → 기본 빈 블랙 상태로 열기 */
+  /* nav Works → 빈 블랙 + 카드 상태로 열기 */
   document.getElementById('navWorks').addEventListener('click', function (e) {
     e.preventDefault(); openWorks();
   });
-
-  /* CTA '보러가기' → 블루밍에어 즉시 재생 */
+  /* CTA 보러가기 → 즉시 재생 */
   document.getElementById('ctaVideoBtn').addEventListener('click', function (e) {
     e.preventDefault(); window.openWorksWithVideo('IVzu4799ERA');
   });
-
-  /* footer 링크 → 블루밍에어 즉시 재생 */
+  /* footer → 즉시 재생 */
   document.getElementById('footerVideoLink').addEventListener('click', function (e) {
     e.preventDefault(); window.openWorksWithVideo('IVzu4799ERA');
   });
-
-  /* Escape 키 */
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && document.getElementById('worksOverlay').classList.contains('open')) closeWorks();
   });
