@@ -267,10 +267,12 @@ function attachPlayer(iframeId) {
   });
 }
 
-/* API가 poster 클릭 전에 먼저 로드될 경우 대비 */
-function onYouTubeIframeAPIReady() {
-  /* 클릭 전엔 아무 것도 하지 않음 */
-}
+/* 페이지 로드 즉시 자동재생 */
+window.addEventListener('load', function() {
+  setTimeout(loadVideo, 200);
+});
+
+function onYouTubeIframeAPIReady() {}
 </script>
 
 </body>
