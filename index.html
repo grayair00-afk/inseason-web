@@ -876,7 +876,7 @@ footer {
 /* ── Works 영상관: 씬(scene) + 갤러리 레이아웃 ── */
 #worksOverlay { display: flex; flex-direction: column; overflow: hidden; }
 
-.wo-header { flex-shrink: 0; padding: 22px 40px 0; }
+.wo-header { flex-shrink: 0; padding: 22px 40px 0; transition: opacity 0.4s ease; }
 .wo-label {
   font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase;
   color: rgba(250,250,248,0.16);
@@ -928,6 +928,7 @@ footer {
   flex-shrink: 0;
   border-top: 1px solid rgba(255,255,255,0.05);
   padding: 14px 40px 160px;
+  transition: opacity 0.4s ease;
 }
 .wo-cards {
   display: flex; gap: 28px;
@@ -997,6 +998,19 @@ footer {
   .wo-card { width: 274px; }
   .wo-card-title { font-size: 13px; }
   .wo-card-info { margin-top: 10px; gap: 4px; }
+}
+
+/* ── Works: 영상 재생 중 몰입 모드 ── */
+/* 헤더·갤러리 페이드아웃 */
+#worksOverlay.playing .wo-header,
+#worksOverlay.playing .wo-gallery { opacity: 0; pointer-events: none; }
+/* 마우스 올리면 복귀 (데스크탑) */
+#worksOverlay.playing:hover .wo-header,
+#worksOverlay.playing:hover .wo-gallery { opacity: 1; pointer-events: auto; }
+/* 터치 기기: hover 없으므로 항상 표시 */
+@media (hover: none) {
+  #worksOverlay.playing .wo-header,
+  #worksOverlay.playing .wo-gallery { opacity: 1; pointer-events: auto; }
 }
 
 /* ── Works: 세로 짧은 화면 반응형 ── */
@@ -1539,7 +1553,7 @@ footer {
     /* iframe 동기 삽입 — 클릭 핸들러 스택 유지 → autoplay 허용 */
     var iframe = document.createElement('iframe');
     iframe.src = 'https://www.youtube.com/embed/' + card.dataset.yt
-      + '?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1';
+      + '?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&iv_load_policy=3&cc_load_policy=0';
     iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
     iframe.allowFullscreen = true;
     iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;';
@@ -1550,7 +1564,8 @@ footer {
     });
 
     playerDiv.insertBefore(iframe, playerDiv.firstChild); /* 닫기 버튼 앞에 삽입 */
-    playerDiv.classList.add('visible'); /* CSS: .wo-player-close 자동 표시 */
+    playerDiv.classList.add('visible');
+    document.getElementById('worksOverlay').classList.add('playing');
 
     document.querySelectorAll('.wo-card').forEach(function (c) {
       c.classList.toggle('active', c === card);
@@ -1563,7 +1578,8 @@ footer {
     var playerDiv = document.getElementById('woPlayer');
     var iframe = playerDiv.querySelector('iframe');
     if (iframe) iframe.remove(); /* iframe만 제거, 버튼은 남김 */
-    playerDiv.classList.remove('visible'); /* CSS: .wo-player-close 자동 숨김 */
+    playerDiv.classList.remove('visible');
+    document.getElementById('worksOverlay').classList.remove('playing');
     document.querySelectorAll('.wo-card').forEach(function (c) { c.classList.remove('active'); });
     resumeBgm();
   }
