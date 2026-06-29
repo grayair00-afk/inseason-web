@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Works — 인비저블 시즌</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: #060508;
+  color: #FAFAF8;
+  font-family: 'Pretendard', -apple-system, 'Apple SD Gothic Neo', sans-serif;
+  min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ── BACK LINK ── */
+.back {
+  position: fixed;
+  top: 28px; left: 32px;
+  z-index: 10;
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 10px; font-weight: 500; letter-spacing: 0.18em;
+  color: rgba(250,250,248,0.32);
+  transition: color 0.2s;
+}
+.back:hover { color: rgba(250,250,248,0.72); }
+.back svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* ── MAIN ── */
+main {
+  min-height: 100vh;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 120px 40px 100px;
+}
+
+/* ── HEADING ── */
+.page-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(250,250,248,0.18);
+  margin-bottom: 8px;
+}
+.page-title {
+  font-size: 13px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(250,250,248,0.44);
+  font-weight: 400;
+  margin-bottom: 72px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ── GRID ── */
+.works-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 48px 40px;
+}
+
+/* ── CARD ── */
+.work-card {
+  display: block;
+  cursor: pointer;
+}
+
+.work-thumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #0c0b0f;
+}
+
+.work-thumb img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.80;
+  transition: transform 0.7s ease, opacity 0.4s;
+}
+
+.work-card:hover .work-thumb img {
+  transform: scale(1.04);
+  opacity: 1;
+}
+
+.work-thumb::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(6,5,8,0.18);
+  transition: background 0.4s;
+}
+.work-card:hover .work-thumb::after {
+  background: rgba(6,5,8,0.06);
+}
+
+/* play icon */
+.work-play {
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; align-items: center; justify-content: center;
+}
+.work-play svg {
+  width: 40px; height: 40px;
+  color: rgba(250,250,248,0.55);
+  transition: color 0.3s, transform 0.3s;
+}
+.work-card:hover .work-play svg {
+  color: rgba(250,250,248,0.88);
+  transform: scale(1.1);
+}
+
+.work-info {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.work-title {
+  font-family: 'Noto Serif KR', 'Pretendard', serif;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  color: rgba(250,250,248,0.84);
+  line-height: 1.2;
+}
+
+.work-role {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(250,250,248,0.24);
+}
+
+/* ── MOBILE ── */
+@media (max-width: 600px) {
+  .back { top: 18px; left: 20px; }
+  main { padding: 88px 20px 72px; }
+  .page-title { margin-bottom: 48px; }
+  .works-grid { gap: 32px; }
+  .work-title { font-size: 15px; }
+}
+</style>
+</head>
+<body>
+
+<a class="back" href="index.html">
+  <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+    <polyline points="9,2 4,7 9,12"/>
+  </svg>
+  인비저블 시즌
+</a>
+
+<main>
+  <p class="page-eyebrow">Invisible Season</p>
+  <p class="page-title">Works</p>
+
+  <div class="works-grid">
+
+    <!--
+    ─── 새 영상 추가 패턴 ───────────────────────────────────────────────
+    새 작업이 생길 때마다 아래 세 곳을 함께 업데이트:
+
+      (a) 전용 재생 페이지 생성
+          blooming-air.html 을 복제 → 새파일.html
+          제목·YouTube ID(embed URL)·credits 교체
+
+      (b) index.html 히어로 버튼 추가
+          <a class="btn-fill" href="새파일.html">「새 제목」 보러가기</a>
+          (BGM 페이드아웃 셀렉터가 href="새파일.html" 을 자동으로 잡아줌)
+
+      (c) 이 파일(works.html)에 썸네일 한 칸 추가
+          아래 블루밍에어 .work-card 블록을 복사해 href와 내용을 교체
+          img src → 해당 영상 스틸 또는 YouTube 썸네일
+    ──────────────────────────────────────────────────────────────────── -->
+
+    <!-- 블루밍에어 -->
+    <a class="work-card" href="blooming-air.html">
+      <div class="work-thumb">
+        <!-- 영상 스틸. 직접 찍은 스틸로 교체 시 src만 변경 -->
+        <img src="img_show.webp" alt="블루밍에어 — 인비저블 시즌">
+        <div class="work-play">
+          <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="26" cy="26" r="23" stroke="currentColor" stroke-width="1.1" opacity="0.6"/>
+            <polygon points="22,18 36,26 22,34" fill="currentColor"/>
+          </svg>
+        </div>
+      </div>
+      <div class="work-info">
+        <span class="work-title">블루밍에어</span>
+        <span class="work-role">Art Director · Jung.K</span>
+      </div>
+    </a>
+
+  </div>
+</main>
+
+</body>
+</html>
