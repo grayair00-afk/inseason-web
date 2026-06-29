@@ -678,6 +678,140 @@ footer {
   footer { padding: 52px 0 60px; }
 
 }
+
+/* ── WORKS · 영상관 오버레이 ── */
+.overlay-full {
+  position: fixed; inset: 0; z-index: 200;
+  background: #060508;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s;
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+}
+.overlay-full.open { opacity: 1; pointer-events: auto; }
+
+.overlay-close {
+  position: fixed; top: 20px; right: 28px; z-index: 201;
+  background: none; border: none; cursor: pointer;
+  color: rgba(250,250,248,0.34); font-size: 30px;
+  font-weight: 300; line-height: 1; padding: 8px;
+  font-family: 'Inter', sans-serif; transition: color 0.2s;
+}
+.overlay-close:hover { color: #FAFAF8; }
+
+/* Works 갤러리 */
+.works-ol-inner { max-width: 1160px; margin: 0 auto; padding: 96px 40px 100px; }
+.works-ol-eyebrow {
+  font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: rgba(250,250,248,0.18); margin-bottom: 6px;
+}
+.works-ol-title {
+  font-size: 13px; letter-spacing: 0.24em; text-transform: uppercase;
+  color: rgba(250,250,248,0.42); font-weight: 400;
+  margin-bottom: 64px; padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.works-ol-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 48px 40px; }
+
+/* 썸네일 카드 */
+.work-card {
+  background: none; border: none; cursor: pointer;
+  text-align: left; padding: 0; display: block; width: 100%;
+}
+.work-thumb { position: relative; aspect-ratio: 16/9; overflow: hidden; background: #0c0b0f; }
+.work-thumb img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  opacity: 0.80; transition: transform 0.7s ease, opacity 0.4s;
+}
+.work-card:hover .work-thumb img { transform: scale(1.04); opacity: 1; }
+.work-thumb::after {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(6,5,8,0.22); transition: background 0.4s;
+}
+.work-card:hover .work-thumb::after { background: rgba(6,5,8,0.05); }
+.work-play-icon {
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; align-items: center; justify-content: center;
+}
+.work-play-icon svg {
+  width: 42px; height: 42px;
+  color: rgba(250,250,248,0.55); transition: color 0.3s, transform 0.3s;
+}
+.work-card:hover .work-play-icon svg { color: rgba(250,250,248,0.88); transform: scale(1.1); }
+.work-info { margin-top: 14px; display: flex; flex-direction: column; gap: 5px; }
+.work-title {
+  font-family: 'Noto Serif KR', 'Pretendard', serif;
+  font-size: 16px; font-weight: 400; letter-spacing: 0.03em; color: rgba(250,250,248,0.84);
+}
+.work-role { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(250,250,248,0.24); }
+
+/* 영상관 */
+.overlay-video { z-index: 300; }
+.video-ol-inner {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 72px 24px 60px; gap: 28px;
+}
+.v-frame { width: 100%; max-width: 960px; position: relative; aspect-ratio: 16/9; background: #000; }
+.v-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; z-index: 1; }
+
+/* 영상 포스터 (iframe 위에 얹힘 → 재생 감지 후 사라짐) */
+.v-poster {
+  position: absolute; inset: 0; z-index: 2;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.v-poster img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover; opacity: 0.82;
+}
+.v-poster::after {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(6,5,8,0.24); transition: background 0.3s;
+}
+.v-poster:hover::after { background: rgba(6,5,8,0.10); }
+.v-poster-btn {
+  position: relative; z-index: 2;
+  background: none; border: none; cursor: pointer;
+  color: rgba(250,250,248,0.80);
+  transition: color 0.25s, transform 0.25s; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.v-poster-btn svg { width: 52px; height: 52px; display: block; }
+.v-poster:hover .v-poster-btn { color: #FAFAF8; transform: scale(1.08); }
+.v-credits { text-align: center; display: flex; flex-direction: column; gap: 5px; }
+.vc-title {
+  font-family: 'Noto Serif KR', 'Pretendard', serif;
+  font-size: 20px; font-weight: 400; letter-spacing: 0.04em; color: #FAFAF8;
+}
+.vc-en {
+  font-size: 10px; font-weight: 300; letter-spacing: 0.32em; text-transform: uppercase;
+  color: rgba(250,250,248,0.20); margin-top: 4px;
+}
+.vc-divider { width: 28px; height: 1px; background: rgba(229,154,130,0.38); margin: 10px auto 0; }
+.vc-meta {
+  font-size: 10px; font-weight: 400; letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(250,250,248,0.36);
+}
+.vc-credit {
+  font-size: 9px; font-weight: 300; letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(250,250,248,0.16); margin-top: 2px;
+}
+.vc-gap { margin-top: 22px; }
+
+@media (max-width: 600px) {
+  .works-ol-inner { padding: 80px 20px 72px; }
+  .works-ol-title { margin-bottom: 44px; }
+  .works-ol-grid { gap: 32px; }
+  .overlay-close { top: 14px; right: 18px; font-size: 26px; }
+  .video-ol-inner { padding: 56px 12px 48px; gap: 18px; }
+  .vc-title { font-size: 17px; }
+  .vc-gap { margin-top: 16px; }
+}
+@media (max-width: 480px) {
+  .vc-title { font-size: 15px; }
+  .vc-gap { margin-top: 12px; }
+}
 </style>
 </head>
 <body>
@@ -722,7 +856,7 @@ footer {
   <div class="nav-links">
     <a href="#about">소개</a>
     <a href="#services">하는 일</a>
-    <a href="works.html">Works</a>
+    <a href="#" id="navWorks">Works</a>
     <a href="#visit">문의하기</a>
     <a class="nav-cta" href="#visit">문의하기</a>
   </div>
@@ -902,7 +1036,7 @@ footer {
     <h2>한 장면을<br>보여드릴게요</h2>
     <p>우리가 만드는 장면을 조용히 담았습니다.<br>빛과 소리가 머무는 시간, 같이 보아요.</p>
     <p class="cta-desc-en">A scene we made, quietly held in light and sound.<br>Come and watch with us.</p>
-    <a class="btn-fill" href="blooming-air.html">「블루밍에어」 보러가기</a>
+    <a class="btn-fill" href="#" id="ctaVideoBtn">「블루밍에어」 보러가기</a>
     <div class="cta-sig">
       <div class="cta-sig-rule"></div>
       <p class="cta-sig-role">Art Director</p>
@@ -927,7 +1061,7 @@ footer {
         <h4>About</h4>
         <a href="#about">소개</a>
         <a href="#services">하는 일</a>
-        <a href="blooming-air.html">블루밍에어</a>
+        <a href="#" id="footerVideoLink">블루밍에어</a>
       </div>
       <div class="foot-col">
         <h4>Contact</h4>
@@ -1042,33 +1176,165 @@ footer {
     }
   });
 
-  /* nav/footer의 블루밍에어 링크 — 페이지 이동 전 BGM 페이드아웃 */
-  document.querySelectorAll('a[href="blooming-air.html"]').forEach(function(link) {
-    link.addEventListener('click', function(e) {
-      if (audio.paused) return;
-      e.preventDefault();
-      var dest = link.href;
-      var vol = audio.volume;
-      var step = vol / 15;
-      var fade = setInterval(function() {
-        if (audio.volume > step) {
-          audio.volume = Math.max(0, audio.volume - step);
-        } else {
-          clearInterval(fade);
-          audio.pause();
-          audio.volume = vol;
-          window.location.href = dest;
-        }
-      }, 20);
-    });
-  });
-
   /* BGM 외부 참조용 */
   window._bgmAudio = audio;
   window._bgmSetOn = setOn;
 })();
 </script>
 
+<!-- ════════════════════════════════════════════════════════════════════
+     WORKS 갤러리 오버레이 — nav 'Works' 클릭 시 열림
+     ════════════════════════════════════════════════════════════════════ -->
+<div class="overlay-full" id="worksOverlay" role="dialog" aria-modal="true" aria-label="Works">
+  <button class="overlay-close" id="worksClose" aria-label="닫기">×</button>
+  <div class="works-ol-inner">
+    <p class="works-ol-eyebrow">Invisible Season</p>
+    <p class="works-ol-title">Works</p>
+
+    <div class="works-ol-grid">
+
+      <!--
+      ─── 새 영상 추가 패턴 ────────────────────────────────────────────
+      (a) 아래 work-card 버튼을 복사해 onclick의 overlay ID를 새 ID로 교체
+      (b) 아래 videoOverlay 블록을 복사해 id · data-yt · 제목 · credits 교체
+      (c) 원하면 CTA 섹션에 버튼 추가:
+          <a class="btn-fill" href="#" id="ctaVideoBtn2" >「새 영상 제목」 보러가기</a>
+          그 다음 JS에서: getElementById('ctaVideoBtn2').addEventListener(...)
+      ──────────────────────────────────────────────────────────────────── -->
+
+      <!-- 블루밍에어 -->
+      <button class="work-card" onclick="openVideoOverlay('videoOverlay-ba')">
+        <div class="work-thumb">
+          <img src="img_show.webp" alt="블루밍에어">
+          <div class="work-play-icon">
+            <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="26" cy="26" r="23" stroke="currentColor" stroke-width="1.1" opacity="0.6"/>
+              <polygon points="22,18 36,26 22,34" fill="currentColor"/>
+            </svg>
+          </div>
+        </div>
+        <div class="work-info">
+          <span class="work-title">블루밍에어</span>
+          <span class="work-role">Art Director · Jung.K</span>
+        </div>
+      </button>
+
+    </div>
+  </div>
+</div>
+
+<!--
+  ════════════════════════════════════════════════════════════════════
+  영상관 오버레이: 블루밍에어
+  새 영상 추가: 이 블록 복사 → id · data-yt · 제목 · credits 교체
+  ════════════════════════════════════════════════════════════════════ -->
+<div class="overlay-full overlay-video" id="videoOverlay-ba" data-yt="IVzu4799ERA"
+     role="dialog" aria-modal="true" aria-label="블루밍에어 영상">
+  <button class="overlay-close" onclick="closeVideoOverlay('videoOverlay-ba')" aria-label="닫기">×</button>
+  <div class="video-ol-inner">
+    <div class="v-frame" id="vFrame-ba"></div>
+    <div class="v-credits">
+      <p class="vc-title">블루밍에어</p>
+      <p class="vc-en">Blooming Air</p>
+      <div class="vc-divider"></div>
+      <p class="vc-meta vc-gap">Invisible Season</p>
+      <p class="vc-credit">Music · Silver Still Water</p>
+      <p class="vc-meta vc-gap">Art Director · Jung.K</p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── 오버레이 컨트롤러 ──
+   핵심: iframe을 클릭/탭 핸들러 안에서 즉시(동기적으로) 삽입해야
+   브라우저가 사용자 제스처로 인식, PC·모바일 모두 소리 포함 자동재생 허용 */
+(function () {
+  var _bgmPaused = false;
+
+  function pauseBgm() {
+    var a = window._bgmAudio;
+    if (a && !a.paused) {
+      a.pause();
+      if (window._bgmSetOn) window._bgmSetOn(false);
+      _bgmPaused = true;
+    }
+  }
+  function resumeBgm() {
+    if (!_bgmPaused) return;
+    _bgmPaused = false;
+    var a = window._bgmAudio;
+    if (a) a.play().then(function () { if (window._bgmSetOn) window._bgmSetOn(true); }).catch(function () {});
+  }
+
+  /* ── 영상관 오버레이 ── */
+  window.openVideoOverlay = function (overlayId) {
+    pauseBgm();
+    var ol = document.getElementById(overlayId);
+    var frame = ol.querySelector('.v-frame');
+
+    /* iframe 즉시 삽입 — setTimeout 없이 클릭 이벤트 콜스택 안에서 실행해야
+       브라우저가 사용자 제스처 컨텍스트를 유지하며 소리 포함 자동재생을 허용한다 */
+    var iframe = document.createElement('iframe');
+    iframe.src = 'https://www.youtube.com/embed/' + ol.dataset.yt
+      + '?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+    iframe.allowFullscreen = true;
+    iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;';
+    frame.appendChild(iframe);
+
+    ol.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeVideoOverlay = function (overlayId) {
+    var ol = document.getElementById(overlayId);
+    ol.querySelector('.v-frame').innerHTML = ''; /* iframe 제거 → 영상·소리 즉시 정지 */
+    ol.classList.remove('open');
+    if (!document.querySelector('.overlay-full.open')) {
+      document.body.style.overflow = '';
+      resumeBgm();
+    }
+  };
+
+  /* ── Works 갤러리 오버레이 ── */
+  function openWorksOverlay() {
+    document.getElementById('worksOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeWorksOverlay() {
+    document.getElementById('worksOverlay').classList.remove('open');
+    if (!document.querySelector('.overlay-video.open')) {
+      document.body.style.overflow = '';
+    }
+  }
+
+  /* 이벤트 바인딩 */
+  document.getElementById('worksClose').addEventListener('click', closeWorksOverlay);
+  document.getElementById('worksOverlay').addEventListener('click', function (e) {
+    if (e.target === this) closeWorksOverlay();
+  });
+  document.querySelectorAll('.overlay-video').forEach(function (ol) {
+    ol.addEventListener('click', function (e) { if (e.target === ol) window.closeVideoOverlay(ol.id); });
+  });
+  document.getElementById('navWorks').addEventListener('click', function (e) {
+    e.preventDefault(); openWorksOverlay();
+  });
+  document.getElementById('ctaVideoBtn').addEventListener('click', function (e) {
+    e.preventDefault(); window.openVideoOverlay('videoOverlay-ba');
+  });
+  document.getElementById('footerVideoLink').addEventListener('click', function (e) {
+    e.preventDefault(); window.openVideoOverlay('videoOverlay-ba');
+  });
+
+  /* Escape 키 */
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    var openVid = document.querySelector('.overlay-video.open');
+    if (openVid) { window.closeVideoOverlay(openVid.id); return; }
+    if (document.getElementById('worksOverlay').classList.contains('open')) closeWorksOverlay();
+  });
+})();
+</script>
 
 </body>
 </html>
