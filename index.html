@@ -881,6 +881,7 @@ footer {
   flex: 1; min-height: 0;
   display: flex; align-items: center; justify-content: center;
   padding: 20px 40px 12px;
+  overflow: hidden;
 }
 
 /* 플레이어 — 기본 숨김, .visible 클래스 추가 시 표시 */
@@ -918,6 +919,7 @@ footer {
 }
 .wo-cards {
   display: flex; gap: 28px;
+  justify-content: flex-end;
   overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
   padding-bottom: 4px;
 }
@@ -985,14 +987,21 @@ footer {
   .wo-card-info { margin-top: 10px; gap: 4px; }
 }
 
-/* ── Works: 세로 짧은 화면 (높이 기준 반응형, 너비 기준 padding은 위 쿼리가 담당) ── */
-@media (max-height: 800px) {
-  .wo-gallery { padding-bottom: 28px; }
-  .wo-card    { width: 310px; }
+/* ── Works: 세로 짧은 화면 반응형 ── */
+/* 1000px 이하: 기본 160px 하단 패딩이 scene을 압박 → 24px로 축소 */
+@media (max-height: 1000px) {
+  .wo-gallery { padding-bottom: 24px; }
 }
+/* 800px 이하: 썸네일 28% 축소, 하단 여백 최소화 → 영상과 확실히 분리 */
+@media (max-height: 800px) {
+  .wo-gallery { padding-top: 10px; padding-bottom: 16px; }
+  .wo-card    { width: 300px; }
+  .wo-cards   { gap: 20px; }
+}
+/* 650px 이하: 극소형 */
 @media (max-height: 650px) {
-  .wo-gallery { padding-top: 8px; padding-bottom: 14px; }
-  .wo-card    { width: 254px; }
+  .wo-gallery { padding-top: 8px; padding-bottom: 10px; }
+  .wo-card    { width: 240px; }
   .wo-scene   { padding-top: 10px; padding-bottom: 6px; }
 }
 </style>
