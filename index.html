@@ -915,7 +915,7 @@ footer {
   transition: color 0.18s, background 0.18s, opacity 0.24s ease;
   display: none; opacity: 0; pointer-events: none;
 }
-.wo-player.visible .wo-player-close { display: block; }
+.wo-player.visible .wo-player-close { display: block; opacity: 0; pointer-events: none; }
 .wo-player.visible:hover .wo-player-close { opacity: 1; pointer-events: auto; }
 .wo-player-close:hover { color: #FAFAF8; background: rgba(6,5,8,0.82); }
 /* 터치 기기: hover 없으므로 항상 표시 */
@@ -1583,6 +1583,21 @@ footer {
     document.querySelectorAll('.wo-card').forEach(function (c) { c.classList.remove('active'); });
     resumeBgm();
   }
+
+  /* YouTube IFrame API: playerState 0 = 영상 종료 → 블랙 화면 복귀 */
+  window.addEventListener('message', function (e) {
+    if (!/youtube\.com$/.test(e.origin)) return;
+    if (!document.getElementById('worksOverlay').classList.contains('playing')) return;
+    var data;
+    try { data = JSON.parse(e.data); } catch (ex) { return; }
+    var state = null;
+    if (data.event === 'infoDelivery' && data.info && data.info.playerState !== undefined) {
+      state = data.info.playerState;
+    } else if (data.event === 'onStateChange') {
+      state = typeof data.info === 'number' ? data.info : null;
+    }
+    if (state === 0) stopPlayer();
+  });
 
   function openWorks() {
     document.getElementById('worksOverlay').classList.add('open');
