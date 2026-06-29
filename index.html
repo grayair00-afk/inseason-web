@@ -12,7 +12,7 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { background: #000; scroll-behavior: smooth; }
+html { background: #000; scroll-behavior: smooth; overflow-x: hidden; }
 
 body {
   background: #060508;
@@ -690,7 +690,7 @@ footer {
 .bs4:nth-child(3) { animation-delay: 10s; }
 .bs4:nth-child(4) { animation-delay: 15s; }
 
-/* ── RESPONSIVE ── */
+/* ── RESPONSIVE: 태블릿 ── */
 @media (max-width: 900px) {
   .wrap { padding: 0 24px; }
   nav { padding: 0 24px; }
@@ -702,7 +702,56 @@ footer {
   .show-img { aspect-ratio: 16/9; min-height: unset; }
   .show-img::after { background: linear-gradient(to bottom, transparent 50%, rgba(6,5,8,0.98)); }
   .show-content { padding: 48px 24px; }
-  .foot { grid-template-columns: 1fr 1fr; }
+  .foot { grid-template-columns: 1fr 1fr; gap: 36px; }
+}
+
+/* ── RESPONSIVE: 모바일 (≤ 480px) ── */
+@media (max-width: 480px) {
+  /* NAV */
+  nav { padding: 0 16px; height: 56px; }
+  .nav-cta { display: none; }
+  .nav-logo-text { font-size: 10px; letter-spacing: 0.22em; }
+
+  /* LAYOUT */
+  .wrap { padding: 0 16px; }
+
+  /* HERO */
+  .hero { min-height: 560px; }
+  .hero-body { padding: 0 16px; }
+  .hero-label { margin-bottom: 20px; }
+  .hero-sub { margin-bottom: 28px; }
+  .hero-btns { flex-direction: column; align-items: center; gap: 12px; }
+  .btn-fill, .btn-line { width: 100%; max-width: 280px; justify-content: center; }
+
+  /* STATEMENT */
+  .statement { padding: 72px 0; }
+  .statement-inner { gap: 32px; }
+
+  /* SERVICES */
+  .services-inner { padding: 72px 0; }
+  .services-head { margin-bottom: 40px; }
+  .svc-card { padding: 32px 20px; }
+
+  /* SHOW */
+  .show-content { padding: 36px 16px; }
+  .show-meta li { gap: 16px; }
+
+  /* QUOTE */
+  .quote { padding: 96px 0; }
+
+  /* CTA */
+  .cta-section { padding: 96px 0; }
+  .cta-sig { margin-top: 64px; }
+
+  /* FOOTER */
+  .foot { grid-template-columns: 1fr; gap: 28px; }
+  footer { padding: 52px 0 60px; }
+
+  /* VIDEO MODAL */
+  .v-modal { padding: 12px 12px 20px; }
+  .v-modal-inner { gap: 16px; }
+  .v-modal-close { top: 10px; right: 12px; font-size: 26px; }
+  .v-modal-title { font-size: 16px; }
 }
 </style>
 </head>
