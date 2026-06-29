@@ -1041,7 +1041,6 @@ footer {
     <a href="#services">하는 일</a>
     <a href="#" id="navWorks">Works</a>
     <a href="#visit">문의하기</a>
-    <a class="nav-cta" href="#visit">문의하기</a>
   </div>
 </nav>
 
@@ -1347,6 +1346,10 @@ footer {
   setOn(false);
   updateTitle(-1);
 
+  /* play/pause 이벤트로 UI 구동 — then() 콜백보다 신뢰성 높음 */
+  audio.addEventListener('play',  function() { if (started) setOn(true);  });
+  audio.addEventListener('pause', function() { setOn(false); });
+
   function openList()  { listEl.classList.add('open');    listOpen = true;  }
   function closeList() { listEl.classList.remove('open'); listOpen = false; }
 
@@ -1356,35 +1359,28 @@ footer {
     document.removeEventListener('touchend', startBgm);
   }
 
-  function playIdx(idx) {
-    if (!started) { started = true; removeListeners(); }
+  function playTrack(idx) {
     curIdx = idx;
     audio.src = tracks[idx].file;
     audio.load();
     updateTitle(idx);
-    audio.play().then(function() { setOn(true); }).catch(function(){});
+    audio.play().catch(function(){});
+  }
+
+  function playIdx(idx) {
+    if (!started) { started = true; removeListeners(); }
+    playTrack(idx);
   }
 
   audio.addEventListener('ended', function() {
-    playIdx((curIdx + 1) % tracks.length);
+    playTrack((curIdx + 1) % tracks.length);
   });
 
   function startBgm() {
     if (started) return;
+    started = true;
     removeListeners();
-    var idx = curIdx < 0 ? 0 : curIdx;
-    curIdx = idx;
-    audio.src = tracks[idx].file;
-    audio.load();
-    updateTitle(idx);
-    audio.play().then(function() {
-      started = true;
-      setOn(true);
-    }).catch(function() {
-      document.addEventListener('click',    startBgm);
-      document.addEventListener('keydown',  startBgm);
-      document.addEventListener('touchend', startBgm);
-    });
+    playTrack(0);
   }
 
   document.addEventListener('click',    startBgm);
@@ -1397,10 +1393,9 @@ footer {
     closeList();
     if (!started) { startBgm(); return; }
     if (audio.paused) {
-      audio.play().then(function() { setOn(true); }).catch(function(){});
+      audio.play().catch(function(){});
     } else {
       audio.pause();
-      setOn(false);
     }
   });
 
