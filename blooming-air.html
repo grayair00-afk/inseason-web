@@ -45,7 +45,7 @@ main {
   gap: 36px;
 }
 
-/* ── VIDEO ── */
+/* ── VIDEO FRAME ── */
 .video-outer {
   width: 100%;
   max-width: 960px;
@@ -61,8 +61,52 @@ main {
     0 0 0 1px rgba(255,255,255,0.06),
     0 24px 80px rgba(0,0,0,0.72),
     0 8px 24px rgba(0,0,0,0.48);
+  background: #000;
 }
 
+/* ── POSTER ── */
+.poster {
+  position: absolute; inset: 0;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.poster img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  /* 유튜브 기본 썸네일에 검정 레터박스가 생길 수 있으므로 약간 확대 */
+  transform: scale(1.01);
+}
+
+/* 포스터 위 어두운 오버레이 */
+.poster::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(6,5,8,0.28);
+  transition: background 0.3s;
+}
+.poster:hover::after { background: rgba(6,5,8,0.14); }
+
+/* ── PLAY BUTTON ── */
+.play-btn {
+  position: relative; z-index: 2;
+  width: 52px; height: 52px;
+  background: none; border: none;
+  cursor: pointer;
+  color: rgba(250,250,248,0.82);
+  transition: color 0.25s, transform 0.25s;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0;
+}
+.play-btn svg { width: 52px; height: 52px; display: block; }
+.poster:hover .play-btn {
+  color: #FAFAF8;
+  transform: scale(1.08);
+}
+
+/* ── IFRAME (재생 후) ── */
 .video-frame iframe {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
@@ -124,6 +168,7 @@ main {
 @media (max-width: 600px) {
   .back { top: 20px; left: 20px; }
   main { padding: 64px 16px 56px; gap: 28px; }
+  .play-btn, .play-btn svg { width: 44px; height: 44px; }
 }
 </style>
 </head>
@@ -138,13 +183,22 @@ main {
 
 <main>
   <div class="video-outer">
-    <div class="video-frame">
-      <iframe
-        src="https://www.youtube.com/embed/IVzu4799ERA?rel=0&modestbranding=1&color=white"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-        allowfullscreen
-        title="블루밍에어 — 인비저블 시즌">
-      </iframe>
+    <div class="video-frame" id="videoFrame">
+
+      <!-- 포스터 + 재생 버튼 -->
+      <div class="poster" id="poster" onclick="loadVideo()">
+        <!-- 나중에 직접 찍은 스틸로 교체 시 아래 src만 변경 -->
+        <img src="https://img.youtube.com/vi/IVzu4799ERA/maxresdefault.jpg" alt="블루밍에어 포스터">
+        <button class="play-btn" aria-label="재생">
+          <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="26" cy="26" r="24" stroke="currentColor" stroke-width="1.2" opacity="0.7"/>
+            <polygon points="22,18 36,26 22,34" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- iframe은 클릭 후 JS로 삽입 -->
+
     </div>
   </div>
 
@@ -156,6 +210,67 @@ main {
     <p class="info-credit">Music · Silver Still Water</p>
   </div>
 </main>
+
+<!-- YouTube IFrame API -->
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+var player;
+var videoLoaded = false;
+
+function loadVideo() {
+  if (videoLoaded) return;
+  videoLoaded = true;
+
+  var frame = document.getElementById('videoFrame');
+  var poster = document.getElementById('poster');
+
+  /* 포스터 페이드아웃 */
+  poster.style.transition = 'opacity 0.3s';
+  poster.style.opacity = '0';
+
+  /* iframe 삽입 */
+  var iframe = document.createElement('iframe');
+  iframe.id = 'ytPlayer';
+  iframe.src = 'https://www.youtube.com/embed/IVzu4799ERA'
+    + '?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1';
+  iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+  iframe.allowFullscreen = true;
+  iframe.title = '블루밍에어 — 인비저블 시즌';
+  iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;';
+
+  setTimeout(function() {
+    frame.appendChild(iframe);
+    poster.style.display = 'none';
+
+    /* YT API로 플레이어 연결 — BGM 정지 */
+    if (window.YT && YT.Player) {
+      attachPlayer(iframe.id);
+    } else {
+      window.onYouTubeIframeAPIReady = function() { attachPlayer(iframe.id); };
+    }
+  }, 300);
+}
+
+function attachPlayer(iframeId) {
+  player = new YT.Player(iframeId, {
+    events: {
+      onStateChange: function(e) {
+        /* PLAYING(1) → 이 페이지에 audio 요소가 생기면 자동 정지 */
+        if (e.data === YT.PlayerState.PLAYING) {
+          document.querySelectorAll('audio').forEach(function(a) {
+            if (!a.paused) a.pause();
+          });
+        }
+      }
+    }
+  });
+}
+
+/* API가 poster 클릭 전에 먼저 로드될 경우 대비 */
+function onYouTubeIframeAPIReady() {
+  /* 클릭 전엔 아무 것도 하지 않음 */
+}
+</script>
 
 </body>
 </html>
