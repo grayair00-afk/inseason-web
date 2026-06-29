@@ -550,7 +550,7 @@ footer {
 .foot-ai-note {
   margin-top: 14px; padding-bottom: 2px;
   font-size: 10px; font-weight: 300; letter-spacing: 0.08em;
-  color: rgba(250,250,248,0.13);
+  color: rgba(250,250,248,0.36);
   text-align: center;
 }
 
@@ -1001,16 +1001,12 @@ footer {
 }
 
 /* ── Works: 영상 재생 중 몰입 모드 ── */
-/* 헤더·갤러리 페이드아웃 */
-#worksOverlay.playing .wo-header,
-#worksOverlay.playing .wo-gallery { opacity: 0; pointer-events: none; }
-/* 마우스 올리면 복귀 (데스크탑) */
-#worksOverlay.playing:hover .wo-header,
-#worksOverlay.playing:hover .wo-gallery { opacity: 1; pointer-events: auto; }
-/* 터치 기기: hover 없으므로 항상 표시 */
+/* 헤더만 페이드아웃 — 썸네일(갤러리)은 항상 표시 */
+#worksOverlay.playing .wo-header { opacity: 0; pointer-events: none; }
+/* 마우스 올리면 헤더 복귀 */
+#worksOverlay.playing:hover .wo-header { opacity: 1; pointer-events: auto; }
 @media (hover: none) {
-  #worksOverlay.playing .wo-header,
-  #worksOverlay.playing .wo-gallery { opacity: 1; pointer-events: auto; }
+  #worksOverlay.playing .wo-header { opacity: 1; pointer-events: auto; }
 }
 
 /* ── Works: 세로 짧은 화면 반응형 ── */
