@@ -12,7 +12,7 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { background: #000; scroll-behavior: smooth; overflow-x: hidden; }
+html { background: #000; scroll-behavior: smooth; overflow-x: hidden; max-width: 100%; }
 
 body {
   background: #060508;
@@ -161,7 +161,7 @@ nav {
   display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
 }
 .statement-img {
-  position: relative; aspect-ratio: 3/4; overflow: hidden;
+  position: relative; aspect-ratio: 3/4; overflow: hidden; transform: translateZ(0);
 }
 /* statement-img → .bs 슬라이드로 대체 */
 .statement-img::after {
@@ -196,7 +196,7 @@ nav {
 
 /* ── SERVICES ── */
 .services {
-  position: relative; overflow: hidden;
+  position: relative; overflow: hidden; transform: translateZ(0);
   border-top: 1px solid rgba(255,255,255,0.05);
 }
 .services-bg {
@@ -279,7 +279,7 @@ nav {
   display: grid; grid-template-columns: 1fr 1fr;
   border-top: 1px solid rgba(255,255,255,0.05);
 }
-.show-img { position: relative; overflow: hidden; }
+.show-img { position: relative; overflow: hidden; transform: translateZ(0); }
 .show-img::after {
   content: ''; position: absolute; inset: 0; z-index: 1;
   background: linear-gradient(to right, transparent 52%, rgba(6,5,8,0.78));
@@ -436,6 +436,7 @@ nav {
   color: rgba(250,250,248,0.16);
   margin-top: 2px;
 }
+.v-modal-gap { margin-top: 57px; }
 
 .bgm-toggle {
   position: fixed; bottom: 28px; right: 28px; z-index: 9999;
@@ -470,7 +471,7 @@ nav {
 /* ── QUOTE ── */
 .quote {
   position: relative; padding: 180px 0;
-  text-align: center; overflow: hidden;
+  text-align: center; overflow: hidden; transform: translateZ(0);
   border-top: 1px solid rgba(255,255,255,0.05);
 }
 .quote-img {
@@ -498,7 +499,7 @@ nav {
 /* ── CTA ── */
 .cta-section {
   position: relative; padding: 180px 0;
-  text-align: center; overflow: hidden;
+  text-align: center; overflow: hidden; transform: translateZ(0);
   border-top: 1px solid rgba(255,255,255,0.05);
 }
 .cta-bg {
@@ -573,7 +574,7 @@ footer {
   27%   { opacity: 0; }
   100%  { opacity: 0; }
 }
-.hero-slideshow { position: absolute; inset: 0; overflow: hidden; }
+.hero-slideshow { position: absolute; inset: 0; overflow: hidden; transform: translateZ(0); }
 /* 9장 슬라이드 — 7초×9 = 63s, 1.5s 크로스페이드 */
 @keyframes slide9 {
   0%    { opacity: 0; }
@@ -690,6 +691,16 @@ footer {
 .bs4:nth-child(3) { animation-delay: 10s; }
 .bs4:nth-child(4) { animation-delay: 15s; }
 
+/* ── RESPONSIVE: 모달 모바일 (≤ 600px) ── */
+@media (max-width: 600px) {
+  .v-modal-title { font-size: 17px; }
+  .v-modal-en { font-size: 9px; letter-spacing: 0.24em; }
+  .v-modal-meta { font-size: 9px; letter-spacing: 0.18em; }
+  .v-modal-credit { font-size: 8px; letter-spacing: 0.18em; }
+  .v-modal-gap { margin-top: 36px; }
+  .v-modal-divider { margin-top: 6px; }
+}
+
 /* ── RESPONSIVE: 태블릿 ── */
 @media (max-width: 900px) {
   .wrap { padding: 0 24px; }
@@ -748,10 +759,11 @@ footer {
   footer { padding: 52px 0 60px; }
 
   /* VIDEO MODAL */
-  .v-modal { padding: 12px 12px 20px; }
-  .v-modal-inner { gap: 16px; }
+  .v-modal { padding: 10px 10px 16px; }
+  .v-modal-inner { gap: 12px; }
   .v-modal-close { top: 10px; right: 12px; font-size: 26px; }
-  .v-modal-title { font-size: 16px; }
+  .v-modal-title { font-size: 15px; }
+  .v-modal-gap { margin-top: 28px; }
 }
 </style>
 </head>
@@ -1154,9 +1166,9 @@ footer {
       <p class="v-modal-title">블루밍에어</p>
       <p class="v-modal-en">Blooming Air</p>
       <div class="v-modal-divider"></div>
-      <p class="v-modal-meta" style="margin-top:57px">Invisible Season</p>
+      <p class="v-modal-meta v-modal-gap">Invisible Season</p>
       <p class="v-modal-credit">Music · Silver Still Water</p>
-      <p class="v-modal-meta" style="margin-top:57px">Director · Jung.K</p>
+      <p class="v-modal-meta v-modal-gap">Director · Jung.K</p>
     </div>
   </div>
 </div>
