@@ -1404,15 +1404,24 @@ footer {
     playTrack(idx);
   }
 
+  /* 연속 회피 셔플: 방금 재생된 곡 제외, 7곡 이상일 때만 회피 */
+  function nextRandom() {
+    var next;
+    do {
+      next = Math.floor(Math.random() * tracks.length);
+    } while (next === curIdx && tracks.length > 1);
+    return next;
+  }
+
   audio.addEventListener('ended', function() {
-    playTrack((curIdx + 1) % tracks.length);
+    playTrack(nextRandom());
   });
 
   function startBgm() {
     if (started) return;
     started = true;
     removeListeners();
-    playTrack(0);
+    playTrack(nextRandom());
   }
 
   document.addEventListener('click',    startBgm);
