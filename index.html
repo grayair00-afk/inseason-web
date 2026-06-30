@@ -1056,6 +1056,17 @@ footer {
   font-size: 11.5px; font-weight: 300; letter-spacing: 0.02em;
   color: rgba(250,250,248,0.34); margin-top: 16px;
 }
+.selfie-privacy {
+  margin-top: 28px;
+  font-size: 10px; font-weight: 300; line-height: 1.8;
+  color: rgba(250,250,248,0.20); letter-spacing: 0.01em;
+  max-width: 320px; margin-left: auto; margin-right: auto;
+}
+.selfie-privacy span {
+  font-family: 'Inter', sans-serif;
+  font-size: 9.5px; letter-spacing: 0.02em;
+  color: rgba(250,250,248,0.13);
+}
 /* 공유 버튼 */
 .selfie-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
@@ -1136,12 +1147,7 @@ footer {
   font-size: 13px; font-weight: 300; line-height: 2.0;
   color: rgba(250,250,248,0.40); margin-bottom: 18px;
 }
-.selfie-denied-retry {
-  background: none; border: none; cursor: pointer;
-  font-size: 10px; font-weight: 500; letter-spacing: 0.16em;
-  color: #E59A82; text-decoration: underline; text-underline-offset: 3px;
-  font-family: 'Inter', sans-serif;
-}
+.selfie-denied-btns { display: flex; gap: 12px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
 @media (max-width: 480px) {
   .selfie-section { padding: 96px 0; }
 }
@@ -1406,6 +1412,7 @@ footer {
           카메라 켜기
         </button>
         <p class="selfie-hint">전면 카메라로 오늘의 순간을 담아보세요</p>
+        <p class="selfie-privacy">카메라 영상과 사진은 당신의 기기에서만 처리되며, 어디에도 저장·전송되지 않습니다.<br><span>Your camera and photo stay on your device — nothing is uploaded or stored.</span></p>
       </div>
 
       <!-- [2] 라이브 카메라 -->
@@ -1459,10 +1466,13 @@ footer {
         </div>
       </div>
 
-      <!-- 권한 거부 안내 -->
+      <!-- 권한 거부 / 오류 안내 -->
       <div id="selfieDenied" style="display:none" class="selfie-denied">
-        <p>카메라 권한이 필요합니다.<br>브라우저 설정에서 카메라를 허용한 뒤 다시 시도해 주세요.</p>
-        <button class="selfie-denied-retry" id="selfieRetryBtn">처음으로 돌아가기</button>
+        <p id="selfieErrMsg">카메라를 열 수 없습니다.</p>
+        <div class="selfie-denied-btns">
+          <button class="selfie-btn selfie-btn-primary" id="selfieRetryBtn">다시 시도</button>
+          <button class="selfie-btn selfie-btn-ghost"   id="selfieBackBtn">처음으로</button>
+        </div>
       </div>
 
     </div>
@@ -1891,28 +1901,68 @@ var SelfieModule = (function () {
     });
   }
 
-  /* ── 카메라 ── */
+  /* ── 에러 → 한국어 안내문 ── */
+  function errMsg(err) {
+    var name = (err && err.name) || '';
+    console.error('[Selfie] 카메라 오류 —', name, err && err.message);
+    if (name === 'NotAllowedError' || name === 'PermissionDeniedError')
+      return '주소창의 카메라 아이콘을 클릭해 "허용"으로 바꾼 뒤 다시 시도해 주세요.';
+    if (name === 'NotReadableError' || name === 'TrackStartError')
+      return '다른 앱(줌·카메라 앱 등)에서 카메라를 사용 중입니다. 닫은 뒤 다시 시도해 주세요.';
+    if (name === 'NotFoundError' || name === 'DevicesNotFoundError')
+      return '카메라를 찾을 수 없습니다. 카메라가 연결되어 있는지 확인해 주세요.';
+    if (name === 'SecurityError')
+      return '보안 연결(HTTPS)에서만 카메라를 사용할 수 있습니다.';
+    return '카메라를 열 수 없습니다. (' + (name || '알 수 없는 오류') + ')';
+  }
+  function showError(err) {
+    var el = document.getElementById('selfieErrMsg');
+    if (el) el.textContent = errMsg(err);
+    show('selfieDenied');
+  }
+
+  /* ── 카메라: facingMode:user → 실패 시 기본 카메라 fallback ── */
   function startCamera(onOk, onFail) {
-    navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 1280 } },
-      audio: false
-    }).then(function (s) {
-      stream = s;
-      refs.video.srcObject = s;
-      onOk();
-    }).catch(function (err) {
-      console.warn('Camera:', err);
-      if (onFail) onFail(err);
-    });
+    var c1 = { video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 1280 } }, audio: false };
+    var c2 = { video: true, audio: false };
+    navigator.mediaDevices.getUserMedia(c1)
+      .then(function (s) { applyStream(s, onOk); })
+      .catch(function (err) {
+        console.warn('[Selfie] facingMode:user 실패 —', err.name, err.message);
+        var needFallback = (
+          err.name === 'OverconstrainedError' ||
+          err.name === 'ConstraintNotSatisfiedError' ||
+          err.name === 'TypeError'
+        );
+        if (needFallback) {
+          console.info('[Selfie] fallback: 제약 없이 재시도');
+          navigator.mediaDevices.getUserMedia(c2)
+            .then(function (s) { applyStream(s, onOk); })
+            .catch(function (err2) { if (onFail) onFail(err2); });
+        } else {
+          if (onFail) onFail(err);
+        }
+      });
+  }
+  function applyStream(s, onOk) {
+    stream = s; refs.video.srcObject = s; onOk();
   }
   function stopCamera() {
     if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
     if (refs.video) refs.video.srcObject = null;
   }
+  /* ── getUserMedia 진입점 (버튼에서 호출) ── */
+  function tryStart() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      showError({ name: 'NotFoundError' }); return;
+    }
+    startCamera(
+      function () { show('selfieLive'); },
+      function (err) { showError(err); }
+    );
+  }
 
-  /* ── 프레임 드로잉 ──
-     B안 교체 포인트: SelfieModule.bgProcessor(ctx, videoEl, size) 설정 시
-     capture() 에서 영상 위에 AI 배경 합성 후 이 함수로 오버레이 추가 */
+  /* ── 프레임 드로잉 (B안: bgProcessor로 교체) ── */
   function drawFrame(ctx, size) {
     /* 비네팅 */
     var g = ctx.createRadialGradient(size/2, size/2, size*0.28, size/2, size/2, size*0.75);
@@ -2034,35 +2084,20 @@ var SelfieModule = (function () {
         + String(now.getDate()).padStart(2, '0');
       if (refs.dateSpan) refs.dateSpan.textContent = dateStr;
 
-      document.getElementById('selfieStartBtn').addEventListener('click', function () {
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          show('selfieDenied'); return;
-        }
-        startCamera(
-          function () { show('selfieLive'); },
-          function () { show('selfieDenied'); }
-        );
-      });
+      /* 카메라 켜기: 버튼 클릭 시만 getUserMedia 호출 (사용자 제스처 필요) */
+      document.getElementById('selfieStartBtn').addEventListener('click', tryStart);
 
       document.getElementById('selfieShootBtn').addEventListener('click', function () {
         flashEffect();
-        setTimeout(function () {
-          capture();
-          stopCamera();
-          show('selfieResult');
-        }, 80);
+        setTimeout(function () { capture(); stopCamera(); show('selfieResult'); }, 80);
       });
 
       document.getElementById('selfieStopBtn').addEventListener('click', function () {
         stopCamera(); show('selfieStart');
       });
 
-      document.getElementById('selfieRetakeBtn').addEventListener('click', function () {
-        startCamera(
-          function () { show('selfieLive'); },
-          function () { show('selfieDenied'); }
-        );
-      });
+      /* 다시 찍기: 카메라 재시작 */
+      document.getElementById('selfieRetakeBtn').addEventListener('click', tryStart);
 
       document.getElementById('selfieSaveBtn').addEventListener('click', function () {
         var msg  = refs.msgInput  ? refs.msgInput.value.trim() : '';
@@ -2075,7 +2110,11 @@ var SelfieModule = (function () {
         });
       });
 
-      document.getElementById('selfieRetryBtn').addEventListener('click', function () {
+      /* 다시 시도: getUserMedia 재호출 */
+      document.getElementById('selfieRetryBtn').addEventListener('click', tryStart);
+
+      /* 처음으로: 시작 화면 복귀 */
+      document.getElementById('selfieBackBtn').addEventListener('click', function () {
         show('selfieStart');
       });
     }
