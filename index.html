@@ -1113,7 +1113,8 @@ footer {
 .selfie-result { display: flex; flex-direction: column; align-items: center; gap: 22px; }
 .selfie-polaroid {
   background: #FAFAF8; padding: 13px 13px 0; display: inline-block;
-  box-shadow: 0 16px 56px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.28);
+  box-shadow: 0 16px 56px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.28),
+              0 0 0 1px rgba(0,0,0,0.10); /* 흰 배경에서도 외곽 보이게 */
 }
 #selfieCanvas {
   display: block;
@@ -1151,6 +1152,25 @@ footer {
 @media (max-width: 480px) {
   .selfie-section { padding: 96px 0; }
 }
+/* ── 셀카: 프리뷰 캔버스 & 배경 피커 ── */
+#selfiePreviewCanvas { width: 100%; height: 100%; display: block; }
+.selfie-bg-picker {
+  display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 6px;
+}
+.sbgp-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 8.5px; letter-spacing: 0.26em; text-transform: uppercase;
+  color: rgba(250,250,248,0.22);
+}
+.sbgp-options { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.sbgp-btn {
+  width: 38px; height: 38px; padding: 0; border-radius: 2px;
+  background-size: cover; background-position: center;
+  border: 1.5px solid transparent; cursor: pointer; outline: none;
+  opacity: 0.50; transition: opacity 0.2s, border-color 0.2s;
+}
+.sbgp-btn:hover { opacity: 0.80; }
+.sbgp-btn.active { border-color: #E59A82; opacity: 1; }
 </style>
 </head>
 <body>
@@ -1708,6 +1728,26 @@ footer {
     클릭 시 위 씬 영역에서 소리와 함께 재생됩니다.
     ──────────────────────────────────────────────────────────────────── -->
     <div class="wo-cards" id="woCards">
+
+      <!-- 고요 / Stillness -->
+      <button class="wo-card" type="button"
+              data-yt="SkG3bHjZqrY"
+              data-title="고요 / Stillness"
+              data-role="Music · Pachelbel Canon / Art Director · Jung.K">
+        <div class="wo-card-thumb">
+          <img src="https://img.youtube.com/vi/SkG3bHjZqrY/maxresdefault.jpg" alt="고요 / Stillness">
+          <div class="wo-card-play">
+            <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="26" cy="26" r="23" stroke="currentColor" stroke-width="1.1" opacity="0.65"/>
+              <polygon points="22,18 36,26 22,34" fill="currentColor"/>
+            </svg>
+          </div>
+        </div>
+        <div class="wo-card-info">
+          <span class="wo-card-title">고요 / Stillness</span>
+          <span class="wo-card-role">Music · Pachelbel Canon / Art Director · Jung.K</span>
+        </div>
+      </button>
 
       <!-- 블루밍에어 -->
       <button class="wo-card" type="button"
