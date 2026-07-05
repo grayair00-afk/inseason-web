@@ -931,7 +931,7 @@ footer {
   transition: opacity 0.4s ease;
 }
 .wo-cards {
-  display: flex; gap: 28px;
+  display: flex; gap: clamp(14px, 2vw, 28px);
   justify-content: flex-end;
   overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
   padding-bottom: 4px;
@@ -939,9 +939,9 @@ footer {
 .wo-cards::-webkit-scrollbar { height: 2px; }
 .wo-cards::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.10); }
 
-/* 카드 — 더 큰 썸네일 + 제목 */
+/* 카드 — 화면 폭에 비례해 유동적으로 축소(기존 대비 약 15~40% 작음, 영상 추가 대비 여유 확보) */
 .wo-card {
-  flex-shrink: 0; width: 420px;
+  flex-shrink: 0; width: clamp(160px, 14vw + 65px, 340px);
   cursor: pointer; background: none; border: none; padding: 0; text-align: left;
 }
 .wo-card-thumb {
@@ -989,14 +989,11 @@ footer {
   .wo-header { padding: 18px 24px 0; }
   .wo-scene { padding: 16px 24px 10px; }
   .wo-gallery { padding: 12px 24px 120px; }
-  .wo-card { width: 340px; }
-  .wo-cards { gap: 20px; }
 }
 @media (max-width: 480px) {
   .wo-header { padding: 14px 18px 0; }
   .wo-scene { padding: 12px 16px 8px; }
   .wo-gallery { padding: 10px 18px 88px; }
-  .wo-card { width: 274px; }
   .wo-card-title { font-size: 13px; }
   .wo-card-info { margin-top: 10px; gap: 4px; }
 }
@@ -1018,13 +1015,10 @@ footer {
 /* 800px 이하: 썸네일 28% 축소, 하단 여백 최소화 → 영상과 확실히 분리 */
 @media (max-height: 800px) {
   .wo-gallery { padding-top: 10px; padding-bottom: 16px; }
-  .wo-card    { width: 300px; }
-  .wo-cards   { gap: 20px; }
 }
 /* 650px 이하: 극소형 */
 @media (max-height: 650px) {
   .wo-gallery { padding-top: 8px; padding-bottom: 10px; }
-  .wo-card    { width: 240px; }
   .wo-scene   { padding-top: 10px; padding-bottom: 6px; }
 }
 
