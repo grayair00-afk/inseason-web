@@ -68,6 +68,40 @@ nav {
 }
 .nav-cta:hover { background: #F5C4AD; transform: translateY(-1px); color: #060508; }
 
+/* ── NAV: 모바일 햄버거 메뉴 ── */
+.nav-toggle {
+  display: none;
+  flex-direction: column; justify-content: center; gap: 5px;
+  width: 32px; height: 32px; padding: 0;
+  background: none; border: none; cursor: pointer;
+}
+.nav-toggle span {
+  display: block; width: 100%; height: 1.5px; background: #FAFAF8;
+  transition: transform 0.25s ease, opacity 0.2s ease;
+}
+.nav-toggle.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; }
+.nav-toggle.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+.mobile-menu {
+  position: fixed; top: 64px; left: 0; right: 0; z-index: 150;
+  display: flex; flex-direction: column;
+  background: rgba(6,5,8,0.97);
+  backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.32s ease;
+}
+.mobile-menu.open { max-height: 320px; }
+.mobile-menu a {
+  padding: 18px 24px;
+  font-size: 13px; letter-spacing: 0.04em;
+  color: rgba(250,250,248,0.65);
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.mobile-menu a:first-child { border-top: none; }
+.mobile-menu a:hover, .mobile-menu a:active { color: #FAFAF8; }
+
 /* ── HERO ── */
 .hero {
   position: relative;
@@ -685,6 +719,7 @@ footer {
   .wrap { padding: 0 24px; }
   nav { padding: 0 24px; }
   .nav-links { display: none; }
+  .nav-toggle { display: flex; }
   .statement-inner { grid-template-columns: 1fr; }
   .statement-img { aspect-ratio: 16/9; }
   .services-grid { grid-template-columns: 1fr; }
@@ -701,6 +736,7 @@ footer {
   nav { padding: 0 16px; height: 56px; }
   .nav-cta { display: none; }
   .nav-logo-text { font-size: 10px; letter-spacing: 0.22em; }
+  .mobile-menu { top: 56px; }
 
   /* LAYOUT */
   .wrap { padding: 0 16px; }
@@ -931,7 +967,7 @@ footer {
   transition: opacity 0.4s ease;
 }
 .wo-cards {
-  display: flex; gap: clamp(14px, 2vw, 28px);
+  display: flex; align-items: flex-start; gap: clamp(14px, 2vw, 28px);
   justify-content: flex-end;
   overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
   padding-bottom: 4px;
@@ -1209,10 +1245,19 @@ footer {
   <div class="nav-links">
     <a href="#about">소개</a>
     <a href="#services">하는 일</a>
-    <a href="#" id="navWorks">Works</a>
+    <a href="#" class="nav-works-link" id="navWorks">Works</a>
     <a href="#visit">문의하기</a>
   </div>
+  <button class="nav-toggle" id="navToggle" aria-label="메뉴 열기" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about">소개</a>
+  <a href="#services">하는 일</a>
+  <a href="#" class="nav-works-link">Works</a>
+  <a href="#visit">문의하기</a>
+</div>
 
 <!-- HERO -->
 <section class="hero" id="top">
@@ -1895,8 +1940,28 @@ footer {
     if (e.target === this) closeWorks();
   });
 
-  document.getElementById('navWorks').addEventListener('click', function (e) {
-    e.preventDefault(); openWorks();
+  document.querySelectorAll('.nav-works-link').forEach(function (el) {
+    el.addEventListener('click', function (e) {
+      e.preventDefault(); openWorks();
+      closeMobileMenu();
+    });
+  });
+
+  /* 모바일 햄버거 메뉴 */
+  var navToggle = document.getElementById('navToggle');
+  var mobileMenu = document.getElementById('mobileMenu');
+  function closeMobileMenu() {
+    mobileMenu.classList.remove('open');
+    navToggle.classList.remove('open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  }
+  navToggle.addEventListener('click', function () {
+    var isOpen = mobileMenu.classList.toggle('open');
+    navToggle.classList.toggle('open', isOpen);
+    navToggle.setAttribute('aria-expanded', String(isOpen));
+  });
+  mobileMenu.querySelectorAll('a:not(.nav-works-link)').forEach(function (a) {
+    a.addEventListener('click', closeMobileMenu);
   });
   document.getElementById('ctaVideoBtn').addEventListener('click', function (e) {
     e.preventDefault(); window.openWorksWithVideo('IVzu4799ERA');
