@@ -968,8 +968,9 @@ footer {
 }
 .wo-cards {
   display: flex; align-items: flex-start; gap: clamp(14px, 2vw, 28px);
-  justify-content: flex-end;
+  justify-content: flex-start;
   overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
+  scroll-snap-type: x proximity;
   padding-bottom: 4px;
 }
 .wo-cards::-webkit-scrollbar { height: 2px; }
@@ -978,6 +979,7 @@ footer {
 /* 카드 — 화면 폭에 비례해 유동적으로 축소(기존 대비 약 15~40% 작음, 영상 추가 대비 여유 확보) */
 .wo-card {
   flex-shrink: 0; width: clamp(160px, 14vw + 65px, 340px);
+  scroll-snap-align: start;
   cursor: pointer; background: none; border: none; padding: 0; text-align: left;
 }
 .wo-card-thumb {
