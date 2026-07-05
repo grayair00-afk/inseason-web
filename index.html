@@ -959,27 +959,28 @@ footer {
   .wo-player.visible .wo-player-close { opacity: 1; pointer-events: auto; }
 }
 
-/* 하단 갤러리 영역 — 카드 위로 올리기 */
+/* 하단 갤러리 영역 — 첫 영상(블루밍에어)이 우측 고정 앵커, 새 영상은 왼쪽으로 쌓임.
+   한 줄에 다 안 들어가면 위쪽에 새 줄이 생기고(아래줄=최신), 세로로만 스크롤(우하단이 기본 시작 위치) */
 .wo-gallery {
   flex-shrink: 0;
   border-top: 1px solid rgba(255,255,255,0.05);
-  padding: 14px 40px 160px;
+  padding: 14px 40px 24px;
+  max-height: clamp(150px, 24vh, 220px);
+  overflow-y: auto; overflow-x: hidden;
   transition: opacity 0.4s ease;
 }
 .wo-cards {
-  display: flex; align-items: flex-start; gap: clamp(14px, 2vw, 28px);
-  justify-content: flex-start;
-  overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
-  scroll-snap-type: x proximity;
+  display: flex; flex-direction: row-reverse; flex-wrap: wrap-reverse;
+  align-items: flex-start; justify-content: flex-start;
+  gap: 20px;
   padding-bottom: 4px;
 }
-.wo-cards::-webkit-scrollbar { height: 2px; }
-.wo-cards::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.10); }
+.wo-gallery::-webkit-scrollbar { width: 2px; }
+.wo-gallery::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.10); }
 
-/* 카드 — 화면 폭에 비례해 유동적으로 축소(기존 대비 약 15~40% 작음, 영상 추가 대비 여유 확보) */
+/* 카드 — 한 줄에 정확히 4개(데스크톱) / 3개(모바일, 768px 이하)가 들어가도록 폭 계산 */
 .wo-card {
-  flex-shrink: 0; width: clamp(160px, 14vw + 65px, 340px);
-  scroll-snap-align: start;
+  flex: 0 0 calc(25% - 15px); max-width: calc(25% - 15px);
   cursor: pointer; background: none; border: none; padding: 0; text-align: left;
 }
 .wo-card-thumb {
@@ -1026,12 +1027,14 @@ footer {
 @media (max-width: 768px) {
   .wo-header { padding: 18px 24px 0; }
   .wo-scene { padding: 16px 24px 10px; }
-  .wo-gallery { padding: 12px 24px 120px; }
+  .wo-gallery { padding: 12px 24px 18px; max-height: clamp(120px, 26vh, 190px); }
+  .wo-cards { gap: 10px; }
+  .wo-card { flex: 0 0 calc(33.333% - 6.667px); max-width: calc(33.333% - 6.667px); }
 }
 @media (max-width: 480px) {
   .wo-header { padding: 14px 18px 0; }
   .wo-scene { padding: 12px 16px 8px; }
-  .wo-gallery { padding: 10px 18px 88px; }
+  .wo-gallery { padding: 10px 18px 14px; }
   .wo-card-title { font-size: 13px; }
   .wo-card-info { margin-top: 10px; gap: 4px; }
 }
@@ -1045,16 +1048,7 @@ footer {
   #worksOverlay.playing .wo-header { opacity: 1; pointer-events: auto; }
 }
 
-/* ── Works: 세로 짧은 화면 반응형 ── */
-/* 1000px 이하: 기본 160px 하단 패딩이 scene을 압박 → 24px로 축소 */
-@media (max-height: 1000px) {
-  .wo-gallery { padding-bottom: 24px; }
-}
-/* 800px 이하: 썸네일 28% 축소, 하단 여백 최소화 → 영상과 확실히 분리 */
-@media (max-height: 800px) {
-  .wo-gallery { padding-top: 10px; padding-bottom: 16px; }
-}
-/* 650px 이하: 극소형 */
+/* ── Works: 세로 짧은 화면 반응형 (갤러리 자체는 max-height가 vh 비례라 자동 대응) ── */
 @media (max-height: 650px) {
   .wo-gallery { padding-top: 8px; padding-bottom: 10px; }
   .wo-scene   { padding-top: 10px; padding-bottom: 6px; }
@@ -1761,36 +1755,25 @@ footer {
   <div class="wo-gallery">
     <!--
     ─── 새 영상 추가 패턴 ─────────────────────────────────────────────
-    wo-card 버튼을 복사해 data 속성·img src 교체:
+    wo-card 버튼을 "맨 마지막"에 복사해 추가 (앞에 끼워넣지 말 것):
       data-yt    → 유튜브 영상 ID
       data-title → 한국어 제목
       data-role  → 하단 역할 텍스트  (예: "Art Director · Jung.K")
       img src    → 썸네일 이미지
     클릭 시 위 씬 영역에서 소리와 함께 재생됩니다.
+
+    레이아웃 규칙(의도된 디자인 — 바꾸지 말 것):
+      · 첫 번째 카드(블루밍에어, DOM 최초 항목)가 항상 우측 끝 고정 앵커.
+        새 카드는 DOM 맨 뒤에 추가만 하면 자동으로 그 왼쪽에 쌓임
+        (.wo-cards가 flex-direction:row-reverse + flex-wrap:wrap-reverse라서
+         DOM 순서상 먼저 나온 카드일수록 오른쪽·아래쪽에 위치함)
+      · 한 줄 최대 4개(모바일 768px 이하는 3개) — 다 차면 자동으로 윗줄 생성
+      · 갤러리 영역은 세로로만 스크롤(overflow-y:auto), 기본 스크롤 위치는
+        JS가 열릴 때마다 맨 아래(최신 줄)로 맞춰줌 — openWorks() 참고
     ──────────────────────────────────────────────────────────────────── -->
     <div class="wo-cards" id="woCards">
 
-      <!-- 고요 / Stillness -->
-      <button class="wo-card" type="button"
-              data-yt="SkG3bHjZqrY"
-              data-title="고요 / Stillness"
-              data-role="Music · Pachelbel Canon / Art Director · Jung.K">
-        <div class="wo-card-thumb">
-          <img src="https://img.youtube.com/vi/SkG3bHjZqrY/maxresdefault.jpg" alt="고요 / Stillness">
-          <div class="wo-card-play">
-            <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="26" cy="26" r="23" stroke="currentColor" stroke-width="1.1" opacity="0.65"/>
-              <polygon points="22,18 36,26 22,34" fill="currentColor"/>
-            </svg>
-          </div>
-        </div>
-        <div class="wo-card-info">
-          <span class="wo-card-title">고요 / Stillness</span>
-          <span class="wo-card-role">Music · Pachelbel Canon / Art Director · Jung.K</span>
-        </div>
-      </button>
-
-      <!-- 블루밍에어 -->
+      <!-- 블루밍에어 (최초 영상 — 항상 우측 끝 고정, DOM 순서 바꾸지 말 것) -->
       <button class="wo-card" type="button"
               data-yt="IVzu4799ERA"
               data-title="블루밍에어"
@@ -1807,6 +1790,26 @@ footer {
         <div class="wo-card-info">
           <span class="wo-card-title">블루밍에어</span>
           <span class="wo-card-role">Art Director · Jung.K</span>
+        </div>
+      </button>
+
+      <!-- 고요 / Stillness (두 번째 영상) -->
+      <button class="wo-card" type="button"
+              data-yt="SkG3bHjZqrY"
+              data-title="고요 / Stillness"
+              data-role="Music · Pachelbel Canon / Art Director · Jung.K">
+        <div class="wo-card-thumb">
+          <img src="https://img.youtube.com/vi/SkG3bHjZqrY/maxresdefault.jpg" alt="고요 / Stillness">
+          <div class="wo-card-play">
+            <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="26" cy="26" r="23" stroke="currentColor" stroke-width="1.1" opacity="0.65"/>
+              <polygon points="22,18 36,26 22,34" fill="currentColor"/>
+            </svg>
+          </div>
+        </div>
+        <div class="wo-card-info">
+          <span class="wo-card-title">고요 / Stillness</span>
+          <span class="wo-card-role">Music · Pachelbel Canon / Art Director · Jung.K</span>
         </div>
       </button>
 
@@ -1908,6 +1911,9 @@ footer {
   function openWorks() {
     document.getElementById('worksOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
+    /* 갤러리가 여러 줄로 쌓였을 때 기본 스크롤 위치 = 맨 아래(최신 줄, 블루밍에어 쪽) */
+    var gallery = document.querySelector('.wo-gallery');
+    gallery.scrollTop = gallery.scrollHeight;
   }
 
   /* CTA·footer: 오버레이 열기 + 즉시 재생 */
