@@ -2178,6 +2178,10 @@ footer {
      실패해도(오프라인 등) 조용히 건너뛰고 기존처럼 배경 없는 일반 촬영으로 동작함 -->
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js" crossorigin="anonymous"></script>
 <script>
+/* 셀카모드 on/off 스위치 — AI 배경합성 루프 미해결 이슈로 임시 비활성화.
+   자세한 진단 내용/재개 방법은 SELFIE_TODO.md 참고. 다시 켜려면 true로만 바꾸면 됨(코드 삭제 없음). */
+var SELFIE_ENABLED = false;
+
 /* ══════════════════════════════════════════════════════════════════════
    SELFIE MODULE — "오늘의 나"
    구조: startCamera → 실시간 배경 합성(라이브 캔버스) → capture(스냅샷) → 다운로드
@@ -2542,6 +2546,13 @@ var SelfieModule = (function () {
   /* ── Public API ── */
   return {
     init: function () {
+      if (!SELFIE_ENABLED) {
+        var section = document.getElementById('today');
+        if (section) section.style.display = 'none';
+        console.info('[Selfie] SELFIE_ENABLED=false — 셀카 섹션 숨김, 초기화 건너뜀');
+        return;
+      }
+
       console.info('[Selfie] 진단 시작 — protocol:', location.protocol,
         '| host:', location.hostname || '(없음, file://)',
         '| getUserMedia 지원:', !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia),
