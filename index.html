@@ -2147,6 +2147,33 @@ footer {
 </script>
 
 
+<!-- 모바일 디버그 콘솔: URL에 ?selfiedebug=1 붙이면 화면 하단에 콘솔 로그가 그대로 보임(F12 없이 확인용) -->
+<script>
+(function () {
+  if (!/[?&]selfiedebug=1/.test(location.search)) return;
+  var box = document.createElement('div');
+  box.style.cssText = 'position:fixed;left:0;right:0;bottom:0;max-height:45vh;overflow:auto;'
+    + 'background:rgba(0,0,0,0.88);color:#9f9;font:11px/1.4 monospace;padding:8px;z-index:999999;white-space:pre-wrap;';
+  document.addEventListener('DOMContentLoaded', function () { document.body.appendChild(box); });
+  function fmt(a) {
+    try { return typeof a === 'object' ? JSON.stringify(a) : String(a); } catch (e) { return String(a); }
+  }
+  function log(type, args) {
+    var line = document.createElement('div');
+    line.style.color = type === 'error' ? '#f66' : (type === 'warn' ? '#fc6' : '#9f9');
+    line.textContent = '[' + type + '] ' + Array.prototype.map.call(args, fmt).join(' ');
+    box.appendChild(line);
+    box.scrollTop = box.scrollHeight;
+  }
+  ['log', 'info', 'warn', 'error'].forEach(function (m) {
+    var orig = console[m];
+    console[m] = function () { log(m, arguments); orig.apply(console, arguments); };
+  });
+  window.addEventListener('error', function (e) { log('error', ['window.onerror:', e.message, e.filename + ':' + e.lineno]); });
+  window.addEventListener('unhandledrejection', function (e) { log('error', ['unhandledrejection:', e.reason]); });
+})();
+</script>
+
 <!-- MediaPipe Selfie Segmentation: 브라우저에서 실시간으로 사람만 분리하는 AI 모델(CDN 로드).
      실패해도(오프라인 등) 조용히 건너뛰고 기존처럼 배경 없는 일반 촬영으로 동작함 -->
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js" crossorigin="anonymous"></script>
