@@ -614,24 +614,23 @@ footer {
   100%  { opacity: 0; }
 }
 
+/* 이미지 개수와 무관하게 재사용되는 크로스페이드 비율(2.4%/11.1%/13.5% 지점은
+   슬라이드 9장·7초 간격 기준 비율 — JS가 매수에 맞춰 animation-duration/delay만 계산해서 적용) */
+@keyframes heroRandomFade {
+  0%    { opacity: 0; }
+  2.4%  { opacity: 1; }
+  11.1% { opacity: 1; }
+  13.5% { opacity: 0; }
+  100%  { opacity: 0; }
+}
 .hs {
   position: absolute; inset: 0;
   background-size: cover; background-position: center 30%;
   filter: brightness(0.88) saturate(1.65) contrast(1.06);
   transform: scale(1.06);
   opacity: 0;
-  animation: slide9 63s ease-in-out infinite;
   will-change: opacity;
 }
-.hs:nth-child(1) { animation-delay: 0s; }
-.hs:nth-child(2) { animation-delay: 7s; }
-.hs:nth-child(3) { animation-delay: 14s; }
-.hs:nth-child(4) { animation-delay: 21s; }
-.hs:nth-child(5) { animation-delay: 28s; }
-.hs:nth-child(6) { animation-delay: 35s; }
-.hs:nth-child(7) { animation-delay: 42s; }
-.hs:nth-child(8) { animation-delay: 49s; }
-.hs:nth-child(9) { animation-delay: 56s; }
 
 .bs9 {
   position: absolute; inset: 0;
@@ -1145,6 +1144,11 @@ footer {
   object-fit: cover; display: block;
   transform: scaleX(-1);
 }
+#selfieLiveCanvas {
+  width: 100%; height: 100%; display: block;
+  background: #000;
+  /* 미러링은 draw 단계에서 이미 적용되므로 CSS transform 불필요 */
+}
 .selfie-frame {
   position: absolute; inset: 0; z-index: 2; pointer-events: none;
 }
@@ -1279,17 +1283,8 @@ footer {
 
 <!-- HERO -->
 <section class="hero" id="top">
-  <div class="hero-slideshow">
-    <div class="hs" style="background-image:url('img_holo1.webp')"></div>
-    <div class="hs" style="background-image:url('img_m08.webp')"></div>
-    <div class="hs" style="background-image:url('img_crystal.webp')"></div>
-    <div class="hs" style="background-image:url('img_m09.webp')"></div>
-    <div class="hs" style="background-image:url('img_holo2.webp')"></div>
-    <div class="hs" style="background-image:url('img_m10.webp')"></div>
-    <div class="hs" style="background-image:url('img_bokeh.webp')"></div>
-    <div class="hs" style="background-image:url('img_holo3.webp')"></div>
-    <div class="hs" style="background-image:url('img_realm1.webp')"></div>
-  </div>
+  <!-- content/backgrounds/manifest.json 기반으로 JS가 랜덤 순서로 채움 (renderHeroBackgrounds 참고) -->
+  <div class="hero-slideshow" id="heroSlideshow"></div>
   <div class="hero-dim"></div>
   <div class="hero-body">
     <p class="label hero-label">MEDIA ART · INVISIBLE SEASON</p>
@@ -1495,7 +1490,10 @@ footer {
       <!-- [2] 라이브 카메라 -->
       <div id="selfieLive" style="display:none" class="selfie-live">
         <div class="selfie-viewport" id="selfieViewport">
-          <video id="selfieVideo" autoplay playsinline muted></video>
+          <!-- video는 세그멘테이션 입력용 소스로만 쓰이고 화면엔 안 보임 -->
+          <video id="selfieVideo" autoplay playsinline muted style="display:none"></video>
+          <!-- 실제로 보이는 화면: 배경 합성 결과(또는 합성 실패 시 일반 미러 영상) -->
+          <canvas id="selfieLiveCanvas"></canvas>
           <!-- 프레임 오버레이: SVG → 나중에 <img src="frame.png">으로 교체 가능 -->
           <div class="selfie-frame">
             <svg viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
@@ -1523,6 +1521,7 @@ footer {
         </div>
         <div class="selfie-live-btns">
           <button class="selfie-btn selfie-btn-primary" id="selfieShootBtn">촬영</button>
+          <button class="selfie-btn selfie-btn-ghost"   id="selfieBgNextBtn">배경 바꾸기</button>
           <button class="selfie-btn selfie-btn-ghost"   id="selfieStopBtn">끄기</button>
         </div>
       </div>
@@ -1593,6 +1592,35 @@ footer {
 </footer>
 
 <script>
+/* content/backgrounds/manifest.json → 히어로 배경 랜덤 순환. 새 이미지를 폴더에 넣고
+   update_web.bat을 돌리면 매니페스트에 추가되어 자동으로 로테이션에 포함됨 */
+(function () {
+  function shuffle(arr) {
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+    }
+    return arr;
+  }
+  fetch('content/backgrounds/manifest.json').then(function (r) { return r.json(); }).then(function (files) {
+    if (!files || !files.length) return;
+    var order = shuffle(files.slice());
+    var container = document.getElementById('heroSlideshow');
+    var n = order.length;
+    var totalDur = n * 7; /* 이미지 1장당 7초 간격, 기존 히어로 슬라이드쇼와 동일한 리듬 */
+    order.forEach(function (file, i) {
+      var div = document.createElement('div');
+      div.className = 'hs';
+      div.style.backgroundImage = "url('" + file + "')";
+      div.style.animation = 'heroRandomFade ' + totalDur + 's ease-in-out infinite';
+      div.style.animationDelay = (i * 7) + 's';
+      container.appendChild(div);
+    });
+  }).catch(function (err) { console.error('backgrounds manifest 로드 실패:', err); });
+})();
+</script>
+
+<script>
 (function(){
   function makeCopyable(el) {
     if (!el) return;
@@ -1635,30 +1663,48 @@ footer {
   var listOpen = false;
   audio.volume = 0.35;
 
+  var MUSIC_DIR = 'content/music/';
   var tracks = [
-    { file: 'Lightwave Gallery 1.mp3', name: 'Lightwave Gallery 1' },
-    { file: 'Glass on Water.mp3',      name: 'Glass on Water'      },
-    { file: 'Moonlit Hands.mp3',       name: 'Moonlit Hands'       },
-    { file: 'Glass Tide.mp3',          name: 'Glass Tide'          },
-    { file: 'Moonlit Balance.mp3',     name: 'Moonlit Balance'     },
-    { file: 'Moonlit Balance 1.mp3',   name: 'Moonlit Balance 1'   },
-    { file: 'Lightwave Gallery.mp3',   name: 'Lightwave Gallery'   }
+    { file: MUSIC_DIR + 'Lightwave Gallery 1.mp3', name: 'Lightwave Gallery 1' },
+    { file: MUSIC_DIR + 'Glass on Water.mp3',      name: 'Glass on Water'      },
+    { file: MUSIC_DIR + 'Moonlit Hands.mp3',       name: 'Moonlit Hands'       },
+    { file: MUSIC_DIR + 'Glass Tide.mp3',          name: 'Glass Tide'          },
+    { file: MUSIC_DIR + 'Moonlit Balance.mp3',     name: 'Moonlit Balance'     },
+    { file: MUSIC_DIR + 'Moonlit Balance 1.mp3',   name: 'Moonlit Balance 1'   },
+    { file: MUSIC_DIR + 'Lightwave Gallery.mp3',   name: 'Lightwave Gallery'   }
   ];
   var curIdx = -1;
 
-  /* 목록 버튼 생성 */
-  tracks.forEach(function(t, i) {
-    var item = document.createElement('button');
-    item.type = 'button';
-    item.className = 'bgm-list-item';
-    item.textContent = t.name;
-    item.addEventListener('click', function(e) {
-      e.stopPropagation();
-      closeList();
-      playIdx(i);
+  /* 목록 버튼 다시 그리기(초기 7곡 + videos.json에서 병합된 곡 포함) */
+  function renderTrackList() {
+    listEl.innerHTML = '';
+    tracks.forEach(function(t, i) {
+      var item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'bgm-list-item';
+      item.textContent = t.name;
+      item.addEventListener('click', function(e) {
+        e.stopPropagation();
+        closeList();
+        playIdx(i);
+      });
+      listEl.appendChild(item);
     });
-    listEl.appendChild(item);
-  });
+  }
+  renderTrackList();
+
+  /* videos.json의 music 필드를 앰비언트 재생목록에 합치기(중복 제외, 기존 7곡은 그대로 유지) */
+  window._mergeBgmTracks = function (musicFiles) {
+    musicFiles.forEach(function (filename) {
+      var file = MUSIC_DIR + filename;
+      var already = tracks.some(function (t) { return t.file === file; });
+      if (already) return;
+      var name = filename.replace(/\.[^/.]+$/, '');
+      tracks.push({ file: file, name: name });
+    });
+    renderTrackList();
+    updateTitle(curIdx);
+  };
 
   function updateTitle(idx) {
     titleEl.textContent = idx >= 0 ? tracks[idx].name : '——';
@@ -1776,69 +1822,19 @@ footer {
   <!-- 재생 영역 ↔ 갤러리 크기 조절 스플리터 (데스크톱 전용, 모바일은 CSS로 숨김) -->
   <div class="wo-splitter" id="woSplitter" role="separator" aria-orientation="horizontal" aria-label="재생 영역과 목록 크기 조절"></div>
 
-  <!-- 하단 갤러리 -->
+  <!-- 하단 갤러리: content/videos.json을 fetch해서 JS가 카드를 생성함 (renderWorksGallery 참고) -->
+  <!--
+  레이아웃 규칙(의도된 디자인 — 바꾸지 말 것):
+    · videos.json의 첫 번째 항목이 항상 우측 끝 고정 앵커.
+      새 항목은 배열 맨 뒤에 추가만 하면 자동으로 그 왼쪽에 쌓임
+      (.wo-cards가 flex-direction:row-reverse + flex-wrap:wrap-reverse라서
+       배열 순서상 먼저 나온 카드일수록 오른쪽·아래쪽에 위치함)
+    · 한 줄 최대 4개(모바일 768px 이하는 3개) — 다 차면 자동으로 윗줄 생성
+    · 갤러리 영역은 세로로만 스크롤(overflow-y:auto), 기본 스크롤 위치는
+      JS가 열릴 때마다 맨 아래(최신 줄)로 맞춰줌 — openWorks() 참고
+  -->
   <div class="wo-gallery">
-    <!--
-    ─── 새 영상 추가 패턴 ─────────────────────────────────────────────
-    wo-card 버튼을 "맨 마지막"에 복사해 추가 (앞에 끼워넣지 말 것):
-      data-yt    → 유튜브 영상 ID
-      data-title → 한국어 제목
-      data-role  → 하단 역할 텍스트  (예: "Art Director · Jung.K")
-      img src    → 썸네일 이미지
-    클릭 시 위 씬 영역에서 소리와 함께 재생됩니다.
-
-    레이아웃 규칙(의도된 디자인 — 바꾸지 말 것):
-      · 첫 번째 카드(블루밍에어, DOM 최초 항목)가 항상 우측 끝 고정 앵커.
-        새 카드는 DOM 맨 뒤에 추가만 하면 자동으로 그 왼쪽에 쌓임
-        (.wo-cards가 flex-direction:row-reverse + flex-wrap:wrap-reverse라서
-         DOM 순서상 먼저 나온 카드일수록 오른쪽·아래쪽에 위치함)
-      · 한 줄 최대 4개(모바일 768px 이하는 3개) — 다 차면 자동으로 윗줄 생성
-      · 갤러리 영역은 세로로만 스크롤(overflow-y:auto), 기본 스크롤 위치는
-        JS가 열릴 때마다 맨 아래(최신 줄)로 맞춰줌 — openWorks() 참고
-    ──────────────────────────────────────────────────────────────────── -->
-    <div class="wo-cards" id="woCards">
-
-      <!-- 블루밍에어 (최초 영상 — 항상 우측 끝 고정, DOM 순서 바꾸지 말 것) -->
-      <button class="wo-card" type="button"
-              data-yt="IVzu4799ERA"
-              data-title="블루밍에어"
-              data-role="Art Director · Jung.K">
-        <div class="wo-card-thumb">
-          <img src="img_show.webp" alt="블루밍에어">
-          <div class="wo-card-play">
-            <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="26" cy="26" r="23" stroke="currentColor" stroke-width="1.1" opacity="0.65"/>
-              <polygon points="22,18 36,26 22,34" fill="currentColor"/>
-            </svg>
-          </div>
-        </div>
-        <div class="wo-card-info">
-          <span class="wo-card-title">블루밍에어</span>
-          <span class="wo-card-role">Art Director · Jung.K</span>
-        </div>
-      </button>
-
-      <!-- 고요 / Stillness (두 번째 영상) -->
-      <button class="wo-card" type="button"
-              data-yt="SkG3bHjZqrY"
-              data-title="고요 / Stillness"
-              data-role="Music · Pachelbel Canon / Art Director · Jung.K">
-        <div class="wo-card-thumb">
-          <img src="https://img.youtube.com/vi/SkG3bHjZqrY/maxresdefault.jpg" alt="고요 / Stillness">
-          <div class="wo-card-play">
-            <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="26" cy="26" r="23" stroke="currentColor" stroke-width="1.1" opacity="0.65"/>
-              <polygon points="22,18 36,26 22,34" fill="currentColor"/>
-            </svg>
-          </div>
-        </div>
-        <div class="wo-card-info">
-          <span class="wo-card-title">고요 / Stillness</span>
-          <span class="wo-card-role">Music · Pachelbel Canon / Art Director · Jung.K</span>
-        </div>
-      </button>
-
-    </div>
+    <div class="wo-cards" id="woCards"></div>
   </div>
 </div>
 
@@ -1862,6 +1858,66 @@ footer {
     if (a) a.play().then(function () { if (window._bgmSetOn) window._bgmSetOn(true); }).catch(function () {});
   }
 
+  /* content/videos.json 항목 → .wo-card 버튼 DOM 생성 (add_video 등으로 항목이 추가되면 자동 반영됨) */
+  function renderWorksGallery(videos) {
+    var container = document.getElementById('woCards');
+    container.innerHTML = '';
+    videos.forEach(function (v) {
+      var btn = document.createElement('button');
+      btn.className = 'wo-card';
+      btn.type = 'button';
+
+      if (v.youtube) {
+        var m = /(?:youtu\.be\/|[?&]v=|embed\/)([A-Za-z0-9_-]{6,})/.exec(v.youtube);
+        btn.dataset.yt = m ? m[1] : v.youtube; /* URL이 아니면 그대로 순수 영상 ID로 취급 */
+      } else if (v.video) {
+        btn.dataset.video = v.video;
+      }
+      btn.dataset.title = v.title || '';
+      btn.dataset.role = v.subtitle || '';
+
+      var thumbSrc = v.thumbnail;
+      if (!thumbSrc && btn.dataset.yt) thumbSrc = 'https://img.youtube.com/vi/' + btn.dataset.yt + '/maxresdefault.jpg';
+
+      var thumb = document.createElement('div');
+      thumb.className = 'wo-card-thumb';
+      var img = document.createElement('img');
+      img.src = thumbSrc || '';
+      img.alt = v.title || '';
+      thumb.appendChild(img);
+
+      var play = document.createElement('div');
+      play.className = 'wo-card-play';
+      play.innerHTML = '<svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">'
+        + '<circle cx="26" cy="26" r="23" stroke="currentColor" stroke-width="1.1" opacity="0.65"/>'
+        + '<polygon points="22,18 36,26 22,34" fill="currentColor"/></svg>';
+      thumb.appendChild(play);
+
+      var info = document.createElement('div');
+      info.className = 'wo-card-info';
+      var titleSpan = document.createElement('span');
+      titleSpan.className = 'wo-card-title';
+      titleSpan.textContent = v.title || '';
+      var roleSpan = document.createElement('span');
+      roleSpan.className = 'wo-card-role';
+      roleSpan.textContent = v.subtitle || '';
+      info.appendChild(titleSpan);
+      info.appendChild(roleSpan);
+
+      btn.appendChild(thumb);
+      btn.appendChild(info);
+      container.appendChild(btn);
+    });
+  }
+
+  /* videos.json 로드 → 갤러리 렌더링 + music 필드를 앰비언트 BGM 목록에 병합 */
+  fetch('content/videos.json').then(function (r) { return r.json(); }).then(function (videos) {
+    renderWorksGallery(videos);
+    var musicFiles = videos.map(function (v) { return v.music; }).filter(Boolean);
+    if (window._mergeBgmTracks) window._mergeBgmTracks(musicFiles);
+    if (window._syncWoCardWidths) window._syncWoCardWidths();
+  }).catch(function (err) { console.error('videos.json 로드 실패:', err); });
+
   /* YouTube postMessage 로 영상 종료 감지 */
   window.addEventListener('message', function (e) {
     if (!e.data || typeof e.data !== 'string') return;
@@ -1875,29 +1931,41 @@ footer {
     } catch (ex) {}
   });
 
-  /* 영상 재생 */
+  /* 영상 재생 (유튜브 iframe 또는 로컬 영상 파일 <video> 둘 다 지원) */
   function playCard(card) {
     if (_endTimer) { clearTimeout(_endTimer); _endTimer = null; }
 
     var playerDiv = document.getElementById('woPlayer');
-    /* 기존 iframe만 제거 (닫기 버튼은 유지) */
-    var old = playerDiv.querySelector('iframe');
+    /* 기존 재생 요소 제거 (닫기 버튼은 유지) */
+    var old = playerDiv.querySelector('iframe, video');
     if (old) old.remove();
 
-    /* iframe 동기 삽입 — 클릭 핸들러 스택 유지 → autoplay 허용 */
-    var iframe = document.createElement('iframe');
-    iframe.src = 'https://www.youtube.com/embed/' + card.dataset.yt
-      + '?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&iv_load_policy=3&cc_load_policy=0';
-    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
-    iframe.allowFullscreen = true;
-    iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;';
+    if (card.dataset.video) {
+      /* 로컬 영상 파일 재생 */
+      var video = document.createElement('video');
+      video.src = card.dataset.video;
+      video.controls = true;
+      video.autoplay = true;
+      video.playsInline = true;
+      video.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;background:#000;';
+      video.addEventListener('ended', function () { stopPlayer(); });
+      playerDiv.insertBefore(video, playerDiv.firstChild);
+    } else {
+      /* iframe 동기 삽입 — 클릭 핸들러 스택 유지 → autoplay 허용 */
+      var iframe = document.createElement('iframe');
+      iframe.src = 'https://www.youtube.com/embed/' + card.dataset.yt
+        + '?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&iv_load_policy=3&cc_load_policy=0';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+      iframe.allowFullscreen = true;
+      iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;';
 
-    /* iframe 로드 후 YouTube에 이벤트 구독 요청 → onStateChange 수신 가능 */
-    iframe.addEventListener('load', function () {
-      try { iframe.contentWindow.postMessage('{"event":"listening"}', 'https://www.youtube.com'); } catch (ex) {}
-    });
+      /* iframe 로드 후 YouTube에 이벤트 구독 요청 → onStateChange 수신 가능 */
+      iframe.addEventListener('load', function () {
+        try { iframe.contentWindow.postMessage('{"event":"listening"}', 'https://www.youtube.com'); } catch (ex) {}
+      });
+      playerDiv.insertBefore(iframe, playerDiv.firstChild); /* 닫기 버튼 앞에 삽입 */
+    }
 
-    playerDiv.insertBefore(iframe, playerDiv.firstChild); /* 닫기 버튼 앞에 삽입 */
     playerDiv.classList.add('visible');
     document.getElementById('worksOverlay').classList.add('playing');
 
@@ -1910,8 +1978,8 @@ footer {
   function stopPlayer() {
     if (_endTimer) { clearTimeout(_endTimer); _endTimer = null; }
     var playerDiv = document.getElementById('woPlayer');
-    var iframe = playerDiv.querySelector('iframe');
-    if (iframe) iframe.remove(); /* iframe만 제거, 버튼은 남김 */
+    var el = playerDiv.querySelector('iframe, video');
+    if (el) el.remove(); /* 재생 요소만 제거, 버튼은 남김 */
     playerDiv.classList.remove('visible');
     document.getElementById('worksOverlay').classList.remove('playing');
     document.querySelectorAll('.wo-card').forEach(function (c) { c.classList.remove('active'); });
@@ -2079,20 +2147,32 @@ footer {
 </script>
 
 
+<!-- MediaPipe Selfie Segmentation: 브라우저에서 실시간으로 사람만 분리하는 AI 모델(CDN 로드).
+     실패해도(오프라인 등) 조용히 건너뛰고 기존처럼 배경 없는 일반 촬영으로 동작함 -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js" crossorigin="anonymous"></script>
 <script>
 /* ══════════════════════════════════════════════════════════════════════
    SELFIE MODULE — "오늘의 나"
-   구조: startCamera → capture → renderPolaroid → download
-   B안(AI 배경 합성) 연결 포인트: SelfieModule.bgProcessor 교체
+   구조: startCamera → 실시간 배경 합성(라이브 캔버스) → capture(스냅샷) → 다운로드
    ══════════════════════════════════════════════════════════════════════ */
 var SelfieModule = (function () {
   'use strict';
   var PHOTO_PX = 340;    /* 캔버스 물리 픽셀 (1:1 정사각) */
   var PAD = 13, PAD_BOT = 82; /* 폴라로이드 다운로드 여백 */
+  var PERSON_SCALE = 0.72; /* 인물 축소 비율 — 상반신이 자연스럽게 들어오도록(작을수록 더 줌아웃) */
 
   var stream   = null;
   var photoUrl = null;
   var refs     = {};
+
+  var segmenter   = null;
+  var segReady    = false;
+  var segBusy     = false;
+  var latestMask  = null;
+  var rafId       = null;
+  var personCanvas = null;
+  var bgImages    = [];
+  var bgIndex     = 0;
 
   /* ── 상태 전환 ── */
   var STATES = ['selfieStart', 'selfieLive', 'selfieResult', 'selfieDenied'];
@@ -2103,19 +2183,163 @@ var SelfieModule = (function () {
     });
   }
 
-  /* ── 에러 → 한국어 안내문 ── */
+  /* ── 가상 배경: content/backgrounds/manifest.json 로드 + 랜덤 셔플 ── */
+  function loadBackgrounds() {
+    return fetch('content/backgrounds/manifest.json').then(function (r) { return r.json(); })
+      .then(function (files) {
+        var shuffled = (files || []).slice();
+        for (var i = shuffled.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var t = shuffled[i]; shuffled[i] = shuffled[j]; shuffled[j] = t;
+        }
+        console.info('[Selfie] 배경 매니페스트 로드됨 —', shuffled.length, '개:', shuffled);
+        bgImages = shuffled.map(function (f) {
+          var img = new Image();
+          img.onload  = function () { console.info('[Selfie] 배경 이미지 로드 성공 —', f, img.naturalWidth + 'x' + img.naturalHeight); };
+          img.onerror = function () { console.error('[Selfie] 배경 이미지 로드 실패(경로 확인 필요) —', f, '| 계산된 URL:', img.src); };
+          img.src = f;
+          return img;
+        });
+        bgIndex = 0;
+      })
+      .catch(function (err) {
+        if (location.protocol === 'file:') {
+          console.error('[Selfie] 배경 목록 로드 실패 — file://로 열면 fetch()가 로컬 파일을 못 읽습니다(브라우저 보안 제한). 로컬 서버(예: npx serve, http://localhost)로 열어야 합니다.', err);
+        } else {
+          console.error('[Selfie] 배경 목록 로드 실패, 배경 합성 없이 진행:', err);
+        }
+        bgImages = [];
+      });
+  }
+  function nextBackground() {
+    if (bgImages.length < 2) return;
+    bgIndex = (bgIndex + 1) % bgImages.length;
+  }
+
+  /* ── MediaPipe Selfie Segmentation 초기화(실패해도 조용히 넘어감) ── */
+  function initSegmenter() {
+    if (typeof SelfieSegmentation === 'undefined') {
+      console.warn('[Selfie] MediaPipe 로드 실패 — 배경 합성 없이 일반 촬영으로 동작합니다.');
+      return;
+    }
+    try {
+      segmenter = new SelfieSegmentation({
+        locateFile: function (file) {
+          return 'https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/' + file;
+        }
+      });
+      segmenter.setOptions({ modelSelection: 1 });
+      segmenter.onResults(function (results) { latestMask = results.segmentationMask; });
+      segReady = true;
+    } catch (err) {
+      console.warn('[Selfie] MediaPipe 초기화 실패:', err);
+      segReady = false;
+    }
+  }
+
+  /* ── 배경 cover 채우기 (CSS background-size:cover와 동일한 크롭) ── */
+  function drawImageCover(ctx, img, w, h) {
+    var iw = img.naturalWidth, ih = img.naturalHeight;
+    if (!iw || !ih) return;
+    var scale = Math.max(w / iw, h / ih);
+    var dw = iw * scale, dh = ih * scale;
+    ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
+  }
+
+  /* 지정한 목적지 사각형(dx,dy,dw,dh) 안에서만 좌우 미러링해서 그리기 */
+  function drawMirrored(ctx, source, sx, sy, side, dx, dy, dw, dh) {
+    ctx.save();
+    ctx.translate(dx + dw, dy);
+    ctx.scale(-1, 1);
+    ctx.drawImage(source, sx, sy, side, side, 0, 0, dw, dh);
+    ctx.restore();
+  }
+
+  function getPersonCanvas(w, h) {
+    if (!personCanvas) personCanvas = document.createElement('canvas');
+    if (personCanvas.width !== w || personCanvas.height !== h) {
+      personCanvas.width = w; personCanvas.height = h;
+    }
+    return personCanvas;
+  }
+
+  /* ── 라이브 캔버스: 배경 합성 준비되면 배경+축소된 인물, 아니면 기존처럼 미러 크롭만 ── */
+  function drawLiveFrame() {
+    rafId = requestAnimationFrame(drawLiveFrame);
+    var video = refs.video, canvas = refs.liveCanvas;
+    if (!canvas || !video || video.readyState < 2) return;
+
+    var w = canvas.width, h = canvas.height;
+    var ctx = canvas.getContext('2d');
+    var vw = video.videoWidth, vh = video.videoHeight;
+    var side = Math.min(vw, vh);
+    var sx = (vw - side) / 2, sy = (vh - side) / 2;
+
+    ctx.clearRect(0, 0, w, h);
+
+    var bg = bgImages[bgIndex];
+    var bgReady = bg && bg.complete && bg.naturalWidth;
+
+    if (segReady && latestMask && bgReady) {
+      drawImageCover(ctx, bg, w, h);
+
+      var pw = w * PERSON_SCALE, ph = h * PERSON_SCALE;
+      var px = (w - pw) / 2, py = h - ph - h * 0.03;
+
+      var pc = getPersonCanvas(w, h);
+      var pctx = pc.getContext('2d');
+      pctx.clearRect(0, 0, w, h);
+      drawMirrored(pctx, latestMask, sx, sy, side, px, py, pw, ph);
+      pctx.globalCompositeOperation = 'source-in';
+      drawMirrored(pctx, video, sx, sy, side, px, py, pw, ph);
+      pctx.globalCompositeOperation = 'source-over';
+
+      ctx.drawImage(pc, 0, 0);
+    } else {
+      drawMirrored(ctx, video, sx, sy, side, 0, 0, w, h);
+    }
+
+    if (segReady && segmenter && !segBusy) {
+      segBusy = true;
+      segmenter.send({ image: video })
+        .catch(function (err) { console.error('[Selfie] segmenter.send 실패:', err); })
+        .finally(function () { segBusy = false; });
+    }
+  }
+
+  function startLiveLoop() {
+    if (rafId) return;
+    drawLiveFrame();
+  }
+  function stopLiveLoop() {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+  }
+
+  function sizeLiveCanvas() {
+    var vp = document.getElementById('selfieViewport');
+    var rect = vp.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var size = Math.round(Math.min(rect.width, rect.height) * dpr) || 360;
+    refs.liveCanvas.width = size;
+    refs.liveCanvas.height = size;
+  }
+
+  /* ── 에러 → 한국어 안내문 (화면에 원본 에러명도 함께 표시) ── */
   function errMsg(err) {
-    var name = (err && err.name) || '';
+    var name = (err && err.name) || '알 수 없는 오류';
     console.error('[Selfie] 카메라 오류 —', name, err && err.message);
+    var tail = ' [' + name + ']';
     if (name === 'NotAllowedError' || name === 'PermissionDeniedError')
-      return '주소창의 카메라 아이콘을 클릭해 "허용"으로 바꾼 뒤 다시 시도해 주세요.';
+      return '주소창의 카메라 아이콘을 클릭해 "허용"으로 바꾼 뒤 다시 시도해 주세요.' + tail;
     if (name === 'NotReadableError' || name === 'TrackStartError')
-      return '다른 앱(줌·카메라 앱 등)에서 카메라를 사용 중입니다. 닫은 뒤 다시 시도해 주세요.';
+      return '다른 앱(줌·카메라 앱 등)에서 카메라를 사용 중입니다. 닫은 뒤 다시 시도해 주세요.' + tail;
     if (name === 'NotFoundError' || name === 'DevicesNotFoundError')
-      return '카메라를 찾을 수 없습니다. 카메라가 연결되어 있는지 확인해 주세요.';
+      return '카메라를 찾을 수 없습니다. 카메라가 연결되어 있는지 확인해 주세요.' + tail;
     if (name === 'SecurityError')
-      return '보안 연결(HTTPS)에서만 카메라를 사용할 수 있습니다.';
-    return '카메라를 열 수 없습니다. (' + (name || '알 수 없는 오류') + ')';
+      return '보안 연결(HTTPS)에서만 카메라를 사용할 수 있습니다.' + tail;
+    if (name === 'AbortError' || name === 'TimeoutError')
+      return '카메라 시작이 시간 초과되었습니다. Windows 설정 > 개인정보 및 보안 > 카메라에서 "데스크톱 앱이 카메라에 액세스하도록 허용"이 켜져 있는지 확인해 주세요.' + tail;
+    return '카메라를 열 수 없습니다.' + tail;
   }
   function showError(err) {
     var el = document.getElementById('selfieErrMsg');
@@ -2131,11 +2355,15 @@ var SelfieModule = (function () {
       .then(function (s) { applyStream(s, onOk); })
       .catch(function (err) {
         console.warn('[Selfie] facingMode:user 실패 —', err.name, err.message);
-        var needFallback = (
-          err.name === 'OverconstrainedError' ||
-          err.name === 'ConstraintNotSatisfiedError' ||
-          err.name === 'TypeError'
+        /* 권한 거부/보안 오류가 아니면 전부 재시도 가치가 있음 — 특히 AbortError(Timeout starting
+           video source)는 특정 웹캠이 1280x1280 정사각형 협상을 느리게 처리할 때 발생, 단순 제약으로
+           재시도하면 대부분 해결됨 */
+        var noRetry = (
+          err.name === 'NotAllowedError' ||
+          err.name === 'PermissionDeniedError' ||
+          err.name === 'SecurityError'
         );
+        var needFallback = !noRetry;
         if (needFallback) {
           console.info('[Selfie] fallback: 제약 없이 재시도');
           navigator.mediaDevices.getUserMedia(c2)
@@ -2150,16 +2378,30 @@ var SelfieModule = (function () {
     stream = s; refs.video.srcObject = s; onOk();
   }
   function stopCamera() {
+    stopLiveLoop();
     if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; }
     if (refs.video) refs.video.srcObject = null;
   }
   /* ── getUserMedia 진입점 (버튼에서 호출) ── */
   function tryStart() {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      showError({ name: 'NotFoundError' }); return;
+      var insecure = location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1';
+      console.error('[Selfie] getUserMedia 사용 불가 — protocol:', location.protocol, '| hostname:', location.hostname || '(none, file://로 열림)');
+      showError({ name: insecure ? 'SecurityError' : 'NotFoundError' });
+      return;
+    }
+    if (navigator.mediaDevices.enumerateDevices) {
+      navigator.mediaDevices.enumerateDevices().then(function (list) {
+        var cams = list.filter(function (d) { return d.kind === 'videoinput'; });
+        console.info('[Selfie] 감지된 카메라 장치 —', cams.length, '개:', cams.map(function (d) { return d.label || '(권한 전이라 이름 안 보임)'; }));
+      });
     }
     startCamera(
-      function () { show('selfieLive'); },
+      function () {
+        show('selfieLive');
+        sizeLiveCanvas();
+        startLiveLoop();
+      },
       function (err) { showError(err); }
     );
   }
@@ -2194,26 +2436,26 @@ var SelfieModule = (function () {
     ctx.stroke();
   }
 
-  /* ── 촬영: video → canvas (미러 정사각 크롭 + 프레임) ── */
+  /* ── 촬영: 라이브 캔버스(이미 배경 합성·미러·크롭 완료된 화면)를 그대로 스냅샷 ── */
   function capture() {
     var s = PHOTO_PX;
     var c = refs.canvas;
     c.width = s; c.height = s;
     var ctx = c.getContext('2d');
 
-    /* 미러 크롭 */
-    ctx.save();
-    ctx.scale(-1, 1);
-    ctx.translate(-s, 0);
-    var vw = refs.video.videoWidth  || s;
-    var vh = refs.video.videoHeight || s;
-    var side = Math.min(vw, vh);
-    ctx.drawImage(refs.video, (vw - side) / 2, (vh - side) / 2, side, side, 0, 0, s, s);
-    ctx.restore();
-
-    /* B안 hook */
-    if (typeof SelfieModule.bgProcessor === 'function') {
-      SelfieModule.bgProcessor(ctx, refs.video, s);
+    var live = refs.liveCanvas;
+    if (live && live.width && live.height) {
+      ctx.drawImage(live, 0, 0, live.width, live.height, 0, 0, s, s);
+    } else {
+      /* 라이브 캔버스가 준비되지 않은 예외 상황 대비 fallback: 비디오에서 직접 크롭 */
+      ctx.save();
+      ctx.scale(-1, 1);
+      ctx.translate(-s, 0);
+      var vw = refs.video.videoWidth  || s;
+      var vh = refs.video.videoHeight || s;
+      var side = Math.min(vw, vh);
+      ctx.drawImage(refs.video, (vw - side) / 2, (vh - side) / 2, side, side, 0, 0, s, s);
+      ctx.restore();
     }
 
     drawFrame(ctx, s);
@@ -2272,19 +2514,27 @@ var SelfieModule = (function () {
 
   /* ── Public API ── */
   return {
-    bgProcessor: null, /* B안: function(ctx, videoEl, size){} 교체 */
-
     init: function () {
-      refs.video    = document.getElementById('selfieVideo');
-      refs.canvas   = document.getElementById('selfieCanvas');
-      refs.dateSpan = document.getElementById('polaroidDate');
-      refs.msgInput = document.getElementById('polaroidMsg');
+      console.info('[Selfie] 진단 시작 — protocol:', location.protocol,
+        '| host:', location.hostname || '(없음, file://)',
+        '| getUserMedia 지원:', !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia),
+        '| MediaPipe 로드됨:', typeof SelfieSegmentation !== 'undefined');
+
+      refs.video      = document.getElementById('selfieVideo');
+      refs.liveCanvas = document.getElementById('selfieLiveCanvas');
+      refs.canvas     = document.getElementById('selfieCanvas');
+      refs.dateSpan   = document.getElementById('polaroidDate');
+      refs.msgInput   = document.getElementById('polaroidMsg');
 
       var now = new Date();
       var dateStr = now.getFullYear() + '.'
         + String(now.getMonth() + 1).padStart(2, '0') + '.'
         + String(now.getDate()).padStart(2, '0');
       if (refs.dateSpan) refs.dateSpan.textContent = dateStr;
+
+      /* 카메라를 켜기 전에 미리 준비해둠 — 실제 촬영 시점엔 이미 로드되어 있도록 */
+      loadBackgrounds();
+      initSegmenter();
 
       /* 카메라 켜기: 버튼 클릭 시만 getUserMedia 호출 (사용자 제스처 필요) */
       document.getElementById('selfieStartBtn').addEventListener('click', tryStart);
@@ -2293,6 +2543,8 @@ var SelfieModule = (function () {
         flashEffect();
         setTimeout(function () { capture(); stopCamera(); show('selfieResult'); }, 80);
       });
+
+      document.getElementById('selfieBgNextBtn').addEventListener('click', nextBackground);
 
       document.getElementById('selfieStopBtn').addEventListener('click', function () {
         stopCamera(); show('selfieStart');
