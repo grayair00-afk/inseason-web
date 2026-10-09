@@ -1813,10 +1813,12 @@ footer {
   function openList()  { listEl.classList.add('open');    listOpen = true;  }
   function closeList() { listEl.classList.remove('open'); listOpen = false; }
 
+  /* 브라우저는 소리 나는 자동재생을 "사용자가 화면을 한 번 건드린 뒤"에만 허락한다.
+     그래서 ① 접속하자마자 한 번 시도(허락된 브라우저·재방문자는 바로 나옴)
+     ② 막히면 화면 어디든 첫 클릭·터치·키 입력에서 시작. 재생이 실제로 된 뒤에만 기다리기를 끝낸다. */
+  var GESTURES = ['pointerdown', 'click', 'keydown', 'touchend'];
   function removeListeners() {
-    document.removeEventListener('click',    startBgm);
-    document.removeEventListener('keydown',  startBgm);
-    document.removeEventListener('touchend', startBgm);
+    GESTURES.forEach(function (ev) { document.removeEventListener(ev, startBgm, true); });
   }
 
   function playTrack(idx) {
@@ -1824,7 +1826,8 @@ footer {
     audio.src = tracks[idx].file;
     audio.load();
     updateTitle(idx);
-    audio.play().catch(function(){});
+    var pr = audio.play();
+    return (pr && pr.then) ? pr : Promise.resolve();
   }
 
   function playIdx(idx) {
@@ -1845,22 +1848,34 @@ footer {
     playTrack(nextRandom());
   });
 
+  var trying = false, startedAt = 0;
   function startBgm() {
-    if (started) return;
+    if (started || trying) return;
+    trying = true;
     started = true;
-    removeListeners();
-    playTrack(nextRandom());
+    startedAt = Date.now();
+    playTrack(nextRandom()).then(function () {
+      trying = false;
+      removeListeners();
+    }, function () {
+      /* 아직 허락 전 — 다음 클릭·터치에서 다시 */
+      trying = false;
+      started = false;
+      setOn(false);
+    });
   }
 
-  document.addEventListener('click',    startBgm);
-  document.addEventListener('keydown',  startBgm);
-  document.addEventListener('touchend', startBgm);
+  GESTURES.forEach(function (ev) { document.addEventListener(ev, startBgm, true); });
+  /* 접속하자마자 한 번 시도 */
+  startBgm();
 
   /* 음표 버튼 토글 */
   btn.addEventListener('click', function(e) {
     e.stopPropagation();
     closeList();
     if (!started) { startBgm(); return; }
+    /* 이 버튼을 누른 손길(pointerdown)로 방금 음악이 시작됐으면 그대로 둔다 — 바로 꺼지지 않게 */
+    if (Date.now() - startedAt < 800) return;
     if (audio.paused) {
       audio.play().catch(function(){});
     } else {
