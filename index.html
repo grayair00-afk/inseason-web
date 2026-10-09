@@ -313,6 +313,21 @@ nav {
 .show.tool .show-img img { width: 100%; height: 100%; object-fit: cover; object-position: 56% center; display: block; }
 @media (max-width: 900px) { .show.tool .show-content { order: 0; } }
 
+/* ── 씬킹으로 만든 장면들 (좌우 대칭 모음) ── */
+.scenes { padding: 120px 64px; background: #060508; border-top: 1px solid rgba(255,255,255,0.05); }
+.scenes-head { max-width: 1200px; margin: 0 auto 48px; }
+.scenes-head h2 { font-size: clamp(28px,3vw,40px); font-weight: 300; margin: 0; color: #FAFAF8; }
+.scenes-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(4,1fr); grid-auto-rows: calc((min(1200px, 100vw - 128px) - 42px) / 4 * 0.86); gap: 14px; }
+.scenes-grid figure { margin: 0; overflow: hidden; border-radius: 4px; }
+.scenes-grid img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .8s; }
+.scenes-grid figure:hover img { transform: scale(1.03); }
+.scenes-grid .t { grid-row: span 2; }
+.scenes-grid .w { grid-column: 1 / -1; grid-row: span 2; }
+@media (max-width: 900px) {
+  .scenes { padding: 80px 20px; }
+  .scenes-grid { grid-template-columns: repeat(2,1fr); grid-auto-rows: calc((100vw - 48px) / 2 * 0.86); gap: 8px; }
+}
+
 /* ── NOW SHOWING ── */
 .show {
   position: relative; min-height: 100vh;
@@ -1365,6 +1380,30 @@ footer {
       </li>
     </ul>
     <a class="show-link" href="https://shortsking.vercel.app" target="_blank" rel="noopener">씬킹 열기 →</a>
+  </div>
+</section>
+
+<!-- 씬킹으로 만든 장면들 -->
+<section class="scenes" id="scenes">
+  <div class="scenes-head">
+    <div class="show-tag">MADE WITH SCENEKING</div>
+    <h2>씬킹으로 만든 장면들</h2>
+    <p class="show-en">Scenes made with SceneKing</p>
+  </div>
+  <div class="scenes-grid">
+      <figure class="t"><img src="img_scene01.webp" alt="붉은 꽃 드레스" loading="lazy"></figure>
+      <figure class="s"><img src="img_scene02.webp" alt="꽃이 쏟아지는 왕좌" loading="lazy"></figure>
+      <figure class="s"><img src="img_scene03.webp" alt="나비 드레스" loading="lazy"></figure>
+      <figure class="t"><img src="img_scene04.webp" alt="흰 꽃 드레스" loading="lazy"></figure>
+      <figure class="s"><img src="img_scene05.webp" alt="물속 궁전" loading="lazy"></figure>
+      <figure class="s"><img src="img_scene06.webp" alt="달과 배" loading="lazy"></figure>
+      <figure class="w"><img src="img_scene07.webp" alt="빛의 물결 앞 관람객" loading="lazy"></figure>
+      <figure class="t"><img src="img_scene08.webp" alt="공중에 매달린 흰 난초" loading="lazy"></figure>
+      <figure class="s"><img src="img_scene09.webp" alt="빛나는 나무" loading="lazy"></figure>
+      <figure class="s"><img src="img_scene10.webp" alt="수정 도시" loading="lazy"></figure>
+      <figure class="t"><img src="img_scene11.webp" alt="보라 난초 설치" loading="lazy"></figure>
+      <figure class="s"><img src="img_scene12.webp" alt="해파리" loading="lazy"></figure>
+      <figure class="s"><img src="img_scene13.webp" alt="구름 샹들리에" loading="lazy"></figure>
   </div>
 </section>
 
