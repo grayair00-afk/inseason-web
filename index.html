@@ -1806,19 +1806,23 @@ footer {
   setOn(false);
   updateTitle(-1);
 
-  /* play/pause 이벤트로 UI 구동 — then() 콜백보다 신뢰성 높음 */
-  audio.addEventListener('play',  function() { if (started) setOn(true);  });
+  /* play/pause 이벤트로 UI 구동 — 소리가 꺼진(무음) 재생은 '켜짐'으로 안 보인다 */
+  audio.addEventListener('play',  function() { setOn(!audio.muted); });
   audio.addEventListener('pause', function() { setOn(false); });
+  audio.addEventListener('volumechange', function() { setOn(!audio.paused && !audio.muted); });
 
   function openList()  { listEl.classList.add('open');    listOpen = true;  }
   function closeList() { listEl.classList.remove('open'); listOpen = false; }
 
-  /* 브라우저는 소리 나는 자동재생을 "사용자가 화면을 한 번 건드린 뒤"에만 허락한다.
-     그래서 ① 접속하자마자 한 번 시도(허락된 브라우저·재방문자는 바로 나옴)
-     ② 막히면 화면 어디든 첫 클릭·터치·키 입력에서 시작. 재생이 실제로 된 뒤에만 기다리기를 끝낸다. */
-  var GESTURES = ['pointerdown', 'click', 'keydown', 'touchend'];
+  /* 자동 재생 — 브라우저는 소리 나는 자동재생을 "사용자가 화면을 한 번 건드린 뒤"에만 허락하고,
+     소리 없는(무음) 자동재생은 허락한다. 그래서
+     ① 접속하자마자 랜덤 곡을 재생 — 허락되면 소리까지, 막히면 무음으로 흘려 둔다
+     ② 화면 어디든 처음 누르거나 터치·키를 누르는 순간 소리만 켠다 (곡은 이미 흐르는 중이라 바로 들림)
+     ③ 끝나면 다음 랜덤 곡 — 음표 버튼으로 끄기 전까지 계속 */
+  var GESTURES = ['pointerdown', 'click', 'keydown', 'touchstart', 'touchend'];
+  var unlocked = false, userOff = false, unlockedAt = 0;
   function removeListeners() {
-    GESTURES.forEach(function (ev) { document.removeEventListener(ev, startBgm, true); });
+    GESTURES.forEach(function (ev) { document.removeEventListener(ev, unlock, true); });
   }
 
   function playTrack(idx) {
@@ -1831,11 +1835,12 @@ footer {
   }
 
   function playIdx(idx) {
-    if (!started) { started = true; removeListeners(); }
-    playTrack(idx);
+    started = true; userOff = false;
+    audio.muted = false; unlocked = true; removeListeners();
+    playTrack(idx).catch(function(){});
   }
 
-  /* 연속 회피 셔플: 방금 재생된 곡 제외, 7곡 이상일 때만 회피 */
+  /* 연속 회피 셔플: 방금 재생된 곡 제외 */
   function nextRandom() {
     var next;
     do {
@@ -1845,42 +1850,39 @@ footer {
   }
 
   audio.addEventListener('ended', function() {
-    playTrack(nextRandom());
+    if (!userOff) playTrack(nextRandom()).catch(function(){});
   });
 
-  var trying = false, startedAt = 0;
-  function startBgm() {
-    if (started || trying) return;
-    trying = true;
+  function autoStart() { /* 접속하자마자 — 먼저 소리를 켠 채 시도, 막히면 무음으로 (무음 자동재생은 허락됨) */
     started = true;
-    startedAt = Date.now();
     playTrack(nextRandom()).then(function () {
-      trying = false;
-      removeListeners();
+      unlocked = true; removeListeners(); /* 소리까지 허락됨 */
     }, function () {
-      /* 아직 허락 전 — 다음 클릭·터치에서 다시 */
-      trying = false;
-      started = false;
-      setOn(false);
+      audio.muted = true; audio.defaultMuted = true; audio.setAttribute('muted', '');
+      audio.load();
+      audio.play().catch(function () { started = false; });
     });
   }
 
-  GESTURES.forEach(function (ev) { document.addEventListener(ev, startBgm, true); });
-  /* 접속하자마자 한 번 시도 */
-  startBgm();
+  function unlock() { /* 첫 손길 = 소리 켜기 */
+    if (unlocked || userOff) return;
+    unlocked = true; unlockedAt = Date.now(); removeListeners();
+    audio.muted = false; audio.defaultMuted = false; audio.removeAttribute('muted');
+    if (!started || audio.paused) { started = true; if (curIdx < 0) playTrack(nextRandom()).catch(function(){}); else audio.play().catch(function(){}); }
+  }
+
+  GESTURES.forEach(function (ev) { document.addEventListener(ev, unlock, true); });
+  autoStart();
 
   /* 음표 버튼 토글 */
   btn.addEventListener('click', function(e) {
     e.stopPropagation();
     closeList();
-    if (!started) { startBgm(); return; }
-    /* 이 버튼을 누른 손길(pointerdown)로 방금 음악이 시작됐으면 그대로 둔다 — 바로 꺼지지 않게 */
-    if (Date.now() - startedAt < 800) return;
-    if (audio.paused) {
-      audio.play().catch(function(){});
-    } else {
-      audio.pause();
-    }
+    /* 이 버튼을 누른 손길로 방금 소리가 켜졌으면 그대로 둔다 — 바로 꺼지지 않게 */
+    if (Date.now() - unlockedAt < 800) return;
+    if (!audio.paused && !audio.muted) { audio.pause(); userOff = true; return; }
+    userOff = false; unlocked = true; removeListeners(); audio.muted = false;
+    if (curIdx < 0) playTrack(nextRandom()).catch(function(){}); else audio.play().catch(function(){});
   });
 
   /* 제목 클릭 → 목록 열기/닫기 */
